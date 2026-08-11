@@ -1,0 +1,348 @@
+{
+  "input": "assets/props/dungeon_raw/dungeon-props-3x3-alpha.png",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "all",
+  "component_padding": 8,
+  "min_component_area": 180,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "closed-chest",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        122,
+        147,
+        331,
+        343
+      ],
+      "padded_crop_bbox": [
+        114,
+        139,
+        339,
+        351
+      ],
+      "edge_touch": false,
+      "output_size": [
+        225,
+        212
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/closed-chest/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "open-chest",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        418,
+        0,
+        836,
+        418
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        94,
+        97,
+        312,
+        354
+      ],
+      "padded_crop_bbox": [
+        86,
+        89,
+        320,
+        362
+      ],
+      "edge_touch": false,
+      "output_size": [
+        234,
+        273
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/open-chest/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "sarcophagus",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        836,
+        0,
+        1254,
+        418
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        32,
+        162,
+        322,
+        341
+      ],
+      "padded_crop_bbox": [
+        24,
+        154,
+        330,
+        349
+      ],
+      "edge_touch": false,
+      "output_size": [
+        306,
+        195
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/sarcophagus/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "ritual-brazier",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        418,
+        418,
+        836
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        159,
+        87,
+        292,
+        324
+      ],
+      "padded_crop_bbox": [
+        151,
+        79,
+        300,
+        332
+      ],
+      "edge_touch": false,
+      "output_size": [
+        149,
+        253
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/ritual-brazier/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "funerary-urns",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        418,
+        418,
+        836,
+        836
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        80,
+        89,
+        299,
+        324
+      ],
+      "padded_crop_bbox": [
+        72,
+        81,
+        307,
+        332
+      ],
+      "edge_touch": false,
+      "output_size": [
+        235,
+        251
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/funerary-urns/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "bone-pile",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        836,
+        418,
+        1254,
+        836
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        54,
+        127,
+        289,
+        305
+      ],
+      "padded_crop_bbox": [
+        46,
+        119,
+        297,
+        313
+      ],
+      "edge_touch": false,
+      "output_size": [
+        251,
+        194
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/bone-pile/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "collapsed-column",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        836,
+        418,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        112,
+        49,
+        330,
+        273
+      ],
+      "padded_crop_bbox": [
+        104,
+        41,
+        338,
+        281
+      ],
+      "edge_touch": false,
+      "output_size": [
+        234,
+        240
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/collapsed-column/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "iron-fence",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        418,
+        836,
+        836,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        70,
+        82,
+        321,
+        249
+      ],
+      "padded_crop_bbox": [
+        62,
+        74,
+        329,
+        257
+      ],
+      "edge_touch": false,
+      "output_size": [
+        267,
+        183
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/iron-fence/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "spike-trap",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        836,
+        836,
+        1254,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        58,
+        62,
+        280,
+        282
+      ],
+      "padded_crop_bbox": [
+        50,
+        54,
+        288,
+        290
+      ],
+      "edge_touch": false,
+      "output_size": [
+        238,
+        236
+      ],
+      "status": "accepted",
+      "image": "assets/props/dungeon/spike-trap/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": []
+}

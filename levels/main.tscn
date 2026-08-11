@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://levels/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://levels/world_renderer.gd" id="2_world"]
+[ext_resource type="Script" path="res://entities/player/player.gd" id="3_player"]
+[ext_resource type="Script" path="res://ui/hud.gd" id="4_hud"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="WorldRenderer" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_world")
+
+[node name="ArenaWalls" type="StaticBody2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
+unique_name_in_owner = true
+y_sort_enabled = true
+
+[node name="Player" type="CharacterBody2D" parent="Actors"]
+unique_name_in_owner = true
+position = Vector2(1100, 1190)
+script = ExtResource("3_player")
+
+[node name="Camera" type="Camera2D" parent="Actors/Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 7.5
+
+[node name="Effects" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="LootLayer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="EnemyDirector" type="Node" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_hud")

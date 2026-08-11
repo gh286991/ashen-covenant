@@ -1,0 +1,1 @@
+Use the base map as the exact reference and add sparse matching gothic props only: braziers, sarcophagi, ossuary racks, urns, bone piles, fallen columns, closed chests, portcullises and clear pads for three Soul Anchors. Preserve every floor, route and boundary exactly. No characters, enemies, UI or text. This image is a planning reference, not the runtime map.

@@ -1,0 +1,25 @@
+{
+  "props": [
+    {"id":"brazier_entry_l","image":"assets/props/dungeon/ritual-brazier/prop.png","x":970,"y":905,"w":68,"h":115,"sortY":905,"layer":"props"},
+    {"id":"brazier_entry_r","image":"assets/props/dungeon/ritual-brazier/prop.png","x":1230,"y":905,"w":68,"h":115,"sortY":905,"layer":"props"},
+    {"id":"brazier_west","image":"assets/props/dungeon/ritual-brazier/prop.png","x":740,"y":625,"w":62,"h":104,"sortY":625,"layer":"props"},
+    {"id":"brazier_east","image":"assets/props/dungeon/ritual-brazier/prop.png","x":1460,"y":625,"w":62,"h":104,"sortY":625,"layer":"props"},
+    {"id":"sarcophagus_w1","image":"assets/props/dungeon/sarcophagus/prop.png","x":285,"y":550,"w":150,"h":92,"sortY":550,"layer":"props"},
+    {"id":"sarcophagus_w2","image":"assets/props/dungeon/sarcophagus/prop.png","x":505,"y":565,"w":150,"h":92,"sortY":565,"layer":"props"},
+    {"id":"sarcophagus_w3","image":"assets/props/dungeon/sarcophagus/prop.png","x":255,"y":825,"w":140,"h":86,"sortY":825,"layer":"props"},
+    {"id":"urns_e1","image":"assets/props/dungeon/funerary-urns/prop.png","x":1705,"y":560,"w":92,"h":100,"sortY":560,"layer":"props"},
+    {"id":"urns_e2","image":"assets/props/dungeon/funerary-urns/prop.png","x":1950,"y":590,"w":86,"h":92,"sortY":590,"layer":"props"},
+    {"id":"bones_e1","image":"assets/props/dungeon/bone-pile/prop.png","x":1880,"y":825,"w":118,"h":82,"sortY":825,"layer":"props"},
+    {"id":"column_court_l","image":"assets/props/dungeon/collapsed-column/prop.png","x":820,"y":565,"w":108,"h":112,"sortY":565,"layer":"props"},
+    {"id":"column_court_r","image":"assets/props/dungeon/collapsed-column/prop.png","x":1380,"y":820,"w":108,"h":112,"sortY":820,"layer":"props"},
+    {"id":"west_cache","image":"assets/props/dungeon/closed-chest/prop.png","x":145,"y":690,"w":92,"h":88,"sortY":690,"layer":"props"},
+    {"id":"east_cache","image":"assets/props/dungeon/closed-chest/prop.png","x":2055,"y":690,"w":92,"h":88,"sortY":690,"layer":"props"},
+    {"id":"nave_cache","image":"assets/props/dungeon/closed-chest/prop.png","x":1010,"y":1185,"w":86,"h":82,"sortY":1185,"layer":"props"},
+    {"id":"urn_1","image":"assets/props/dungeon/funerary-urns/prop.png","x":1080,"y":1160,"w":62,"h":68,"sortY":1160,"layer":"props"},
+    {"id":"urn_2","image":"assets/props/dungeon/funerary-urns/prop.png","x":1195,"y":965,"w":58,"h":64,"sortY":965,"layer":"props"},
+    {"id":"urn_3","image":"assets/props/dungeon/funerary-urns/prop.png","x":520,"y":640,"w":60,"h":66,"sortY":640,"layer":"props"},
+    {"id":"urn_4","image":"assets/props/dungeon/funerary-urns/prop.png","x":1655,"y":635,"w":60,"h":66,"sortY":635,"layer":"props"},
+    {"id":"urn_5","image":"assets/props/dungeon/funerary-urns/prop.png","x":1050,"y":480,"w":58,"h":64,"sortY":480,"layer":"props"},
+    {"id":"urn_6","image":"assets/props/dungeon/bone-pile/prop.png","x":1260,"y":815,"w":80,"h":58,"sortY":815,"layer":"props"}
+  ]
+}

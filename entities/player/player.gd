@@ -7,6 +7,7 @@ signal dash_requested(origin: Vector2, direction: Vector2)
 signal health_changed(current: float, maximum: float)
 signal mana_changed(current: float, maximum: float)
 signal experience_changed(current: int, required: int, level: int)
+signal skill_points_changed(available: int)
 signal potions_changed(count: int)
 signal equipment_changed
 signal level_up_requested(new_level: int)
@@ -34,8 +35,9 @@ const POINTER_STOP_DISTANCE := 10.0
 const POINTER_ATTACK_DISTANCE := 68.0
 const POINTER_WAYPOINT_DISTANCE := 14.0
 const CRIMSON_FRAME_SIZE := Vector2(80.0, 80.0)
-const CRIMSON_ART_SCALE := 3.0
-const CRIMSON_FOOT_OFFSET := 48.0
+const CRIMSON_ART_SCALE := 2.55
+const CRIMSON_PAINTED_FOOT_OFFSET := 16.0
+const CRIMSON_FOOT_OFFSET := CRIMSON_PAINTED_FOOT_OFFSET * CRIMSON_ART_SCALE
 const CRIMSON_FRAME_COUNTS := {
 	&"idle": 6,
 	&"walk": 8,
@@ -89,6 +91,24 @@ const CRIMSON_SHEETS := {
 		preload("res://assets/sprites/player_crimson/death_up.png"),
 	],
 }
+const SKILL_ORDER: Array[StringName] = [&"iron_oath", &"executioner", &"blood_rush"]
+const SKILL_DEFINITIONS := {
+	&"iron_oath": {
+		"title": "IRON OATH",
+		"summary": "+20 Life  •  +3 Armor",
+		"max_rank": 3,
+	},
+	&"executioner": {
+		"title": "EXECUTIONER",
+		"summary": "+3 Damage  •  +2.5% Critical",
+		"max_rank": 3,
+	},
+	&"blood_rush": {
+		"title": "BLOOD RUSH",
+		"summary": "+10 Essence  •  Faster Ash Nova",
+		"max_rank": 3,
+	},
+}
 
 var gameplay_enabled := false
 var rng := RandomNumberGenerator.new()
@@ -128,6 +148,7 @@ var pointer_attack_point_active := false
 
 var level := 1
 var experience := 0
+var skill_points := 0
 var base_max_health := 150.0
 var base_max_mana := 85.0
 var base_damage := 17.0
@@ -581,14 +602,15 @@ func add_experience(amount: int) -> bool:
 	while experience >= experience_required():
 		experience -= experience_required()
 		level += 1
+		skill_points += 1
 		base_max_health += 12.0
 		base_damage += 1.5
 		health = max_health()
 		mana = max_mana()
 		leveled = true
-	experience_changed.emit(experience, experience_required(), level)
-	if leveled:
 		level_up_requested.emit(level)
+		skill_points_changed.emit(skill_points)
+	experience_changed.emit(experience, experience_required(), level)
 	return leveled
 
 func experience_required() -> int:
@@ -608,21 +630,52 @@ func equip_loot(item: LootItem) -> bool:
 		_emit_all_stats()
 	return equipped_new
 
-func apply_upgrade(upgrade_id: String) -> void:
-	upgrades.append(upgrade_id)
-	match upgrade_id:
-		"iron_oath":
-			base_max_health += 32.0
-			armor += 5.0
+func get_skill_rank(skill_id: StringName) -> int:
+	var definition: Dictionary = SKILL_DEFINITIONS.get(skill_id, {})
+	if definition.is_empty():
+		return 0
+	return mini(upgrades.count(String(skill_id)), int(definition.get("max_rank", 1)))
+
+func can_purchase_skill(skill_id: StringName) -> bool:
+	var definition: Dictionary = SKILL_DEFINITIONS.get(skill_id, {})
+	if definition.is_empty() or skill_points <= 0:
+		return false
+	return get_skill_rank(skill_id) < int(definition.get("max_rank", 1))
+
+func purchase_skill(skill_id: StringName) -> bool:
+	if not can_purchase_skill(skill_id):
+		return false
+	skill_points -= 1
+	upgrades.append(String(skill_id))
+	match skill_id:
+		&"iron_oath":
+			base_max_health += 20.0
+			armor += 3.0
 			health = max_health()
-		"executioner":
-			base_damage += 5.0
-			base_crit_chance += 0.045
-		"blood_rush":
-			nova_cooldown_bonus += 0.4
-			base_max_mana += 18.0
+		&"executioner":
+			base_damage += 3.0
+			base_crit_chance += 0.025
+		&"blood_rush":
+			nova_cooldown_bonus += 0.18
+			base_max_mana += 10.0
 			mana = max_mana()
+	skill_points_changed.emit(skill_points)
 	_emit_all_stats()
+	return true
+
+func get_skill_tree_snapshot() -> Array[Dictionary]:
+	var skills: Array[Dictionary] = []
+	for skill_id in SKILL_ORDER:
+		var definition: Dictionary = SKILL_DEFINITIONS[skill_id]
+		skills.append({
+			"id": skill_id,
+			"title": String(definition.get("title", skill_id)),
+			"summary": String(definition.get("summary", "")),
+			"rank": get_skill_rank(skill_id),
+			"max_rank": int(definition.get("max_rank", 1)),
+			"available": can_purchase_skill(skill_id),
+		})
+	return skills
 
 func max_health() -> float:
 	var bonus := 0
@@ -675,6 +728,7 @@ func to_save_dict() -> Dictionary:
 			equipment_data[String(key)] = null
 	return {
 		"level": level, "experience": experience, "base_health": base_max_health,
+		"skill_points": skill_points,
 		"base_mana": base_max_mana, "base_damage": base_damage, "crit": base_crit_chance,
 		"armor": armor, "gold": gold, "potions": potions, "kills": kills,
 		"nova_bonus": nova_cooldown_bonus, "upgrades": upgrades.duplicate(),
@@ -684,6 +738,7 @@ func to_save_dict() -> Dictionary:
 func load_save_dict(data: Dictionary) -> void:
 	level = clampi(int(data.get("level", 1)), 1, 30)
 	experience = maxi(0, int(data.get("experience", 0)))
+	skill_points = clampi(int(data.get("skill_points", 0)), 0, 99)
 	base_max_health = clampf(float(data.get("base_health", 150.0)), 80.0, 2000.0)
 	base_max_mana = clampf(float(data.get("base_mana", 85.0)), 20.0, 1000.0)
 	base_damage = clampf(float(data.get("base_damage", 17.0)), 5.0, 500.0)
@@ -706,6 +761,7 @@ func load_save_dict(data: Dictionary) -> void:
 func reset_progress() -> void:
 	level = 1
 	experience = 0
+	skill_points = 0
 	base_max_health = 150.0
 	base_max_mana = 85.0
 	base_damage = 17.0
@@ -747,6 +803,7 @@ func _emit_all_stats() -> void:
 	health_changed.emit(health, max_health())
 	mana_changed.emit(mana, max_mana())
 	experience_changed.emit(experience, experience_required(), level)
+	skill_points_changed.emit(skill_points)
 	potions_changed.emit(potions)
 
 func _draw() -> void:

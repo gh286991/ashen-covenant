@@ -1,7 +1,7 @@
 class_name AshenCovenantGame
 extends Node2D
 
-enum GamePhase { TITLE, PLAYING, SHEET, UPGRADE, PAUSED, VICTORY, DEFEAT }
+enum GamePhase { TITLE, PLAYING, SHEET, SKILL_TREE, PAUSED, VICTORY, DEFEAT }
 
 const EnemyScript := preload("res://entities/enemies/enemy.gd")
 const ProjectileScript := preload("res://entities/projectiles/projectile.gd")
@@ -59,8 +59,10 @@ func _ready() -> void:
 	_rebuild_dungeon_props()
 	_connect_player()
 	_configure_camera()
-	if not hud.upgrade_selected.is_connected(choose_upgrade):
-		hud.upgrade_selected.connect(choose_upgrade)
+	if not hud.skill_selected.is_connected(purchase_skill):
+		hud.skill_selected.connect(purchase_skill)
+	if not hud.skill_tree_requested.is_connected(open_skill_tree):
+		hud.skill_tree_requested.connect(open_skill_tree)
 	player.set_collision_mask_value(1, true)
 	player.gameplay_enabled = false
 	world_renderer.set_interactables(chests, breakables)
@@ -113,18 +115,17 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.is_action_pressed(&"toggle_sheet"):
 				sheet_open = true
 				_set_phase(GamePhase.SHEET)
+			elif event.is_action_pressed(&"toggle_skills"):
+				open_skill_tree()
 			elif event.is_action_pressed(&"pause"):
 				_set_phase(GamePhase.PAUSED)
 		GamePhase.SHEET:
 			if event.is_action_pressed(&"toggle_sheet") or event.is_action_pressed(&"pause"):
 				sheet_open = false
 				_set_phase(GamePhase.PLAYING)
-		GamePhase.UPGRADE:
-			if event is InputEventKey:
-				match event.physical_keycode:
-					KEY_1: choose_upgrade("iron_oath")
-					KEY_2: choose_upgrade("executioner")
-					KEY_3: choose_upgrade("blood_rush")
+		GamePhase.SKILL_TREE:
+			if event.is_action_pressed(&"toggle_skills") or event.is_action_pressed(&"pause"):
+				_set_phase(GamePhase.PLAYING)
 		GamePhase.PAUSED:
 			if event.is_action_pressed(&"pause"):
 				_set_phase(GamePhase.PLAYING)
@@ -702,19 +703,23 @@ func _update_shortcuts() -> void:
 		break
 
 func _on_level_up(new_level: int) -> void:
-	if phase != GamePhase.PLAYING:
-		return
-	_set_phase(GamePhase.UPGRADE)
-	_spawn_fx(player.global_position, CombatFX.FXType.LEVEL_UP, Color("ffd16a"), 1.0, 100.0)
-	_show_announcement("LEVEL %d" % new_level, Color("ffd16a"), 2.0)
+	if phase == GamePhase.PLAYING:
+		_spawn_fx(player.global_position, CombatFX.FXType.LEVEL_UP, Color("ffd16a"), 1.0, 100.0)
+		hud.play_level_up_notice(new_level, 1)
+		_show_announcement("LEVEL %d  •  SKILL POINT +1" % new_level, Color("ffd16a"), 2.0)
 	print("[ASHEN] LEVEL_UP level=%d" % new_level)
 
-func choose_upgrade(upgrade_id: String) -> void:
-	if phase != GamePhase.UPGRADE:
+func open_skill_tree() -> void:
+	if phase == GamePhase.PLAYING:
+		_set_phase(GamePhase.SKILL_TREE)
+
+func purchase_skill(skill_id: String) -> void:
+	if phase != GamePhase.SKILL_TREE:
 		return
-	player.apply_upgrade(upgrade_id)
-	_set_phase(GamePhase.PLAYING)
-	_show_announcement(upgrade_id.replace("_", " ").to_upper() + " AWAKENED", Color("f0cc77"), 1.7)
+	if not player.purchase_skill(StringName(skill_id)):
+		return
+	var skill_rank := player.get_skill_rank(StringName(skill_id))
+	_show_announcement("%s  •  RANK %d" % [skill_id.replace("_", " ").to_upper(), skill_rank], Color("f0cc77"), 1.7)
 
 func _on_player_died() -> void:
 	_set_phase(GamePhase.DEFEAT)
@@ -839,6 +844,7 @@ func _update_hud() -> void:
 		"xp_ratio": float(player.experience) / float(maxi(1, player.experience_required())),
 		"xp_current": player.experience, "xp_required": player.experience_required(),
 		"level": player.level, "kills": player.kills, "gold": player.gold, "potions": player.potions,
+		"skill_points": player.skill_points, "skills": player.get_skill_tree_snapshot(),
 		"anchors_destroyed": anchors_destroyed, "anchors_total": anchors.size(), "objective": objective,
 		"attack_cd": player.cooldown_ratio(&"attack"), "nova_cd": player.cooldown_ratio(&"nova"), "dash_cd": player.cooldown_ratio(&"dash"),
 		"boss_visible": is_instance_valid(boss), "boss_ratio": boss.health_ratio() if is_instance_valid(boss) else 0.0,

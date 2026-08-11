@@ -10,33 +10,10 @@ signal damaged(position: Vector2, amount: int, critical: bool, impact_direction:
 enum AIState { CHASE, WINDUP, RECOVER, CHARGE, STAGGER, DEAD }
 enum AttackStyle { MELEE, PROJECTILE, RADIAL, CHARGE }
 
-const DEATH_DURATION := 0.26
-const BOSS_DEATH_DURATION := 0.48
-
-const GHOUL_TEXTURES := [
-	preload("res://assets/sprites/ghoul_idle/idle-1.png"),
-	preload("res://assets/sprites/ghoul_idle/idle-2.png"),
-	preload("res://assets/sprites/ghoul_idle/idle-3.png"),
-	preload("res://assets/sprites/ghoul_idle/idle-4.png"),
-]
-const WRAITH_TEXTURES := [
-	preload("res://assets/sprites/wraith_idle/idle-1.png"),
-	preload("res://assets/sprites/wraith_idle/idle-2.png"),
-	preload("res://assets/sprites/wraith_idle/idle-3.png"),
-	preload("res://assets/sprites/wraith_idle/idle-4.png"),
-]
-const BRUTE_TEXTURES := [
-	preload("res://assets/sprites/brute_idle/idle-1.png"),
-	preload("res://assets/sprites/brute_idle/idle-2.png"),
-	preload("res://assets/sprites/brute_idle/idle-3.png"),
-	preload("res://assets/sprites/brute_idle/idle-4.png"),
-]
-const BOSS_TEXTURES := [
-	preload("res://assets/sprites/boss_idle/idle-1.png"),
-	preload("res://assets/sprites/boss_idle/idle-2.png"),
-	preload("res://assets/sprites/boss_idle/idle-3.png"),
-	preload("res://assets/sprites/boss_idle/idle-4.png"),
-]
+const DEATH_DURATION := 0.82
+const BOSS_DEATH_DURATION := 1.1
+const FlareSpriteAnimatorScript := preload("res://common/flare_sprite_animator.gd")
+const FLARE_BESTIARY_ROOT := "res://assets/sprites/flare_bestiary"
 
 var enemy_kind: StringName = &"ghoul"
 var display_name := "Ash Ghoul"
@@ -73,8 +50,8 @@ var spawn_time := 0.0
 var rng := RandomNumberGenerator.new()
 var visual_root: Node2D
 var art_sprite: Sprite2D
-var art_scale := 0.43
-var art_base_y := -44.0
+var flare_animator: FlareSpriteAnimator
+var art_scale := 0.5
 var movement_filter: Callable
 var activation_radius := 520.0
 var death_timer := 0.0
@@ -91,7 +68,7 @@ func _apply_archetype() -> void:
 	var scale_factor := pow(1.15, clampi(enemy_level - 1, 0, 20))
 	match enemy_kind:
 		&"wraith":
-			display_name = "Void Wraith"
+			display_name = "Ashbone Hexer"
 			max_health = 48.0 * scale_factor
 			move_speed = 92.0
 			contact_damage = 15.0 * scale_factor
@@ -102,7 +79,7 @@ func _apply_archetype() -> void:
 			armor = 3.0 + enemy_level
 			xp_reward = 22 + enemy_level * 3
 		&"brute":
-			display_name = "Grave Brute"
+			display_name = "Rotting Behemoth"
 			max_health = 125.0 * scale_factor
 			move_speed = 74.0
 			contact_damage = 23.0 * scale_factor
@@ -125,7 +102,7 @@ func _apply_archetype() -> void:
 			armor = 24.0 + enemy_level * 2.0
 			xp_reward = 350
 		_:
-			display_name = "Ash Ghoul"
+			display_name = "Ash Skeleton"
 			max_health = 62.0 * scale_factor
 			move_speed = 112.0
 			contact_damage = 13.0 * scale_factor
@@ -157,29 +134,24 @@ func _ready() -> void:
 	z_index = 0
 
 func _configure_art_sprite() -> void:
-	art_sprite = Sprite2D.new()
-	art_sprite.name = "ArtSprite"
+	flare_animator = FlareSpriteAnimatorScript.new() as FlareSpriteAnimator
+	var definition_path := ""
 	match enemy_kind:
 		&"wraith":
-			art_sprite.texture = WRAITH_TEXTURES[0]
-			art_scale = 0.42
-			art_base_y = -44.0
+			definition_path = FLARE_BESTIARY_ROOT.path_join("skeleton_mage.txt")
+			art_scale = 0.47
 		&"brute":
-			art_sprite.texture = BRUTE_TEXTURES[0]
-			art_scale = 0.54
-			art_base_y = -56.0
+			definition_path = FLARE_BESTIARY_ROOT.path_join("zombie.txt")
+			art_scale = 0.58
 		&"boss":
-			art_sprite.texture = BOSS_TEXTURES[0]
-			art_scale = 0.49
-			art_base_y = -66.0
+			definition_path = FLARE_BESTIARY_ROOT.path_join("minotaur.txt")
+			art_scale = 0.62
 		_:
-			art_sprite.texture = GHOUL_TEXTURES[0]
-			art_scale = 0.41
-			art_base_y = -43.0
-	art_sprite.scale = Vector2.ONE * art_scale
-	art_sprite.position = Vector2(0, art_base_y)
-	art_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	visual_root.add_child(art_sprite)
+			definition_path = FLARE_BESTIARY_ROOT.path_join("skeleton.txt")
+			art_scale = 0.52
+	visual_root.add_child(flare_animator)
+	flare_animator.setup(definition_path, FLARE_BESTIARY_ROOT, art_scale)
+	art_sprite = flare_animator.sprite
 
 func _physics_process(delta: float) -> void:
 	spawn_time += delta
@@ -190,7 +162,7 @@ func _physics_process(delta: float) -> void:
 		locomotion_velocity = Vector2.ZERO
 		velocity = knockback_velocity
 		move_and_slide()
-		_update_art_sprite()
+		_update_art_sprite(delta)
 		queue_redraw()
 		if death_timer >= (BOSS_DEATH_DURATION if is_boss else DEATH_DURATION):
 			queue_free()
@@ -199,7 +171,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if not target.gameplay_enabled:
 		velocity = Vector2.ZERO
-		_update_art_sprite()
+		_update_art_sprite(delta)
 		queue_redraw()
 		return
 	hurt_flash = maxf(0.0, hurt_flash - delta)
@@ -210,7 +182,7 @@ func _physics_process(delta: float) -> void:
 	if not is_boss and distance_to_target > activation_radius:
 		locomotion_velocity = locomotion_velocity.move_toward(Vector2.ZERO, 760.0 * delta)
 		velocity = locomotion_velocity + knockback_velocity
-		_update_art_sprite()
+		_update_art_sprite(delta)
 		queue_redraw()
 		return
 	if is_boss and boss_phase == 1 and health <= max_health * 0.5:
@@ -232,65 +204,40 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		locomotion_velocity = Vector2.ZERO
 		knockback_velocity = Vector2.ZERO
-	_update_art_sprite()
+	_update_art_sprite(delta)
 	queue_redraw()
 
-func _update_art_sprite() -> void:
-	if not is_instance_valid(art_sprite):
+func _update_art_sprite(delta: float) -> void:
+	if not is_instance_valid(art_sprite) or not is_instance_valid(flare_animator):
 		return
-	var direction_index := 0
-	if absf(facing.x) > absf(facing.y):
-		direction_index = 1 if facing.x < 0.0 else 2
-	elif facing.y < 0.0:
-		direction_index = 3
-	match enemy_kind:
-		&"wraith": art_sprite.texture = WRAITH_TEXTURES[direction_index]
-		&"brute": art_sprite.texture = BRUTE_TEXTURES[direction_index]
-		&"boss": art_sprite.texture = BOSS_TEXTURES[direction_index]
-		_: art_sprite.texture = GHOUL_TEXTURES[direction_index]
 	var moving := locomotion_velocity.length_squared() > 225.0
-	var bob_speed := 5.4 if enemy_kind == &"wraith" else (7.0 if moving else 2.5)
-	var bob_amount := 3.8 if enemy_kind == &"wraith" else (1.8 if moving else 0.6)
-	art_sprite.position.y = art_base_y + sin(spawn_time * bob_speed + global_position.x * 0.01) * bob_amount
-	var pulse := 1.0 + sin(spawn_time * 2.8) * (0.02 if is_boss else 0.008)
-	art_sprite.scale = Vector2(art_scale * pulse, art_scale / pulse)
+	var animation := _flare_animation_for_state(moving)
+	var animation_duration := 0.0
+	if state == AIState.WINDUP or state == AIState.STAGGER:
+		animation_duration = state_duration
+	elif state == AIState.DEAD:
+		animation_duration = BOSS_DEATH_DURATION if is_boss else DEATH_DURATION
+	flare_animator.set_animation(animation, facing, delta, animation_duration)
 	var pose_position := Vector2.ZERO
 	var pose_rotation := 0.0
 	var pose_scale := Vector2.ONE
 	match state:
 		AIState.WINDUP:
 			var p := 1.0 - state_timer / maxf(0.001, state_duration)
-			pose_position = -attack_direction * lerpf(0.0, 7.0 if is_boss else 4.5, p)
-			pose_rotation = sin(p * PI * 2.0) * 0.025
-			pose_scale = Vector2(1.0 + p * 0.07, 1.0 - p * 0.09)
+			pose_position = -attack_direction * lerpf(0.0, 2.5, p)
+			pose_scale = Vector2(1.0 + p * 0.025, 1.0 - p * 0.025)
 		AIState.CHARGE:
-			var p := 1.0 - state_timer / maxf(0.001, state_duration)
-			pose_position = charge_direction * (5.0 + sin(p * PI) * 4.0)
-			pose_rotation = sin(p * PI * 4.0) * 0.018
-			pose_scale = Vector2(0.88, 1.16)
-		AIState.RECOVER:
-			var p := 1.0 - state_timer / maxf(0.001, state_duration)
-			pose_position = -attack_direction * lerpf(5.0, 0.0, p)
-			pose_rotation = lerpf(0.045, 0.0, p)
-			pose_scale = Vector2(lerpf(1.08, 1.0, p), lerpf(0.93, 1.0, p))
+			pose_position = charge_direction * 2.0
 		AIState.STAGGER:
 			var p := 1.0 - state_timer / maxf(0.001, state_duration)
 			var recoil := knockback_velocity.normalized()
 			if recoil == Vector2.ZERO:
 				recoil = -facing
-			pose_position = recoil * (4.0 * (1.0 - p)) + facing.orthogonal() * sin(p * PI * 7.0) * 2.4 * (1.0 - p)
-			pose_rotation = sin(p * PI * 5.0) * 0.065 * (1.0 - p)
-			pose_scale = Vector2(1.07 - p * 0.07, 0.93 + p * 0.07)
+			pose_position = recoil * (3.0 * (1.0 - p))
 		AIState.DEAD:
 			var duration := BOSS_DEATH_DURATION if is_boss else DEATH_DURATION
 			var p := clampf(death_timer / duration, 0.0, 1.0)
-			pose_position = Vector2(0.0, p * (18.0 if is_boss else 11.0))
-			pose_rotation = lerpf(0.0, 0.42 if facing.x >= 0.0 else -0.42, p)
-			pose_scale = Vector2(1.0 + p * 0.14, 1.0 - p * 0.45)
-		_:
-			if moving:
-				pose_rotation = sin(spawn_time * bob_speed) * 0.012
-				pose_scale = Vector2(1.0 + sin(spawn_time * bob_speed) * 0.015, 1.0 - sin(spawn_time * bob_speed) * 0.01)
+			pose_position = Vector2(0.0, p * 5.0)
 	visual_root.position = pose_position
 	visual_root.rotation = pose_rotation
 	visual_root.scale = pose_scale
@@ -305,6 +252,22 @@ func _update_art_sprite() -> void:
 	if state == AIState.DEAD:
 		var duration := BOSS_DEATH_DURATION if is_boss else DEATH_DURATION
 		art_sprite.modulate.a = 1.0 - clampf(death_timer / duration, 0.0, 1.0)
+
+func _flare_animation_for_state(moving: bool) -> StringName:
+	match state:
+		AIState.DEAD:
+			return &"die"
+		AIState.STAGGER:
+			return &"hit"
+		AIState.WINDUP:
+			return &"cast" if enemy_kind == &"wraith" else &"swing"
+		AIState.CHARGE:
+			return &"run"
+		_:
+			return &"run" if moving else &"stance"
+
+func active_art_animation() -> StringName:
+	return flare_animator.current_animation() if is_instance_valid(flare_animator) else &""
 
 func _process_state(delta: float) -> void:
 	var to_target := target.global_position - global_position

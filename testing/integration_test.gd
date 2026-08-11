@@ -61,8 +61,14 @@ func _run_suite() -> void:
 	for i in 10:
 		await physics_frame
 	_check(player_art != null and is_equal_approx(player_art.position.y, grounded_art_y), "Player art keeps a fixed foot anchor instead of vertical hovering")
+	_check(player_art != null and is_equal_approx(player_art.scale.x, 2.55) and is_equal_approx(player_art.position.y, -40.8), "Player art is reduced while keeping its feet on the ground")
 
 	var target_enemy := game.enemies[0] as CovenantEnemy
+	_check(target_enemy.active_art_animation() == &"stance", "Flare bestiary supplies a directional stance animation")
+	target_enemy.flare_animator.set_animation(&"stance", Vector2.RIGHT, 0.0)
+	_check(target_enemy.flare_animator.current_direction() == 5, "Flare east-facing frames match enemy movement")
+	target_enemy.flare_animator.set_animation(&"stance", Vector2.DOWN, 0.0)
+	_check(target_enemy.flare_animator.current_direction() == 7, "Flare south-facing frames match enemy movement")
 	target_enemy.global_position = game.player.global_position + Vector2(55, 0)
 	game.player.facing = Vector2.RIGHT
 	game.player.last_move_direction = Vector2.RIGHT
@@ -73,6 +79,7 @@ func _run_suite() -> void:
 	for i in 8:
 		await physics_frame
 	_check(target_enemy.health < health_before, "Attack input damages a nearby enemy")
+	_check(target_enemy.active_art_animation() in [&"swing", &"hit", &"stance"], "Flare bestiary swaps enemy combat animation states")
 	_check(Engine.time_scale > 0.99, "Hit-stop restores the global time scale")
 	game.player.cancel_pointer_command()
 	for i in 24:
@@ -99,6 +106,37 @@ func _run_suite() -> void:
 	_check(is_equal_approx(game.player.health, sheet_health) and is_equal_approx(game.run_time, sheet_time), "Character sheet freezes combat and run time")
 	await _tap_action(&"toggle_sheet")
 	_check(game.phase == AshenCovenantGame.GamePhase.PLAYING, "Character sheet returns to gameplay")
+	var points_before_level := game.player.skill_points
+	var level_position := game.player.global_position
+	var level_time := game.run_time
+	var required_xp := maxi(1, game.player.experience_required() - game.player.experience)
+	game.player.add_experience(required_xp)
+	await process_frame
+	_check(game.phase == AshenCovenantGame.GamePhase.PLAYING, "Leveling up no longer interrupts the hunt")
+	_check(game.player.skill_points == points_before_level + 1, "Leveling awards an unspent skill point")
+	_check(game.player.global_position.distance_to(level_position) < 0.5 and game.run_time >= level_time, "Level-up keeps the game running")
+	_check(game.hud.surface.has_level_up_notice(), "Leveling plays a visible skill-point notice")
+	var badge_click := InputEventMouseButton.new()
+	badge_click.button_index = MOUSE_BUTTON_LEFT
+	badge_click.pressed = true
+	badge_click.position = game.hud.surface._skill_badge_rect().get_center()
+	game.hud.surface._gui_input(badge_click)
+	await process_frame
+	_check(game.phase == AshenCovenantGame.GamePhase.SKILL_TREE, "Clicking the skill badge opens the separate skill tree")
+	var tree_position := game.player.global_position
+	var tree_time := game.run_time
+	Input.action_press(&"move_right")
+	for i in 8:
+		await physics_frame
+	Input.action_release(&"move_right")
+	_check(game.player.global_position.distance_to(tree_position) < 0.5 and is_equal_approx(game.run_time, tree_time), "Skill tree freezes player movement and combat time")
+	var damage_before_skill := game.player.base_damage
+	game.purchase_skill("executioner")
+	_check(game.player.get_skill_rank(&"executioner") == 1, "Skill tree purchases increase the selected branch rank")
+	_check(game.player.skill_points == points_before_level, "Buying a skill spends exactly one point")
+	_check(game.player.base_damage > damage_before_skill, "Executioner applies its rank benefit")
+	await _tap_action(&"toggle_skills")
+	_check(game.phase == AshenCovenantGame.GamePhase.PLAYING, "Skill tree returns to gameplay with K")
 
 	game.player.global_position = Vector2(1100, 1200)
 	game.player.last_move_direction = Vector2.UP
@@ -109,13 +147,22 @@ func _run_suite() -> void:
 	_check(game.player.global_position.distance_to(dash_start) > 35.0, "Shadow Step covers burst distance")
 	_check(game.player.dash_cooldown > 0.0, "Shadow Step starts its cooldown")
 
+	var nearby_targets: Array[CovenantEnemy] = []
 	for i in mini(2, game.enemies.size()):
-		game.enemies[i].global_position = game.player.global_position + Vector2(45 + i * 24, 0)
+		var enemy := game.enemies[i] as CovenantEnemy
+		enemy.global_position = game.player.global_position + Vector2(45 + i * 24, 0)
+		nearby_targets.append(enemy)
 	var mana_before := game.player.mana
-	var enemy_health_before := game.enemies[0].health
+	var nearby_health_before: Array[float] = []
+	for enemy in nearby_targets:
+		nearby_health_before.append(enemy.health)
 	await _tap_action(&"skill_nova")
 	_check(game.player.mana < mana_before, "Ash Nova consumes essence")
-	_check(game.enemies[0].health < enemy_health_before, "Ash Nova damages clustered enemies")
+	var nova_damaged_enemy := false
+	for i in nearby_targets.size():
+		if not is_instance_valid(nearby_targets[i]) or nearby_targets[i].health < nearby_health_before[i]:
+			nova_damaged_enemy = true
+	_check(nova_damaged_enemy, "Ash Nova damages clustered enemies")
 
 	game.playtest_break_all_anchors()
 	await process_frame

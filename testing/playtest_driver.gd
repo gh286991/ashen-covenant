@@ -7,9 +7,9 @@ var target: AshenCovenantGame
 var elapsed := 0.0
 var prepared_encounter := false
 var level_triggered := false
-var upgrade_chosen := false
-var upgrade_seen_at := -1.0
-var upgrade_count := 0
+var skill_tree_opened := false
+var skill_tree_closed := false
+var skill_purchased := false
 var boss_triggered := false
 var boss_softened := false
 var victory_triggered := false
@@ -63,16 +63,16 @@ func _drive_playtest() -> void:
 		level_triggered = true
 		var remaining := maxi(1, target.player.experience_required() - target.player.experience)
 		target.player.add_experience(remaining)
-	if target.phase == AshenCovenantGame.GamePhase.UPGRADE:
-		if upgrade_seen_at < 0.0:
-			upgrade_seen_at = elapsed
-		var hold_time := 2.15 if upgrade_count == 0 else 0.65
-		if elapsed - upgrade_seen_at >= hold_time:
-			target.choose_upgrade("executioner" if upgrade_count % 2 == 0 else "iron_oath")
-			upgrade_count += 1
-			upgrade_chosen = true
-			upgrade_seen_at = -1.0
-	if elapsed >= 7.55 and upgrade_chosen and not sheet_opened:
+	if elapsed >= 5.7 and level_triggered and not skill_tree_opened and target.phase == AshenCovenantGame.GamePhase.PLAYING:
+		skill_tree_opened = true
+		_send_ui_action(&"toggle_skills")
+	if elapsed >= 6.1 and skill_tree_opened and not skill_purchased and target.phase == AshenCovenantGame.GamePhase.SKILL_TREE:
+		target.purchase_skill("executioner")
+		skill_purchased = target.player.get_skill_rank(&"executioner") == 1
+	if elapsed >= 6.5 and skill_purchased and not skill_tree_closed and target.phase == AshenCovenantGame.GamePhase.SKILL_TREE:
+		skill_tree_closed = true
+		_send_ui_action(&"toggle_skills")
+	if elapsed >= 7.55 and skill_tree_closed and not sheet_opened:
 		sheet_opened = true
 		_send_ui_action(&"toggle_sheet")
 	if elapsed >= 9.7 and sheet_opened and not sheet_closed:

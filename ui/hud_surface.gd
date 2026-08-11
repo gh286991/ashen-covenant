@@ -1,7 +1,8 @@
 class_name CovenantHUDSurface
 extends Control
 
-signal upgrade_selected(id: String)
+signal skill_selected(id: String)
+signal skill_tree_requested
 
 const ICON_CLEAVE := preload("res://assets/ui/ability_icons/single-1.png")
 const ICON_NOVA := preload("res://assets/ui/ability_icons/single-2.png")
@@ -10,7 +11,7 @@ const ICON_POTION := preload("res://assets/ui/ability_icons/single-4.png")
 const GOTHIC_HUD_FRAME := preload("res://assets/ui/gothic_hud/gothic-hud-frame.png")
 const VIRTUAL_SIZE := Vector2(1280.0, 720.0)
 const HUD_SCALE := 0.70
-const UPGRADE_SCALE := 0.80
+const SKILL_TREE_SCALE := 0.80
 const GOTHIC_HUD_SOURCE := Rect2(0.0, 205.0, 1672.0, 530.0)
 const GOTHIC_HUD_RECT := Rect2(115.0, 385.0, 1050.0, 333.0)
 const LIFE_ORB_CENTER := Vector2(314.0, 603.0)
@@ -19,24 +20,32 @@ const SKILL_SLOT_SIZE := Vector2(84.0, 86.0)
 const SKILL_SLOT_GAP := 16.5
 const LIQUID_REFRESH_MSEC := 33
 const LIQUID_SURFACE_SEGMENTS := 22
-const UPGRADE_IDS: Array[String] = ["iron_oath", "executioner", "blood_rush"]
+const SKILL_NODE_SIZE := Vector2(250.0, 78.0)
+const SKILL_BRANCH_X := [295.0, 640.0, 985.0]
+const SKILL_RANK_Y := [310.0, 415.0, 520.0]
+const SKILL_COLORS := [Color("b55d55"), Color("d49a49"), Color("845db8")]
+const SKILL_BADGE_RECT := Rect2(785.0, 40.0, 112.0, 82.0)
+const LEVEL_UP_NOTICE_DURATION_MSEC := 2600
 
 var snapshot: Dictionary = {}
 var _canvas_scale := 1.0
 var _canvas_offset := Vector2.ZERO
-var _upgrade_hovered := -1
-var _upgrade_focused := 0
-var _upgrade_mode := false
-var _upgrade_selection_locked := false
+var _skill_hovered := -1
+var _skill_focused := 0
+var _skill_tree_mode := false
 var _flash_color := Color.TRANSPARENT
 var _flash_intensity := 0.0
 var _flash_started_msec := 0
 var _flash_duration_msec := 0
 var _last_liquid_redraw_msec := 0
+var _level_up_notice_level := 0
+var _level_up_notice_points := 0
+var _level_up_notice_started_msec := 0
+var _level_up_notice_duration_msec := 0
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	focus_mode = Control.FOCUS_NONE
 	mouse_exited.connect(_on_mouse_exited)
@@ -44,10 +53,10 @@ func _ready() -> void:
 	focus_exited.connect(queue_redraw)
 
 func update_snapshot(data: Dictionary) -> void:
-	var next_upgrade_mode := String(data.get("phase", "TITLE")) == "UPGRADE"
+	var next_skill_tree_mode := String(data.get("phase", "TITLE")) == "SKILL_TREE"
 	snapshot = data
-	if next_upgrade_mode != _upgrade_mode:
-		_set_upgrade_mode(next_upgrade_mode)
+	if next_skill_tree_mode != _skill_tree_mode:
+		_set_skill_tree_mode(next_skill_tree_mode)
 	queue_redraw()
 
 func play_screen_flash(color: Color, intensity: float = 0.3, duration: float = 0.14) -> void:
@@ -57,12 +66,26 @@ func play_screen_flash(color: Color, intensity: float = 0.3, duration: float = 0
 	_flash_duration_msec = maxi(1, int(maxf(duration, 0.01) * 1000.0))
 	queue_redraw()
 
+func play_level_up_notice(level: int, points_awarded: int) -> void:
+	_level_up_notice_level = level
+	_level_up_notice_points = points_awarded
+	_level_up_notice_started_msec = Time.get_ticks_msec()
+	_level_up_notice_duration_msec = LEVEL_UP_NOTICE_DURATION_MSEC
+	queue_redraw()
+
+func has_level_up_notice() -> bool:
+	return _level_up_notice_duration_msec > 0
+
 func _process(_delta: float) -> void:
 	var now_msec := Time.get_ticks_msec()
 	var needs_redraw := false
 	if _flash_duration_msec > 0:
 		if now_msec - _flash_started_msec >= _flash_duration_msec:
 			_flash_duration_msec = 0
+		needs_redraw = true
+	if _level_up_notice_duration_msec > 0:
+		if now_msec - _level_up_notice_started_msec >= _level_up_notice_duration_msec:
+			_level_up_notice_duration_msec = 0
 		needs_redraw = true
 	if String(snapshot.get("phase", "TITLE")) != "TITLE" and now_msec - _last_liquid_redraw_msec >= LIQUID_REFRESH_MSEC:
 		_last_liquid_redraw_msec = now_msec
@@ -86,6 +109,9 @@ func _draw() -> void:
 		_set_virtual_draw_scale(Vector2(40.0, 40.0), HUD_SCALE)
 		_draw_quest_hud()
 		_set_virtual_canvas_transform()
+		_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 40.0), HUD_SCALE)
+		_draw_skill_badge()
+		_set_virtual_canvas_transform()
 		if not boss_visible:
 			_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 40.0), HUD_SCALE)
 			_draw_status_hud(canvas_size)
@@ -102,15 +128,16 @@ func _draw() -> void:
 		_draw_boss_bar(canvas_size)
 		_set_virtual_canvas_transform()
 		_draw_message(canvas_size)
+		_draw_level_up_notice(canvas_size)
 		if sheet_open:
 			_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 132.0), HUD_SCALE)
 			_draw_character_sheet(canvas_size)
 			_set_virtual_canvas_transform()
 		match phase:
-			"UPGRADE":
-				_draw_upgrade_backdrop(canvas_size)
-				_set_virtual_draw_scale(canvas_size * 0.5, UPGRADE_SCALE)
-				_draw_upgrade(canvas_size)
+			"SKILL_TREE":
+				_draw_skill_tree_backdrop(canvas_size)
+				_set_virtual_draw_scale(canvas_size * 0.5, SKILL_TREE_SCALE)
+				_draw_skill_tree(canvas_size)
 				_set_virtual_canvas_transform()
 			"PAUSED": _draw_modal(canvas_size, "PAUSED", "Press Esc to return to the hunt", Color("d9c7ac"))
 			"VICTORY": _draw_victory(canvas_size)
@@ -145,12 +172,16 @@ func _viewport_to_virtual(viewport_position: Vector2) -> Vector2:
 	return (viewport_position - _canvas_offset) / maxf(_canvas_scale, 0.001)
 
 func blocks_world_pointer(viewport_position: Vector2) -> bool:
+	if String(snapshot.get("phase", "TITLE")) == "SKILL_TREE":
+		return true
 	var point := _viewport_to_virtual(viewport_position)
 	if not Rect2(Vector2.ZERO, VIRTUAL_SIZE).has_point(point):
 		return true
 	if _scaled_rect(Rect2(40, 40, 390, 82), Vector2(40, 40), HUD_SCALE).has_point(point):
 		return true
 	var boss_visible := bool(snapshot.get("boss_visible", false))
+	if _skill_badge_rect().has_point(point):
+		return true
 	if not boss_visible and _scaled_rect(Rect2(VIRTUAL_SIZE.x - 272, 40, 232, 82), Vector2(VIRTUAL_SIZE.x - 40, 40), HUD_SCALE).has_point(point):
 		return true
 	if not boss_visible and not bool(snapshot.get("sheet_open", false)) and _scaled_rect(Rect2(VIRTUAL_SIZE.x - 272, 134, 232, 142), Vector2(VIRTUAL_SIZE.x - 40, 134), HUD_SCALE).has_point(point):
@@ -194,7 +225,7 @@ func _draw_title(canvas_size: Vector2) -> void:
 	_center_text("Press Enter to begin", center.y + 142.0 + sin(Time.get_ticks_msec() * 0.004) * 4.0, 24, Color("f0b75e"), canvas_size.x)
 	if bool(snapshot.get("has_save", false)):
 		_center_text("Press C to continue from the last broken anchor", center.y + 184.0, 17, Color("8fb5c9"), canvas_size.x)
-	_center_text("Left Click Move / Attack  •  Right Click Ash Nova  •  Space Shadow Step  •  R Potion", canvas_size.y - 64.0, 16, Color("91858d"), canvas_size.x)
+	_center_text("Left Click Move / Attack  •  Right Click Ash Nova  •  Space Shadow Step  •  R Potion  •  K Skills", canvas_size.y - 64.0, 16, Color("91858d"), canvas_size.x)
 
 func _draw_quest_hud() -> void:
 	_panel(Rect2(40, 40, 390, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
@@ -211,6 +242,41 @@ func _draw_status_hud(canvas_size: Vector2) -> void:
 	_text("LEVEL %d" % int(snapshot.get("level", 1)), Vector2(canvas_size.x - 250, 67), 18, Color("d5b895"))
 	_text("Kills  %d" % int(snapshot.get("kills", 0)), Vector2(canvas_size.x - 250, 94), 16, Color("aaa0a4"))
 	_text("Gold  %d" % int(snapshot.get("gold", 0)), Vector2(canvas_size.x - 147, 94), 16, Color("f1c75b"))
+
+func _draw_skill_badge() -> void:
+	var points := int(snapshot.get("skill_points", 0))
+	var has_points := points > 0
+	var pulse := 0.5 + sin(Time.get_ticks_msec() * 0.006) * 0.5
+	var border := Color("e7bd5c") if has_points else Color("6d5e70")
+	var fill := Color("402e39", 0.98) if has_points else Color("241c29", 0.94)
+	_panel(SKILL_BADGE_RECT, fill, border)
+	if has_points:
+		draw_rect(SKILL_BADGE_RECT.grow(4.0), Color(border, 0.12 + pulse * 0.16), false, 2.0)
+	var icon_center := SKILL_BADGE_RECT.position + Vector2(25.0, 39.0)
+	for radius in [16.0, 11.0]:
+		draw_arc(icon_center, radius, 0.0, TAU, 18, Color(border, 0.82), 1.5)
+	for offset in [Vector2(0, -13), Vector2(-12, 8), Vector2(12, 8)]:
+		draw_line(icon_center, icon_center + offset, Color(border, 0.85), 1.5)
+		draw_circle(icon_center + offset, 3.4, Color("241923"))
+		draw_arc(icon_center + offset, 3.4, 0.0, TAU, 10, border, 1.1)
+	draw_circle(icon_center, 5.0, border)
+	_text("SKILLS", SKILL_BADGE_RECT.position + Vector2(50, 31), 16, Color("f5dfad") if has_points else Color("c1b7c0"))
+	_text("K  •  %d POINT%s" % [points, "" if points == 1 else "S"], SKILL_BADGE_RECT.position + Vector2(50, 54), 12, border)
+
+func _draw_level_up_notice(canvas_size: Vector2) -> void:
+	if _level_up_notice_duration_msec <= 0:
+		return
+	var elapsed := float(Time.get_ticks_msec() - _level_up_notice_started_msec)
+	var progress := clampf(elapsed / float(_level_up_notice_duration_msec), 0.0, 1.0)
+	var fade := sin(progress * PI)
+	var center := Vector2(canvas_size.x * 0.5, 164.0)
+	for i in 4:
+		draw_arc(center, 68.0 + i * 19.0 + progress * 48.0, 0.0, TAU, 32, Color(0.95, 0.71, 0.25, fade * (0.28 - i * 0.05)), 2.0)
+	var rect := Rect2(center - Vector2(205.0, 51.0), Vector2(410.0, 102.0))
+	_panel(rect, Color(0.10, 0.055, 0.09, 0.96 * fade), Color(0.94, 0.71, 0.31, fade))
+	_center_text_at("LEVEL %d" % _level_up_notice_level, center + Vector2(0.0, -20.0), 29, Color(1.0, 0.83, 0.43, fade))
+	_center_text_at("SKILL POINT +%d" % _level_up_notice_points, center + Vector2(0.0, 10.0), 18, Color(0.94, 0.83, 0.72, fade))
+	_center_text_at("Click SKILLS or press K to spend it", center + Vector2(0.0, 34.0), 13, Color(0.83, 0.75, 0.79, fade))
 
 func _draw_minimap(canvas_size: Vector2) -> void:
 	var panel_rect := Rect2(canvas_size.x - 272, 134, 232, 142)
@@ -436,29 +502,51 @@ func _draw_character_sheet(canvas_size: Vector2) -> void:
 		_text(_fit_text(String(entry.get("name", "Unknown")), 15, rect.size.x - 48.0), rect.position + Vector2(24, 349 + i * 23), 15, entry.get("color", Color.WHITE))
 	_right_text("TAB / ESC  CLOSE", rect.position + Vector2(rect.size.x - 24, rect.size.y - 18), 14, Color("a99ca2"))
 
-func _draw_upgrade_backdrop(canvas_size: Vector2) -> void:
-	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.01, 0.005, 0.015, 0.72))
+func _draw_skill_tree_backdrop(canvas_size: Vector2) -> void:
+	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.01, 0.005, 0.015, 0.80))
+	for i in 5:
+		draw_arc(canvas_size * 0.5 - Vector2(0.0, 62.0), 164.0 + i * 32.0, 0.0, TAU, 40, Color(0.40, 0.11, 0.16, 0.12 - i * 0.018), 2.0)
 
-func _draw_upgrade(canvas_size: Vector2) -> void:
-	_center_text("POWER AWAKENS", 134, 36, Color("f0cc77"), canvas_size.x)
-	_center_text("Choose one covenant boon", 172, 19, Color("c8b8ae"), canvas_size.x)
-	var choices := [
-		{"key": "1", "title": "IRON OATH", "body": "+32 Life  •  +5 Armor", "color": Color("b55d55")},
-		{"key": "2", "title": "EXECUTIONER", "body": "+5 Damage  •  +4.5% Critical", "color": Color("d49a49")},
-		{"key": "3", "title": "BLOOD RUSH", "body": "+18 Essence  •  Faster Ash Nova", "color": Color("845db8")}
-	]
-	for i in choices.size():
-		var rect := _upgrade_rect(i)
-		var selected := i == (_upgrade_hovered if _upgrade_hovered >= 0 else _upgrade_focused)
-		var fill := Color(0.075, 0.045, 0.08, 0.99) if selected else Color(0.045, 0.027, 0.05, 0.97)
-		_panel(rect, fill, choices[i].color)
-		if selected:
-			draw_rect(rect.grow(5.0), Color(choices[i].color, 0.24))
-			draw_rect(rect.grow(3.0), choices[i].color.lightened(0.2), false, 3.0)
-		_center_text_at(choices[i].key, rect.position + Vector2(120, 44), 28, Color("f4ead8"))
-		_center_text_at(choices[i].title, rect.position + Vector2(120, 91), 21, choices[i].color)
-		_center_text_at(choices[i].body, rect.position + Vector2(120, 134), 15, Color("d8cdc7"))
-	_center_text("Click a boon  •  1 / 2 / 3  •  Arrow keys + Enter", 476, 16, Color("a99da1"), canvas_size.x)
+func _draw_skill_tree(canvas_size: Vector2) -> void:
+	var skill_points := int(snapshot.get("skill_points", 0))
+	var skills: Array = snapshot.get("skills", [])
+	_center_text("COVENANT DISCIPLINES", 105, 35, Color("f0cc77"), canvas_size.x)
+	_center_text("Spend points when you choose your moment", 139, 18, Color("c8b8ae"), canvas_size.x)
+	var point_text := "SKILL POINTS  %d" % skill_points
+	var point_color := Color("f0cc77") if skill_points > 0 else Color("91878b")
+	_center_text(point_text, 182, 21, point_color, canvas_size.x)
+	var root := Vector2(canvas_size.x * 0.5, 226.0)
+	draw_circle(root, 28.0, Color("20151c"))
+	draw_arc(root, 28.0, 0.0, TAU, 32, Color("d9b566"), 2.0)
+	_center_text_at("✦", root, 22, Color("f0cc77"))
+	for i in skills.size():
+		var skill: Dictionary = skills[i]
+		var skill_color: Color = SKILL_COLORS[i % SKILL_COLORS.size()]
+		var rank := int(skill.get("rank", 0))
+		var max_rank := maxi(1, int(skill.get("max_rank", 1)))
+		for rank_index in max_rank:
+			var center := _skill_node_center(i, rank_index)
+			var previous := root if rank_index == 0 else _skill_node_center(i, rank_index - 1)
+			var purchased := rank_index < rank
+			var next_rank := rank_index == rank and bool(skill.get("available", false))
+			var connector_color := Color(skill_color, 0.78) if purchased else (Color(skill_color, 0.5) if next_rank else Color("4c414b"))
+			draw_line(previous, center, connector_color, 3.0)
+			_draw_skill_node(_skill_node_rect(i, rank_index), skill, rank_index, purchased, next_rank, i == (_skill_hovered if _skill_hovered >= 0 else _skill_focused), skill_color)
+	_center_text("Click the highlighted next rank  •  ← / → + Enter  •  K / Esc close", 641, 16, Color("a99da1"), canvas_size.x)
+
+func _draw_skill_node(rect: Rect2, skill: Dictionary, rank_index: int, purchased: bool, next_rank: bool, focused: bool, color: Color) -> void:
+	var fill := Color("37212b") if purchased else (Color("2c2433") if next_rank else Color("18131c"))
+	var border := color if purchased or next_rank else Color("514653")
+	_panel(rect, fill, border)
+	if next_rank and focused:
+		draw_rect(rect.grow(5.0), Color(color, 0.22))
+		draw_rect(rect.grow(3.0), color.lightened(0.24), false, 2.0)
+	var state := "MASTERED" if purchased else ("AVAILABLE" if next_rank else "LOCKED")
+	var state_color := Color("f0cc77") if purchased else (color.lightened(0.25) if next_rank else Color("817783"))
+	_text(String(skill.get("title", "DISCIPLINE")), rect.position + Vector2(15, 27), 17, color if purchased or next_rank else Color("a095a1"))
+	_right_text("RANK %d" % (rank_index + 1), rect.position + Vector2(rect.size.x - 14, 27), 13, Color("d7cbd0"))
+	_text(String(skill.get("summary", "")), rect.position + Vector2(15, 51), 13, Color("d6c9cd") if purchased or next_rank else Color("807783"))
+	_right_text(state, rect.position + Vector2(rect.size.x - 14, 67), 11, state_color)
 
 func _draw_victory(canvas_size: Vector2) -> void:
 	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.015, 0.008, 0.018, 0.82))
@@ -566,83 +654,107 @@ func _circle_segment_polygon(center: Vector2, radius: float, ratio: float, segme
 				clipped.append(current.lerp(next, weight))
 	return clipped
 
-func _upgrade_rect(index: int) -> Rect2:
-	return Rect2(VIRTUAL_SIZE.x * 0.5 - 390.0 + index * 270.0, 232.0, 240.0, 190.0)
+func _skill_node_center(skill_index: int, rank_index: int) -> Vector2:
+	var x: float = float(SKILL_BRANCH_X[clampi(skill_index, 0, SKILL_BRANCH_X.size() - 1)])
+	var y: float = float(SKILL_RANK_Y[clampi(rank_index, 0, SKILL_RANK_Y.size() - 1)])
+	return Vector2(x, y)
 
-func _upgrade_index_at(viewport_position: Vector2) -> int:
+func _skill_node_rect(skill_index: int, rank_index: int) -> Rect2:
+	return Rect2(_skill_node_center(skill_index, rank_index) - SKILL_NODE_SIZE * 0.5, SKILL_NODE_SIZE)
+
+func _skill_badge_rect() -> Rect2:
+	return _scaled_rect(SKILL_BADGE_RECT, Vector2(VIRTUAL_SIZE.x - 40.0, 40.0), HUD_SCALE)
+
+func _skill_index_at(viewport_position: Vector2) -> int:
 	var virtual_position := _viewport_to_virtual(viewport_position)
 	var pivot := VIRTUAL_SIZE * 0.5
-	virtual_position = pivot + (virtual_position - pivot) / UPGRADE_SCALE
-	for i in UPGRADE_IDS.size():
-		if _upgrade_rect(i).has_point(virtual_position):
+	virtual_position = pivot + (virtual_position - pivot) / SKILL_TREE_SCALE
+	var skills: Array = snapshot.get("skills", [])
+	for i in skills.size():
+		var skill: Dictionary = skills[i]
+		if not bool(skill.get("available", false)):
+			continue
+		var rank := int(skill.get("rank", 0))
+		if _skill_node_rect(i, rank).has_point(virtual_position):
 			return i
 	return -1
 
-func _set_upgrade_mode(enabled: bool) -> void:
-	_upgrade_mode = enabled
-	_upgrade_hovered = -1
-	_upgrade_focused = 0
-	_upgrade_selection_locked = false
+func _set_skill_tree_mode(enabled: bool) -> void:
+	_skill_tree_mode = enabled
+	_skill_hovered = -1
+	_skill_focused = 0
 	if enabled:
 		mouse_filter = Control.MOUSE_FILTER_STOP
 		focus_mode = Control.FOCUS_ALL
 		grab_focus()
 	else:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		mouse_filter = Control.MOUSE_FILTER_PASS
 		focus_mode = Control.FOCUS_NONE
 		release_focus()
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
 	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
-	if not _upgrade_mode or _upgrade_selection_locked:
+	if not _skill_tree_mode:
+		if String(snapshot.get("phase", "TITLE")) != "PLAYING":
+			return
+		if event is InputEventMouseMotion:
+			var virtual_position := _viewport_to_virtual(event.position)
+			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if _skill_badge_rect().has_point(virtual_position) else Control.CURSOR_ARROW
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if _skill_badge_rect().has_point(_viewport_to_virtual(event.position)):
+				skill_tree_requested.emit()
+				accept_event()
 		return
 	if event is InputEventMouseMotion:
-		var next_hovered := _upgrade_index_at(event.position)
-		if next_hovered != _upgrade_hovered:
-			_upgrade_hovered = next_hovered
+		var next_hovered := _skill_index_at(event.position)
+		if next_hovered != _skill_hovered:
+			_skill_hovered = next_hovered
 			if next_hovered >= 0:
-				_upgrade_focused = next_hovered
+				_skill_focused = next_hovered
 			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if next_hovered >= 0 else Control.CURSOR_ARROW
 			queue_redraw()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var clicked := _upgrade_index_at(event.position)
+		var clicked := _skill_index_at(event.position)
 		if clicked >= 0:
-			_select_upgrade(clicked)
+			_select_skill(clicked)
 			accept_event()
 		return
 	if event.is_action_pressed(&"ui_left") or event.is_action_pressed(&"ui_up"):
-		_upgrade_hovered = -1
-		_upgrade_focused = wrapi(_upgrade_focused - 1, 0, UPGRADE_IDS.size())
+		_skill_hovered = -1
+		_skill_focused = wrapi(_skill_focused - 1, 0, 3)
 		queue_redraw()
 		accept_event()
 	elif event.is_action_pressed(&"ui_right") or event.is_action_pressed(&"ui_down") or event.is_action_pressed(&"ui_focus_next"):
-		_upgrade_hovered = -1
-		_upgrade_focused = wrapi(_upgrade_focused + 1, 0, UPGRADE_IDS.size())
+		_skill_hovered = -1
+		_skill_focused = wrapi(_skill_focused + 1, 0, 3)
 		queue_redraw()
 		accept_event()
 	elif event.is_action_pressed(&"ui_accept"):
-		_select_upgrade(_upgrade_focused)
+		_select_skill(_skill_focused)
 		accept_event()
 	elif event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
-			KEY_1: _select_upgrade(0)
-			KEY_2: _select_upgrade(1)
-			KEY_3: _select_upgrade(2)
+			KEY_1: _select_skill(0)
+			KEY_2: _select_skill(1)
+			KEY_3: _select_skill(2)
 			_: return
 		accept_event()
 
-func _select_upgrade(index: int) -> void:
-	if index < 0 or index >= UPGRADE_IDS.size() or _upgrade_selection_locked:
+func _select_skill(index: int) -> void:
+	var skills: Array = snapshot.get("skills", [])
+	if index < 0 or index >= skills.size():
 		return
-	_upgrade_selection_locked = true
-	upgrade_selected.emit(UPGRADE_IDS[index])
+	var skill: Dictionary = skills[index]
+	if not bool(skill.get("available", false)):
+		return
+	skill_selected.emit(String(skill.get("id", "")))
 	queue_redraw()
 
 func _on_mouse_exited() -> void:
-	if _upgrade_hovered == -1:
-		return
-	_upgrade_hovered = -1
+	if _skill_hovered != -1:
+		_skill_hovered = -1
+		queue_redraw()
 	mouse_default_cursor_shape = Control.CURSOR_ARROW
-	queue_redraw()

@@ -7,6 +7,7 @@ const EnemyScript := preload("res://entities/enemies/enemy.gd")
 const ProjectileScript := preload("res://entities/projectiles/projectile.gd")
 const PickupScript := preload("res://common/loot_pickup.gd")
 const FXScript := preload("res://common/combat_fx.gd")
+const SpriteFXScript := preload("res://common/sprite_sequence_fx.gd")
 const DungeonPropScript := preload("res://common/dungeon_prop.gd")
 const DUNGEON_LAYOUT_PATH := "res://data/ashen_catacombs_layout.json"
 const POINTER_GRID_CELL_SIZE := 32.0
@@ -50,6 +51,7 @@ var hit_stop_generation := 0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	rng.seed = 0xD1AB10
+	SpriteFXScript.warm_gameplay_effects()
 	_load_dungeon_layout()
 	world_renderer.configure_layout(dungeon_layout)
 	_initialize_anchors()
@@ -291,6 +293,7 @@ func _spawn_dungeon_prop(prop_data: Dictionary) -> DungeonProp:
 func _connect_player() -> void:
 	player.attack_requested.connect(_on_player_attack)
 	player.nova_requested.connect(_on_player_nova)
+	player.dash_requested.connect(_on_player_dash)
 	player.level_up_requested.connect(_on_level_up)
 	player.died.connect(_on_player_died)
 	player.damaged.connect(_on_player_damaged)
@@ -415,11 +418,14 @@ func _spawn_boss() -> void:
 	world_renderer.update_world(anchors, true, true)
 	_show_announcement("THE ASHEN WARDEN AWAKENS", Color("ff7454"), 3.0)
 	_spawn_fx(boss.global_position, CombatFX.FXType.ANCHOR, Color("ff6a47"), 1.1, 150.0)
+	_spawn_sprite_fx(boss.global_position, SpriteFXScript.EffectID.FIRE_RUNE, Color("ff7a52"), 1.15)
 	print("[ASHEN] BOSS_SPAWNED hp=%d" % int(boss.max_health))
 
 func _on_player_attack(origin: Vector2, direction: Vector2, radius: float, packet: DamagePacket, combo: int) -> void:
-	var fx := _spawn_fx(origin, CombatFX.FXType.SLASH, Color("f2d6ae"), 0.24, radius)
+	var fx := _spawn_fx(origin, CombatFX.FXType.SLASH, Color("f2d6ae") if not packet.is_critical else Color("fff0b8"), 0.15 if combo < 3 else 0.19, radius * (1.02 if combo < 3 else 1.18))
 	fx.direction = direction
+	fx.swing_side = -1.0 if combo != 2 else 1.0
+	fx.swing_intensity = 1.0 + (0.20 if combo == 2 else (0.48 if combo >= 3 else 0.0)) + (0.16 if packet.is_critical else 0.0)
 	var hits := 0
 	var minimum_dot := cos(deg_to_rad(82.0 if combo == 3 else 65.0))
 	for enemy in enemies.duplicate():
@@ -444,6 +450,7 @@ func _on_player_attack(origin: Vector2, direction: Vector2, radius: float, packe
 
 func _on_player_nova(origin: Vector2, radius: float, packet: DamagePacket) -> void:
 	_spawn_fx(origin, CombatFX.FXType.NOVA, Color("a85ee5"), 0.68, radius)
+	_spawn_sprite_fx(origin, SpriteFXScript.EffectID.ENERGY_BALL, Color("b983ff"), 2.45, 1.1)
 	var hit_count := 0
 	for enemy in enemies.duplicate():
 		if not is_instance_valid(enemy): continue
@@ -510,12 +517,14 @@ func _break_dungeon_prop(prop_data: Dictionary) -> void:
 func _damage_anchor(anchor: Dictionary, amount: float) -> void:
 	anchor.health = maxf(0.0, float(anchor.health) - amount)
 	_spawn_fx(anchor.position, CombatFX.FXType.HIT, Color("e74767"), 0.3, 28.0)
+	_spawn_sprite_fx(Vector2(anchor.position), SpriteFXScript.EffectID.FIRE_RUNE, Color("ef5c76"), 0.34)
 	if float(anchor.health) <= 0.0 and bool(anchor.alive):
 		anchor.alive = false
 		if player.is_attacking_pointer_point(Vector2(anchor.position)):
 			player.cancel_pointer_command()
 		anchors_destroyed += 1
 		_spawn_fx(anchor.position, CombatFX.FXType.ANCHOR, Color("ed4262"), 0.9, 110.0)
+		_spawn_sprite_fx(Vector2(anchor.position), SpriteFXScript.EffectID.EATER_FIRE, Color("ff6680"), 0.95)
 		_spawn_guaranteed_relic(anchor.position)
 		objective = "Break the soul anchors  (%d / 3)" % anchors_destroyed
 		var anchor_id := String(anchor.get("id", ""))
@@ -529,6 +538,14 @@ func _damage_anchor(anchor: Dictionary, amount: float) -> void:
 
 func _on_enemy_attack(enemy: CovenantEnemy, center: Vector2, radius: float, raw_damage: float, color: Color) -> void:
 	_spawn_fx(center, CombatFX.FXType.NOVA, color, 0.35, radius)
+	_spawn_sprite_fx(center, SpriteFXScript.EffectID.FIRE_RUNE, color, clampf(radius / 135.0, 0.42, 1.18))
+	var attack_direction := (player.global_position - enemy.global_position).normalized()
+	if attack_direction == Vector2.ZERO:
+		attack_direction = Vector2.DOWN
+	var enemy_slash := _spawn_fx(enemy.global_position, CombatFX.FXType.SLASH, color, 0.17 if not enemy.is_boss else 0.22, radius * (0.82 if not enemy.is_boss else 1.05))
+	enemy_slash.direction = attack_direction
+	enemy_slash.swing_side = 1.0 if enemy.is_boss else -1.0
+	enemy_slash.swing_intensity = 1.0 if not enemy.is_boss else 1.52
 	if player.global_position.distance_to(center) <= radius + 15.0:
 		var direction := (player.global_position - enemy.global_position).normalized()
 		player.take_damage(DamagePacket.new(raw_damage, enemy, center, direction * 190.0, DamagePacket.DamageKind.PHYSICAL))
@@ -539,7 +556,10 @@ func _on_projectile_requested(origin: Vector2, direction: Vector2, speed: float,
 	projectile.movement_filter = Callable(world_renderer, "is_motion_walkable")
 	projectile.global_position = origin
 	actors.add_child(projectile)
-	projectile.impacted.connect(func(p: Vector2, c: Color) -> void: _spawn_fx(p, CombatFX.FXType.HIT, c, 0.28, 34.0))
+	projectile.impacted.connect(func(p: Vector2, c: Color) -> void:
+		_spawn_fx(p, CombatFX.FXType.HIT, c, 0.28, 34.0)
+		_spawn_sprite_fx(p, SpriteFXScript.EffectID.EATER_FIRE, c, 0.42)
+	)
 
 func _on_summon_requested(origin: Vector2, count: int) -> void:
 	for i in count:
@@ -552,11 +572,20 @@ func _on_enemy_damaged(fx_position: Vector2, amount: int, critical: bool, impact
 	var label := "%d%s" % [amount, "!" if critical else ""]
 	var hit_fx := _spawn_fx(fx_position, CombatFX.FXType.HIT, color, 0.24, 34.0 if critical else 26.0)
 	hit_fx.direction = impact_direction if impact_direction != Vector2.ZERO else Vector2.UP
+	var blade_impact := _spawn_sprite_fx(fx_position, SpriteFXScript.EffectID.BLADE_CRIT if critical else SpriteFXScript.EffectID.BLADE_IMPACT, color, 0.92 if critical else 0.70, 1.12 if critical else 1.0)
+	blade_impact.rotation = hit_fx.direction.angle()
+	if critical:
+		var crit_fx := _spawn_sprite_fx(fx_position, SpriteFXScript.EffectID.FIRE_SCISSORS, Color("ffd56a"), 0.38)
+		crit_fx.rotation = hit_fx.direction.angle() - PI * 0.5
 	_spawn_fx(fx_position - Vector2(0, 28), CombatFX.FXType.TEXT, color, 0.72, 65.0 if critical else 35.0, label)
 
 func _on_player_damaged(fx_position: Vector2, amount: int, impact_direction: Vector2) -> void:
 	var hit_fx := _spawn_fx(fx_position, CombatFX.FXType.HIT, Color("ff6b6b"), 0.28, 32.0)
 	hit_fx.direction = impact_direction if impact_direction != Vector2.ZERO else Vector2.DOWN
+	var blade_impact := _spawn_sprite_fx(fx_position, SpriteFXScript.EffectID.BLADE_IMPACT, Color("ff7770"), 0.78)
+	blade_impact.rotation = hit_fx.direction.angle()
+	var hurt_fx := _spawn_sprite_fx(fx_position, SpriteFXScript.EffectID.FIRE_SCISSORS, Color("ff6b6b"), 0.32)
+	hurt_fx.rotation = hit_fx.direction.angle() - PI * 0.5
 	_spawn_fx(fx_position - Vector2(0, 35), CombatFX.FXType.TEXT, Color("ff8a8a"), 0.7, 40.0, "-%d" % amount)
 	_request_hit_stop(0.045)
 	_add_camera_trauma(0.34)
@@ -570,6 +599,7 @@ func _on_enemy_died(enemy: CovenantEnemy, xp_reward: int, was_boss: bool) -> voi
 	player.kills += 1
 	player.gold += rng.randi_range(3, 9) * (3 if was_boss else 1)
 	_spawn_fx(death_position, CombatFX.FXType.DEATH, Color("b55762") if not was_boss else Color("ff784e"), 0.72, 72.0 if was_boss else 42.0)
+	_spawn_sprite_fx(death_position, SpriteFXScript.EffectID.EATER_FIRE, Color("c66b73") if not was_boss else Color("ff8a58"), 0.62 if not was_boss else 1.25)
 	if not was_boss:
 		player.add_experience(xp_reward)
 		_roll_enemy_loot(death_position)
@@ -689,6 +719,7 @@ func choose_upgrade(upgrade_id: String) -> void:
 func _on_player_died() -> void:
 	_set_phase(GamePhase.DEFEAT)
 	_spawn_fx(player.global_position, CombatFX.FXType.DEATH, Color("d33d50"), 1.1, 120.0)
+	_spawn_sprite_fx(player.global_position, SpriteFXScript.EffectID.EATER_FIRE, Color("e45765"), 1.0)
 	print("[ASHEN] PLAYER_DEFEATED time=%.1f" % run_time)
 
 func _on_victory() -> void:
@@ -717,6 +748,17 @@ func _spawn_fx(fx_position: Vector2, type: CombatFX.FXType, color: Color, life: 
 	fx.global_position = fx_position
 	effects.add_child(fx)
 	return fx
+
+func _spawn_sprite_fx(fx_position: Vector2, type: int, color: Color, scale_factor: float, speed: float = 1.0) -> Node2D:
+	var fx = SpriteFXScript.new()
+	fx.setup(type, color, scale_factor, speed)
+	fx.global_position = fx_position
+	effects.add_child(fx)
+	return fx
+
+func _on_player_dash(origin: Vector2, direction: Vector2) -> void:
+	var dash_fx := _spawn_sprite_fx(origin - direction * 12.0, SpriteFXScript.EffectID.BLUE_TOP, Color("a987ff"), 0.36, 1.35)
+	dash_fx.rotation = direction.angle() + PI * 0.5
 
 func _request_hit_stop(duration: float) -> void:
 	if phase != GamePhase.PLAYING or duration <= 0.0:

@@ -1,6 +1,8 @@
 class_name EnemyProjectile
 extends Node2D
 
+const SpriteFXScript := preload("res://common/sprite_sequence_fx.gd")
+
 signal impacted(position: Vector2, color: Color)
 
 var velocity := Vector2.ZERO
@@ -12,6 +14,7 @@ var radius := 9.0
 var age := 0.0
 var kind: DamagePacket.DamageKind = DamagePacket.DamageKind.VOID
 var movement_filter: Callable
+var spell_frames: Node2D
 
 func setup(direction: Vector2, speed: float, value: float, player: Node2D, color: Color = Color("e25b77")) -> EnemyProjectile:
 	velocity = direction.normalized() * speed
@@ -22,6 +25,10 @@ func setup(direction: Vector2, speed: float, value: float, player: Node2D, color
 
 func _ready() -> void:
 	z_index = 16
+	spell_frames = SpriteFXScript.new()
+	spell_frames.setup(SpriteFXScript.EffectID.FIREBALL, projectile_color, 0.36, 1.2, true)
+	spell_frames.rotation = velocity.angle()
+	add_child(spell_frames)
 
 func _physics_process(delta: float) -> void:
 	age += delta

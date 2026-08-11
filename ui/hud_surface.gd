@@ -9,10 +9,16 @@ const ICON_STEP := preload("res://assets/ui/ability_icons/single-3.png")
 const ICON_POTION := preload("res://assets/ui/ability_icons/single-4.png")
 const GOTHIC_HUD_FRAME := preload("res://assets/ui/gothic_hud/gothic-hud-frame.png")
 const VIRTUAL_SIZE := Vector2(1280.0, 720.0)
+const HUD_SCALE := 0.70
+const UPGRADE_SCALE := 0.80
 const GOTHIC_HUD_SOURCE := Rect2(0.0, 205.0, 1672.0, 530.0)
 const GOTHIC_HUD_RECT := Rect2(115.0, 385.0, 1050.0, 333.0)
 const LIFE_ORB_CENTER := Vector2(314.0, 603.0)
 const ESSENCE_ORB_CENTER := Vector2(966.0, 603.0)
+const SKILL_SLOT_SIZE := Vector2(84.0, 86.0)
+const SKILL_SLOT_GAP := 16.5
+const LIQUID_REFRESH_MSEC := 33
+const LIQUID_SURFACE_SEGMENTS := 22
 const UPGRADE_IDS: Array[String] = ["iron_oath", "executioner", "blood_rush"]
 
 var snapshot: Dictionary = {}
@@ -26,6 +32,7 @@ var _flash_color := Color.TRANSPARENT
 var _flash_intensity := 0.0
 var _flash_started_msec := 0
 var _flash_duration_msec := 0
+var _last_liquid_redraw_msec := 0
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -51,11 +58,17 @@ func play_screen_flash(color: Color, intensity: float = 0.3, duration: float = 0
 	queue_redraw()
 
 func _process(_delta: float) -> void:
-	if _flash_duration_msec <= 0:
-		return
-	if Time.get_ticks_msec() - _flash_started_msec >= _flash_duration_msec:
-		_flash_duration_msec = 0
-	queue_redraw()
+	var now_msec := Time.get_ticks_msec()
+	var needs_redraw := false
+	if _flash_duration_msec > 0:
+		if now_msec - _flash_started_msec >= _flash_duration_msec:
+			_flash_duration_msec = 0
+		needs_redraw = true
+	if String(snapshot.get("phase", "TITLE")) != "TITLE" and now_msec - _last_liquid_redraw_msec >= LIQUID_REFRESH_MSEC:
+		_last_liquid_redraw_msec = now_msec
+		needs_redraw = true
+	if needs_redraw:
+		queue_redraw()
 
 func _draw() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -70,16 +83,35 @@ func _draw() -> void:
 	else:
 		var boss_visible := bool(snapshot.get("boss_visible", false))
 		var sheet_open := bool(snapshot.get("sheet_open", false))
-		_draw_top_hud(canvas_size)
+		_set_virtual_draw_scale(Vector2(40.0, 40.0), HUD_SCALE)
+		_draw_quest_hud()
+		_set_virtual_canvas_transform()
+		if not boss_visible:
+			_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 40.0), HUD_SCALE)
+			_draw_status_hud(canvas_size)
+			_set_virtual_canvas_transform()
 		if not boss_visible and not sheet_open:
+			_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 134.0), HUD_SCALE)
 			_draw_minimap(canvas_size)
+			_set_virtual_canvas_transform()
+		_set_virtual_draw_scale(Vector2(canvas_size.x * 0.5, canvas_size.y), HUD_SCALE)
 		_draw_bottom_hud(canvas_size)
+		_set_virtual_canvas_transform()
+		if boss_visible:
+			_set_virtual_draw_scale(Vector2(canvas_size.x * 0.5, 126.0), HUD_SCALE)
 		_draw_boss_bar(canvas_size)
+		_set_virtual_canvas_transform()
 		_draw_message(canvas_size)
 		if sheet_open:
+			_set_virtual_draw_scale(Vector2(canvas_size.x - 40.0, 132.0), HUD_SCALE)
 			_draw_character_sheet(canvas_size)
+			_set_virtual_canvas_transform()
 		match phase:
-			"UPGRADE": _draw_upgrade(canvas_size)
+			"UPGRADE":
+				_draw_upgrade_backdrop(canvas_size)
+				_set_virtual_draw_scale(canvas_size * 0.5, UPGRADE_SCALE)
+				_draw_upgrade(canvas_size)
+				_set_virtual_canvas_transform()
 			"PAUSED": _draw_modal(canvas_size, "PAUSED", "Press Esc to return to the hunt", Color("d9c7ac"))
 			"VICTORY": _draw_victory(canvas_size)
 			"DEFEAT": _draw_modal(canvas_size, "YOU HAVE FALLEN", "Press Enter to rise again", Color("d95858"))
@@ -97,6 +129,17 @@ func _update_virtual_canvas(viewport_size: Vector2) -> void:
 	_canvas_scale = minf(viewport_size.x / VIRTUAL_SIZE.x, viewport_size.y / VIRTUAL_SIZE.y)
 	_canvas_offset = (viewport_size - VIRTUAL_SIZE * _canvas_scale) * 0.5
 
+func _set_virtual_canvas_transform() -> void:
+	draw_set_transform(_canvas_offset, 0.0, Vector2.ONE * _canvas_scale)
+
+func _set_virtual_draw_scale(pivot: Vector2, scale_factor: float) -> void:
+	var clamped_scale := maxf(scale_factor, 0.01)
+	var offset := _canvas_offset + (pivot - pivot * clamped_scale) * _canvas_scale
+	draw_set_transform(offset, 0.0, Vector2.ONE * _canvas_scale * clamped_scale)
+
+func _scaled_rect(rect: Rect2, pivot: Vector2, scale_factor: float) -> Rect2:
+	return Rect2(pivot + (rect.position - pivot) * scale_factor, rect.size * scale_factor)
+
 func _viewport_to_virtual(viewport_position: Vector2) -> Vector2:
 	_update_virtual_canvas(get_viewport_rect().size)
 	return (viewport_position - _canvas_offset) / maxf(_canvas_scale, 0.001)
@@ -105,15 +148,24 @@ func blocks_world_pointer(viewport_position: Vector2) -> bool:
 	var point := _viewport_to_virtual(viewport_position)
 	if not Rect2(Vector2.ZERO, VIRTUAL_SIZE).has_point(point):
 		return true
-	if Rect2(40, 40, 390, 82).has_point(point):
+	if _scaled_rect(Rect2(40, 40, 390, 82), Vector2(40, 40), HUD_SCALE).has_point(point):
 		return true
-	if Rect2(VIRTUAL_SIZE.x - 272, 40, 232, 236).has_point(point):
+	var boss_visible := bool(snapshot.get("boss_visible", false))
+	if not boss_visible and _scaled_rect(Rect2(VIRTUAL_SIZE.x - 272, 40, 232, 82), Vector2(VIRTUAL_SIZE.x - 40, 40), HUD_SCALE).has_point(point):
 		return true
-	if bool(snapshot.get("boss_visible", false)) and Rect2(262, 126, 756, 66).has_point(point):
+	if not boss_visible and not bool(snapshot.get("sheet_open", false)) and _scaled_rect(Rect2(VIRTUAL_SIZE.x - 272, 134, 232, 142), Vector2(VIRTUAL_SIZE.x - 40, 134), HUD_SCALE).has_point(point):
 		return true
-	if Rect2(115, 385, 305, 335).has_point(point) or Rect2(860, 385, 305, 335).has_point(point):
+	if boss_visible and _scaled_rect(Rect2(262, 126, 756, 66), Vector2(VIRTUAL_SIZE.x * 0.5, 126), HUD_SCALE).has_point(point):
 		return true
-	return Rect2(405, 535, 470, 185).has_point(point)
+	var bottom_pivot := Vector2(VIRTUAL_SIZE.x * 0.5, VIRTUAL_SIZE.y)
+	if _scaled_rect(Rect2(115, 385, 305, 335), bottom_pivot, HUD_SCALE).has_point(point) or _scaled_rect(Rect2(860, 385, 305, 335), bottom_pivot, HUD_SCALE).has_point(point):
+		return true
+	if _scaled_rect(Rect2(405, 535, 470, 185), bottom_pivot, HUD_SCALE).has_point(point):
+		return true
+	if bool(snapshot.get("sheet_open", false)):
+		var sheet_rect := Rect2(VIRTUAL_SIZE.x - 460, 132, 420, 464)
+		return _scaled_rect(sheet_rect, Vector2(VIRTUAL_SIZE.x - 40, 132), HUD_SCALE).has_point(point)
+	return false
 
 func _draw_screen_flash(viewport_size: Vector2) -> void:
 	if _flash_duration_msec <= 0:
@@ -144,7 +196,7 @@ func _draw_title(canvas_size: Vector2) -> void:
 		_center_text("Press C to continue from the last broken anchor", center.y + 184.0, 17, Color("8fb5c9"), canvas_size.x)
 	_center_text("Left Click Move / Attack  •  Right Click Ash Nova  •  Space Shadow Step  •  R Potion", canvas_size.y - 64.0, 16, Color("91858d"), canvas_size.x)
 
-func _draw_top_hud(canvas_size: Vector2) -> void:
+func _draw_quest_hud() -> void:
 	_panel(Rect2(40, 40, 390, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
 	_text("COVENANT OF ASH", Vector2(60, 67), 17, Color("d5b895"))
 	_text(_fit_text(String(snapshot.get("objective", "Find the soul anchors")), 17, 286.0), Vector2(60, 94), 17, Color("e8e1d8"))
@@ -153,8 +205,8 @@ func _draw_top_hud(canvas_size: Vector2) -> void:
 	for i in total:
 		var c := Color("d94c68") if i < done else Color("3b303c")
 		draw_colored_polygon(PackedVector2Array([Vector2(365 + i * 20, 64), Vector2(372 + i * 20, 75), Vector2(365 + i * 20, 86), Vector2(358 + i * 20, 75)]), c)
-	if bool(snapshot.get("boss_visible", false)):
-		return
+
+func _draw_status_hud(canvas_size: Vector2) -> void:
 	_panel(Rect2(canvas_size.x - 272, 40, 232, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
 	_text("LEVEL %d" % int(snapshot.get("level", 1)), Vector2(canvas_size.x - 250, 67), 18, Color("d5b895"))
 	_text("Kills  %d" % int(snapshot.get("kills", 0)), Vector2(canvas_size.x - 250, 94), 16, Color("aaa0a4"))
@@ -219,8 +271,9 @@ func _draw_bottom_hud(canvas_size: Vector2) -> void:
 		{"key": "SPACE", "name": "STEP", "icon": ICON_STEP, "color": Color("6572b8"), "cooldown": snapshot.get("dash_cd", 0.0)},
 		{"key": "R", "name": "POTION %d" % int(snapshot.get("potions", 0)), "icon": ICON_POTION, "color": Color("ba3f55"), "cooldown": 0.0}
 	]
+	var skill_start := _skill_row_start()
 	for i in skills.size():
-		_draw_gothic_skill(Vector2(441.0 + i * 100.5, 573.0), skills[i])
+		_draw_gothic_skill(skill_start + Vector2(i * (SKILL_SLOT_SIZE.x + SKILL_SLOT_GAP), 0.0), skills[i])
 	_draw_gothic_orb_text(LIFE_ORB_CENTER, "LIFE", health, health_max, Color("fff2e4"))
 	_draw_gothic_orb_text(ESSENCE_ORB_CENTER, "ESSENCE", mana, mana_max, Color("e6efff"))
 	var xp_ratio := clampf(float(snapshot.get("xp_ratio", 0.0)), 0.0, 1.0)
@@ -237,22 +290,81 @@ func _draw_gothic_orb_fill(center: Vector2, radius: float, ratio: float, color: 
 	draw_circle(center, radius + 1.0, Color(0.015, 0.012, 0.018, 0.98))
 	draw_circle(center, radius, Color(color.darkened(0.62), 0.92))
 	var fill_ratio := clampf(ratio, 0.0, 1.0)
-	var fill_polygon := _circle_segment_polygon(center, radius - 2.0, fill_ratio)
+	var inner_radius := radius - 2.0
+	var liquid_phase := Time.get_ticks_msec() * 0.0022 + center.x * 0.017
+	var fill_polygon := _liquid_orb_polygon(center, inner_radius, fill_ratio, liquid_phase)
 	if fill_polygon.size() >= 3:
-		draw_colored_polygon(fill_polygon, Color(color, 0.94))
+		draw_colored_polygon(fill_polygon, Color(color.darkened(0.06), 0.96))
+		var deep_ratio := clampf((fill_ratio - 0.16) / 0.84, 0.0, 1.0)
+		if deep_ratio > 0.0:
+			var deep_polygon := _liquid_orb_polygon(center + Vector2(0.0, 2.5), inner_radius - 5.0, deep_ratio, liquid_phase * 0.82 + 1.2)
+			if deep_polygon.size() >= 3:
+				draw_colored_polygon(deep_polygon, Color(color.darkened(0.34), 0.36))
 		if fill_ratio > 0.0 and fill_ratio < 1.0:
-			var water_y := center.y + radius - radius * 2.0 * fill_ratio
-			var chord_half_width := sqrt(maxf(0.0, radius * radius - pow(water_y - center.y, 2.0)))
-			draw_line(Vector2(center.x - chord_half_width, water_y), Vector2(center.x + chord_half_width, water_y), Color(color.lightened(0.38), 0.95), 2.0)
+			var surface := _liquid_surface_points(center, inner_radius, fill_ratio, liquid_phase)
+			draw_polyline(surface, Color(color.lightened(0.58), 0.88), 1.7, true)
+			draw_polyline(_offset_points(surface, Vector2(0.0, 2.0)), Color(color.lightened(0.18), 0.30), 0.8, true)
+			_draw_liquid_bubbles(center, inner_radius, fill_ratio, liquid_phase, color)
 	draw_arc(center - Vector2(8, 7), radius - 11.0, PI * 1.12, PI * 1.56, 18, Color(1.0, 1.0, 1.0, 0.18), 3.0)
 	draw_circle(center + Vector2(17, 19), 13.0, Color(color.darkened(0.52), 0.2))
+
+func _skill_row_start() -> Vector2:
+	var total_width := SKILL_SLOT_SIZE.x * 4.0 + SKILL_SLOT_GAP * 3.0
+	return Vector2(VIRTUAL_SIZE.x * 0.5 - total_width * 0.5, LIFE_ORB_CENTER.y - SKILL_SLOT_SIZE.y * 0.5)
+
+func _liquid_surface_points(center: Vector2, radius: float, ratio: float, phase: float) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	if ratio <= 0.0 or ratio >= 1.0:
+		return points
+	var water_y := center.y + radius - radius * 2.0 * ratio
+	var chord_half_width := sqrt(maxf(0.0, radius * radius - pow(water_y - center.y, 2.0)))
+	for i in range(LIQUID_SURFACE_SEGMENTS + 1):
+		var t := float(i) / float(LIQUID_SURFACE_SEGMENTS)
+		var envelope := sin(PI * t)
+		var wave := (sin(t * TAU * 1.35 + phase) * 1.5 + sin(t * TAU * 2.8 - phase * 0.72) * 0.65) * envelope
+		points.append(Vector2(center.x + lerpf(-chord_half_width, chord_half_width, t), water_y + wave))
+	return points
+
+func _liquid_orb_polygon(center: Vector2, radius: float, ratio: float, phase: float) -> PackedVector2Array:
+	if ratio <= 0.0:
+		return PackedVector2Array()
+	if ratio >= 1.0:
+		return _circle_segment_polygon(center, radius, 1.0)
+	var points := _liquid_surface_points(center, radius, ratio, phase)
+	var water_y := center.y + radius - radius * 2.0 * ratio
+	var vertical := clampf((water_y - center.y) / radius, -0.999, 0.999)
+	var right_angle := asin(vertical)
+	var left_angle := PI - right_angle
+	for i in range(1, 33):
+		var t := float(i) / 32.0
+		var angle := lerpf(right_angle, left_angle, t)
+		points.append(center + Vector2(cos(angle), sin(angle)) * radius)
+	return points
+
+func _offset_points(points: PackedVector2Array, offset: Vector2) -> PackedVector2Array:
+	var shifted := PackedVector2Array()
+	for point in points:
+		shifted.append(point + offset)
+	return shifted
+
+func _draw_liquid_bubbles(center: Vector2, radius: float, ratio: float, phase: float, color: Color) -> void:
+	if ratio < 0.34:
+		return
+	var water_y := center.y + radius - radius * 2.0 * ratio
+	var offsets := [Vector2(-20.0, 22.0), Vector2(14.0, 31.0), Vector2(25.0, 12.0)]
+	for i in offsets.size():
+		var bubble: Vector2 = center + offsets[i] + Vector2(sin(phase * 0.64 + i) * 1.3, cos(phase * 0.48 + i * 1.7) * 1.8)
+		if bubble.y <= water_y + 3.0 or bubble.distance_to(center) >= radius - 3.0:
+			continue
+		var bubble_radius := 1.1 + float(i) * 0.28
+		draw_arc(bubble, bubble_radius, 0.0, TAU, 10, Color(color.lightened(0.60), 0.33), 0.7, true)
 
 func _draw_gothic_orb_text(center: Vector2, label: String, current: int, maximum: int, color: Color) -> void:
 	_center_text_at(label, center + Vector2(0, -9), 12, Color(color, 0.86))
 	_center_text_at("%d / %d" % [current, maximum], center + Vector2(0, 13), 17, color)
 
 func _draw_gothic_skill(draw_position: Vector2, data: Dictionary) -> void:
-	var rect := Rect2(draw_position, Vector2(84, 86))
+	var rect := Rect2(draw_position, SKILL_SLOT_SIZE)
 	var color: Color = data.color
 	draw_rect(rect.grow(-4.0), Color(color, 0.07))
 	var icon: Texture2D = data.icon
@@ -302,7 +414,7 @@ func _draw_message(canvas_size: Vector2) -> void:
 	var c: Color = snapshot.get("message_color", Color.WHITE)
 	c.a *= alpha
 	var y := canvas_size.y * (0.29 if bool(snapshot.get("boss_visible", false)) else 0.24)
-	_center_text(message, y, 24, c, canvas_size.x)
+	_center_text(message, y, 20, c, canvas_size.x)
 
 func _draw_character_sheet(canvas_size: Vector2) -> void:
 	var rect := Rect2(canvas_size.x - 460, 132, 420, 464)
@@ -324,8 +436,10 @@ func _draw_character_sheet(canvas_size: Vector2) -> void:
 		_text(_fit_text(String(entry.get("name", "Unknown")), 15, rect.size.x - 48.0), rect.position + Vector2(24, 349 + i * 23), 15, entry.get("color", Color.WHITE))
 	_right_text("TAB / ESC  CLOSE", rect.position + Vector2(rect.size.x - 24, rect.size.y - 18), 14, Color("a99ca2"))
 
-func _draw_upgrade(canvas_size: Vector2) -> void:
+func _draw_upgrade_backdrop(canvas_size: Vector2) -> void:
 	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.01, 0.005, 0.015, 0.72))
+
+func _draw_upgrade(canvas_size: Vector2) -> void:
 	_center_text("POWER AWAKENS", 134, 36, Color("f0cc77"), canvas_size.x)
 	_center_text("Choose one covenant boon", 172, 19, Color("c8b8ae"), canvas_size.x)
 	var choices := [
@@ -457,6 +571,8 @@ func _upgrade_rect(index: int) -> Rect2:
 
 func _upgrade_index_at(viewport_position: Vector2) -> int:
 	var virtual_position := _viewport_to_virtual(viewport_position)
+	var pivot := VIRTUAL_SIZE * 0.5
+	virtual_position = pivot + (virtual_position - pivot) / UPGRADE_SCALE
 	for i in UPGRADE_IDS.size():
 		if _upgrade_rect(i).has_point(virtual_position):
 			return i

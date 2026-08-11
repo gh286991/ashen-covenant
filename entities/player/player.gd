@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 signal attack_requested(origin: Vector2, facing: Vector2, radius: float, packet: DamagePacket, combo_step: int)
 signal nova_requested(origin: Vector2, radius: float, packet: DamagePacket)
+signal dash_requested(origin: Vector2, direction: Vector2)
 signal health_changed(current: float, maximum: float)
 signal mana_changed(current: float, maximum: float)
 signal experience_changed(current: int, required: int, level: int)
@@ -407,6 +408,7 @@ func try_dash() -> bool:
 	dash_timer = DASH_DURATION
 	dash_cooldown = DASH_COOLDOWN
 	invulnerable_timer = DASH_DURATION + 0.08
+	dash_requested.emit(global_position, dash_direction)
 	action_feedback.emit("SHADOW STEP", Color("9f7aea"))
 	return true
 

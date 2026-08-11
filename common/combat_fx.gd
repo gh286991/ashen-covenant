@@ -10,6 +10,8 @@ var radius := 42.0
 var text_value := ""
 var elapsed := 0.0
 var direction := Vector2.RIGHT
+var swing_side := 1.0
+var swing_intensity := 1.0
 
 func setup(type: FXType, color: Color, life: float = 0.45, size: float = 42.0, label_text: String = "") -> CombatFX:
 	fx_type = type
@@ -36,21 +38,35 @@ func _draw() -> void:
 		fx_direction = Vector2.RIGHT
 	match fx_type:
 		FXType.SLASH:
+			# A slash starts close to the weapon hand, sweeps across the target, then
+			# exits quickly. This reads as a hit instead of a static arc on the floor.
+			var swing_t := clampf(t * 1.34, 0.0, 1.0)
+			swing_t = 1.0 - pow(1.0 - swing_t, 2.2)
+			var side := 1.0 if swing_side >= 0.0 else -1.0
+			var arc_span := 1.38 + swing_intensity * 0.20
+			var start_angle := fx_direction.angle() - side * arc_span * 0.62
+			var lead_angle := start_angle + side * arc_span * swing_t
+			var tail_angle := lead_angle - side * (0.46 + (1.0 - swing_t) * 0.58)
+			var pivot := fx_direction * radius * 0.12
+			var reach := radius * lerpf(0.28, 0.98 + swing_intensity * 0.06, swing_t)
 			var outer_points := PackedVector2Array()
 			var inner_points := PackedVector2Array()
-			var base_angle := fx_direction.angle() - 0.92
-			for i in 14:
-				var p := float(i) / 13.0
-				var a := base_angle + 1.84 * p + t * 0.16
-				outer_points.append(Vector2.from_angle(a) * radius * (0.58 + t * 0.48))
-				inner_points.append(Vector2.from_angle(a) * radius * (0.48 + t * 0.4))
-			var glow := Color(c, c.a * 0.28)
-			var edge := Color(1.0, 0.96, 0.84, minf(1.0, fade * 0.9))
-			draw_polyline(outer_points, glow, 15.0 * fade, true)
-			draw_polyline(outer_points, c, 6.5 * fade, true)
-			draw_polyline(inner_points, edge, 2.2 * fade, true)
+			for i in 12:
+				var p := float(i) / 11.0
+				var a := lerpf(tail_angle, lead_angle, p)
+				var outer_reach := reach * (0.9 + sin(p * PI) * 0.1)
+				outer_points.append(pivot + Vector2.from_angle(a) * outer_reach)
+				inner_points.append(pivot + Vector2.from_angle(a) * maxf(0.0, outer_reach - radius * (0.105 + swing_intensity * 0.012)))
+			var fade_out := clampf((1.0 - t) * 2.6, 0.0, 1.0)
+			var glow := Color(c, c.a * 0.32 * fade_out)
+			var edge := Color(1.0, 0.96, 0.84, minf(1.0, fade * 0.92) * fade_out)
+			draw_polyline(outer_points, glow, (15.0 + swing_intensity * 2.0) * fade_out, true)
+			draw_polyline(outer_points, c, (6.0 + swing_intensity) * fade_out, true)
+			draw_polyline(inner_points, edge, 2.0 * fade_out, true)
 			var tip := outer_points[outer_points.size() - 1]
-			draw_circle(tip, 4.5 * fade, edge)
+			var tip_direction := Vector2.from_angle(lead_angle)
+			draw_line(tip - tip_direction * radius * 0.10, tip + tip_direction * radius * 0.13, edge, 3.0 * fade_out)
+			draw_circle(tip, (3.8 + swing_intensity) * fade_out, edge)
 		FXType.NOVA:
 			draw_arc(Vector2.ZERO, radius * (0.2 + t), 0.0, TAU, 64, c, 9.0 * fade, true)
 			draw_arc(Vector2.ZERO, radius * (0.05 + t * 0.75), 0.0, TAU, 48, Color(c, c.a * 0.5), 3.0, true)

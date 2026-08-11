@@ -458,43 +458,11 @@ func _draw() -> void:
 	var shadow_radius := 38.0 if is_boss else (29.0 if enemy_kind == &"brute" else 20.0)
 	draw_circle(Vector2.ZERO, shadow_radius, Color(0.0, 0.0, 0.0, 0.42 * death_fade))
 	draw_set_transform(Vector2.ZERO)
-	if state == AIState.WINDUP:
-		_draw_attack_telegraph(c)
 	if state != AIState.DEAD and (is_boss or health < max_health):
 		var width := 112.0 if is_boss else (62.0 if enemy_kind == &"brute" else 48.0)
 		var bar_y := -136.0 if is_boss else (-112.0 if enemy_kind == &"brute" else -94.0)
 		draw_rect(Rect2(-width * 0.5, bar_y, width, 7.0), Color("241a24"))
 		draw_rect(Rect2(-width * 0.5 + 1.0, bar_y + 1.0, (width - 2.0) * health_ratio(), 5.0), Color("cc3d52") if not is_boss else Color("f06a43"))
-
-func _draw_attack_telegraph(color: Color) -> void:
-	var progress := clampf(1.0 - state_timer / maxf(0.001, state_duration), 0.0, 1.0)
-	var pulse_alpha := 0.08 + progress * 0.12 + sin(spawn_time * 18.0) * 0.025
-	var outline := Color(color, 0.55 + progress * 0.4)
-	var local_origin := attack_origin - global_position
-	var local_center := attack_center - global_position
-	match attack_style:
-		AttackStyle.PROJECTILE:
-			var end := local_origin + attack_direction * attack_range
-			draw_line(local_origin, end, Color(color, pulse_alpha), 15.0)
-			draw_line(local_origin, end, outline, 2.5)
-			draw_circle(end, 7.0 + progress * 3.0, Color(color, 0.18 + progress * 0.14))
-		AttackStyle.RADIAL:
-			draw_circle(local_origin, attack_radius, Color(color, pulse_alpha))
-			draw_arc(local_origin, attack_radius, 0.0, TAU, 52, outline, 3.5)
-			for i in 8:
-				var ray := Vector2.from_angle(TAU * float(i) / 8.0)
-				draw_line(local_origin + ray * attack_radius * 0.45, local_origin + ray * attack_radius, Color(color, 0.32 + progress * 0.35), 2.0)
-		AttackStyle.CHARGE:
-			var side := attack_direction.orthogonal() * attack_radius * 0.48
-			var finish := local_origin + attack_direction * (300.0 if is_boss else 230.0)
-			var corridor := PackedVector2Array([local_origin + side, finish + side, finish - side, local_origin - side])
-			draw_colored_polygon(corridor, Color(color, pulse_alpha))
-			draw_polyline(PackedVector2Array([local_origin + side, finish + side, finish - side, local_origin - side, local_origin + side]), outline, 3.0)
-			draw_line(local_origin, finish, Color(color, 0.5 + progress * 0.4), 2.0)
-		_:
-			draw_circle(local_center, attack_radius, Color(color, pulse_alpha))
-			draw_arc(local_center, attack_radius, 0.0, TAU, 40, outline, 3.0)
-			draw_line(local_origin, local_center + attack_direction * attack_radius, Color(color, 0.45 + progress * 0.35), 2.5)
 
 func _body_color() -> Color:
 	match enemy_kind:

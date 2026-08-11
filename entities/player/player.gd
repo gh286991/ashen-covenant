@@ -33,12 +33,62 @@ const NOVA_MANA_COST := 28.0
 const POINTER_STOP_DISTANCE := 10.0
 const POINTER_ATTACK_DISTANCE := 68.0
 const POINTER_WAYPOINT_DISTANCE := 14.0
-const ART_TEXTURES := [
-	preload("res://assets/sprites/player_idle/idle-1.png"), # south
-	preload("res://assets/sprites/player_idle/idle-2.png"), # west
-	preload("res://assets/sprites/player_idle/idle-3.png"), # east
-	preload("res://assets/sprites/player_idle/idle-4.png"), # north
-]
+const CRIMSON_FRAME_SIZE := Vector2(80.0, 80.0)
+const CRIMSON_ART_SCALE := 3.0
+const CRIMSON_FOOT_OFFSET := 48.0
+const CRIMSON_FRAME_COUNTS := {
+	&"idle": 6,
+	&"walk": 8,
+	&"run": 6,
+	&"sword_attack": 5,
+	&"axe_attack": 7,
+	&"hurt": 4,
+	&"death": 6,
+}
+const CRIMSON_SHEETS := {
+	&"idle": [
+		preload("res://assets/sprites/player_crimson/idle_down.png"),
+		preload("res://assets/sprites/player_crimson/idle_left.png"),
+		preload("res://assets/sprites/player_crimson/idle_right.png"),
+		preload("res://assets/sprites/player_crimson/idle_up.png"),
+	],
+	&"walk": [
+		preload("res://assets/sprites/player_crimson/walk_down.png"),
+		preload("res://assets/sprites/player_crimson/walk_left.png"),
+		preload("res://assets/sprites/player_crimson/walk_right.png"),
+		preload("res://assets/sprites/player_crimson/walk_up.png"),
+	],
+	&"run": [
+		preload("res://assets/sprites/player_crimson/run_down.png"),
+		preload("res://assets/sprites/player_crimson/run_left.png"),
+		preload("res://assets/sprites/player_crimson/run_right.png"),
+		preload("res://assets/sprites/player_crimson/run_up.png"),
+	],
+	&"sword_attack": [
+		preload("res://assets/sprites/player_crimson/sword_attack_down.png"),
+		preload("res://assets/sprites/player_crimson/sword_attack_left.png"),
+		preload("res://assets/sprites/player_crimson/sword_attack_right.png"),
+		preload("res://assets/sprites/player_crimson/sword_attack_up.png"),
+	],
+	&"axe_attack": [
+		preload("res://assets/sprites/player_crimson/axe_attack_down.png"),
+		preload("res://assets/sprites/player_crimson/axe_attack_left.png"),
+		preload("res://assets/sprites/player_crimson/axe_attack_right.png"),
+		preload("res://assets/sprites/player_crimson/axe_attack_up.png"),
+	],
+	&"hurt": [
+		preload("res://assets/sprites/player_crimson/hurt_down.png"),
+		preload("res://assets/sprites/player_crimson/hurt_left.png"),
+		preload("res://assets/sprites/player_crimson/hurt_right.png"),
+		preload("res://assets/sprites/player_crimson/hurt_up.png"),
+	],
+	&"death": [
+		preload("res://assets/sprites/player_crimson/death_down.png"),
+		preload("res://assets/sprites/player_crimson/death_left.png"),
+		preload("res://assets/sprites/player_crimson/death_right.png"),
+		preload("res://assets/sprites/player_crimson/death_up.png"),
+	],
+}
 
 var gameplay_enabled := false
 var rng := RandomNumberGenerator.new()
@@ -110,10 +160,12 @@ func _ready() -> void:
 	add_child(visual_root)
 	art_sprite = Sprite2D.new()
 	art_sprite.name = "ArtSprite"
-	art_sprite.texture = ART_TEXTURES[3]
-	art_sprite.scale = Vector2.ONE * 0.43
-	art_sprite.position = Vector2(0, -42)
-	art_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	art_sprite.texture = CRIMSON_SHEETS[&"idle"][3]
+	art_sprite.region_enabled = true
+	art_sprite.region_rect = Rect2(Vector2.ZERO, CRIMSON_FRAME_SIZE)
+	art_sprite.scale = Vector2.ONE * CRIMSON_ART_SCALE
+	art_sprite.position = Vector2(0, -CRIMSON_FOOT_OFFSET)
+	art_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	visual_root.add_child(art_sprite)
 	rng.seed = 0xA55E_2026
 	health = max_health()
@@ -150,26 +202,29 @@ func _physics_process(delta: float) -> void:
 func _update_art_sprite() -> void:
 	if not is_instance_valid(art_sprite) or not is_instance_valid(visual_root):
 		return
-	var direction_index := 0
-	if absf(facing.x) > absf(facing.y):
-		direction_index = 1 if facing.x < 0.0 else 2
-	elif facing.y < 0.0:
-		direction_index = 3
-	art_sprite.texture = ART_TEXTURES[direction_index]
 	var moving := locomotion_velocity.length_squared() > 625.0 or dash_timer > 0.0
-	# The painted feet stay pinned to the body origin. Breathing and gait scale
-	# around VisualRoot (the contact point) so the hero keeps visual weight.
-	art_sprite.position = Vector2(0, -42.0)
-	art_sprite.scale = Vector2.ONE * 0.43
+	# Crimson Warrior uses 80px horizontal strips. Its painted feet sit 16px
+	# below the cell center, so the scaled art is anchored on the floor rather
+	# than the bottom of its transparent frame.
+	art_sprite.position = Vector2(0, -CRIMSON_FOOT_OFFSET)
+	art_sprite.scale = Vector2.ONE * CRIMSON_ART_SCALE
 	var pose_position := Vector2.ZERO
 	var pose_rotation := 0.0
 	var pose_scale := Vector2.ONE
+	var sprite_action: StringName = &"idle"
+	var sprite_direction := facing
+	var sprite_frame := 0
 	if health <= 0.0:
+		sprite_action = &"death"
+		sprite_frame = mini(int(death_pose_timer * 14.0), CRIMSON_FRAME_COUNTS[sprite_action] - 1)
 		var death_t := clampf(death_pose_timer / 0.42, 0.0, 1.0)
 		pose_position = Vector2(0.0, death_t * 12.0)
 		pose_rotation = lerpf(0.0, 0.34 if facing.x >= 0.0 else -0.34, death_t)
 		pose_scale = Vector2(1.0 + death_t * 0.08, 1.0 - death_t * 0.2)
 	elif hurt_lock_timer > 0.0:
+		sprite_action = &"hurt"
+		var hurt_progress := 1.0 - hurt_lock_timer / HURT_LOCK_DURATION
+		sprite_frame = mini(int(hurt_progress * CRIMSON_FRAME_COUNTS[sprite_action]), CRIMSON_FRAME_COUNTS[sprite_action] - 1)
 		var hurt_t := 1.0 - hurt_lock_timer / HURT_LOCK_DURATION
 		var recoil_direction := -knockback_velocity.normalized()
 		if recoil_direction == Vector2.ZERO:
@@ -179,6 +234,11 @@ func _update_art_sprite() -> void:
 		pose_rotation = sin(hurt_t * PI * 5.0) * 0.055 * (1.0 - hurt_t)
 		pose_scale = Vector2(1.06 - hurt_t * 0.06, 0.94 + hurt_t * 0.06)
 	elif attack_phase != AttackPhase.NONE:
+		sprite_action = &"axe_attack" if pending_combo_step == 2 else &"sword_attack"
+		sprite_direction = attack_direction
+		var attack_elapsed := ATTACK_WINDUP + ATTACK_ACTIVE + ATTACK_RECOVERY - attack_phase_timer
+		var attack_progress := clampf(attack_elapsed / (ATTACK_WINDUP + ATTACK_ACTIVE + ATTACK_RECOVERY), 0.0, 0.999)
+		sprite_frame = int(attack_progress * CRIMSON_FRAME_COUNTS[sprite_action])
 		var side := -1.0 if pending_combo_step == 2 else 1.0
 		match attack_phase:
 			AttackPhase.WINDUP:
@@ -197,14 +257,23 @@ func _update_art_sprite() -> void:
 				pose_rotation = side * lerpf(-0.06, 0.0, p)
 				pose_scale = Vector2(lerpf(0.97, 1.0, p), lerpf(1.04, 1.0, p))
 	elif dash_timer > 0.0:
+		sprite_action = &"run"
+		sprite_direction = dash_direction
+		sprite_frame = int(art_time * 19.0) % CRIMSON_FRAME_COUNTS[sprite_action]
 		pose_position = dash_direction * 7.0
 		pose_scale = Vector2(0.9, 1.12)
 	elif moving:
-		pose_rotation = sin(art_time * 9.0) * 0.014
-		pose_scale = Vector2(1.0 + sin(art_time * 9.0) * 0.018, 1.0 - sin(art_time * 9.0) * 0.012)
+		# Keep travelling grounded and readable. Run frames are reserved for the
+		# supernatural dash; this complete eight-frame walk cycle sells each step.
+		sprite_action = &"walk"
+		sprite_frame = int(art_time * 10.0) % CRIMSON_FRAME_COUNTS[sprite_action]
+		pose_rotation = sin(art_time * 7.5) * 0.006
+		pose_scale = Vector2(1.0 + sin(art_time * 7.5) * 0.008, 1.0 - sin(art_time * 7.5) * 0.005)
 	else:
+		sprite_frame = int(art_time * 6.0) % CRIMSON_FRAME_COUNTS[sprite_action]
 		var breath := sin(art_time * 2.7)
 		pose_scale = Vector2(1.0 + breath * 0.006, 1.0 - breath * 0.009)
+	_set_crimson_frame(sprite_action, sprite_direction, sprite_frame)
 	visual_root.position = pose_position
 	visual_root.rotation = pose_rotation
 	visual_root.scale = pose_scale
@@ -216,6 +285,16 @@ func _update_art_sprite() -> void:
 		art_sprite.modulate = Color.WHITE
 	if health <= 0.0:
 		art_sprite.modulate.a = 1.0 - clampf(death_pose_timer / 0.42, 0.0, 0.72)
+
+func _set_crimson_frame(action: StringName, direction: Vector2, frame: int) -> void:
+	var direction_index := 0 # down, left, right, up
+	if absf(direction.x) > absf(direction.y):
+		direction_index = 1 if direction.x < 0.0 else 2
+	elif direction.y < 0.0:
+		direction_index = 3
+	var frame_count: int = CRIMSON_FRAME_COUNTS[action]
+	art_sprite.texture = CRIMSON_SHEETS[action][direction_index]
+	art_sprite.region_rect = Rect2(Vector2(frame % frame_count * CRIMSON_FRAME_SIZE.x, 0.0), CRIMSON_FRAME_SIZE)
 
 func _tick_timers(delta: float) -> void:
 	var was_dashing := dash_timer > 0.0

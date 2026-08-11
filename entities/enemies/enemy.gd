@@ -35,6 +35,7 @@ var state_timer := 0.0
 var state_duration := 0.0
 var hurt_flash := 0.0
 var invincible_timer := 0.0
+var ashbound_timer := 0.0
 var facing := Vector2.DOWN
 var knockback_velocity := Vector2.ZERO
 var locomotion_velocity := Vector2.ZERO
@@ -176,6 +177,7 @@ func _physics_process(delta: float) -> void:
 		return
 	hurt_flash = maxf(0.0, hurt_flash - delta)
 	invincible_timer = maxf(0.0, invincible_timer - delta)
+	ashbound_timer = maxf(0.0, ashbound_timer - delta)
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, 520.0 * delta)
 	var distance_to_target := global_position.distance_to(target.global_position)
@@ -243,6 +245,8 @@ func _update_art_sprite(delta: float) -> void:
 	visual_root.scale = pose_scale
 	if hurt_flash > 0.0:
 		art_sprite.modulate = Color.WHITE if int(hurt_flash * 90.0) % 2 == 0 else Color("ffd7c7")
+	elif ashbound_timer > 0.0:
+		art_sprite.modulate = Color("b49bf3")
 	elif is_boss and boss_phase == 2:
 		art_sprite.modulate = Color(1.0, 0.72, 0.58)
 	elif state == AIState.WINDUP:
@@ -290,7 +294,7 @@ func _process_state(delta: float) -> void:
 				state_duration = 0.0
 		AIState.CHARGE:
 			state_timer -= delta
-			locomotion_velocity = charge_direction * (390.0 if enemy_kind == &"brute" else 465.0)
+			locomotion_velocity = charge_direction * (390.0 if enemy_kind == &"brute" else 465.0) * _ashbound_speed_multiplier()
 			if global_position.distance_to(target.global_position) < attack_radius * 0.62:
 				attack_requested.emit(self, global_position + charge_direction * 24.0, attack_radius, contact_damage * 1.25, Color("ff6c4f"))
 				state_timer = 0.0
@@ -307,15 +311,16 @@ func _process_state(delta: float) -> void:
 				state_duration = 0.0
 
 func _process_chase(delta: float, distance: float, to_target: Vector2) -> void:
+	var speed := move_speed * _ashbound_speed_multiplier()
 	if enemy_kind == &"wraith":
 		if distance < 190.0:
-			locomotion_velocity = locomotion_velocity.move_toward(-to_target.normalized() * move_speed, 600.0 * delta)
+			locomotion_velocity = locomotion_velocity.move_toward(-to_target.normalized() * speed, 600.0 * delta)
 		elif distance > 300.0:
-			locomotion_velocity = locomotion_velocity.move_toward(to_target.normalized() * move_speed, 520.0 * delta)
+			locomotion_velocity = locomotion_velocity.move_toward(to_target.normalized() * speed, 520.0 * delta)
 		else:
-			locomotion_velocity = locomotion_velocity.move_toward(to_target.orthogonal().normalized() * move_speed * 0.65, 400.0 * delta)
+			locomotion_velocity = locomotion_velocity.move_toward(to_target.orthogonal().normalized() * speed * 0.65, 400.0 * delta)
 	else:
-		locomotion_velocity = locomotion_velocity.move_toward(to_target.normalized() * move_speed, 620.0 * delta)
+		locomotion_velocity = locomotion_velocity.move_toward(to_target.normalized() * speed, 620.0 * delta)
 	if attack_cooldown <= 0.0 and distance <= attack_range:
 		_begin_windup()
 
@@ -396,6 +401,16 @@ func take_damage(packet: DamagePacket) -> bool:
 		state_duration = state_timer
 		attack_cooldown = maxf(attack_cooldown, 0.24)
 	return true
+
+func apply_ashbound(duration: float) -> void:
+	if state == AIState.DEAD:
+		return
+	ashbound_timer = maxf(ashbound_timer, maxf(0.0, duration))
+
+func _ashbound_speed_multiplier() -> float:
+	if ashbound_timer <= 0.0:
+		return 1.0
+	return 0.78 if is_boss else 0.58
 
 func _die() -> void:
 	state = AIState.DEAD

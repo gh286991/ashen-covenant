@@ -1,0 +1,30 @@
+{
+  "input": "/var/folders/3g/2jfwjm894ns3j6hqw4r4n8y00000gn/T/tmp.XCF15SEjwM/stance_02_keyed.png",
+  "grid": {
+    "rows": 1,
+    "cols": 1,
+    "source_cell": [
+      1254,
+      1254
+    ],
+    "output_cell": 256
+  },
+  "key": "#FF00FF",
+  "anchor": "feet",
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "col": 0,
+      "source_bbox": [
+        148,
+        75,
+        1035,
+        1186
+      ],
+      "edge_touch": false
+    }
+  ],
+  "valid": true,
+  "edge_margin": 2
+}

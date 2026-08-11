@@ -1,0 +1,7 @@
+Use case: stylized-concept
+Asset type: 16:9 fullscreen title-menu background for the Godot 2D dark fantasy action RPG “Ashen Covenant”.
+Primary request: A hand-painted, top-down/isometric-feeling dark catacomb sanctuary at night. A lone crimson-cloaked warrior stands in the lower-right third before a vast circular ritual seal carved into wet black stone. In the upper-middle distance, a ruined Gothic altar and three ember-red soul flames burn through drifting ash. The center-left third must remain relatively dark and visually quiet to support a vertical menu; the upper center must have dark negative space suitable for an overlaid title.
+Style/medium: premium hand-painted HD game key art, painterly textured brushwork, crisp readable 2D action-RPG environment design, matching a gothic dungeon with dark slate stone, muted purple shadows, restrained ember orange highlights, blood-red ritual inlays.
+Composition/framing: cinematic wide 16:9, room edges fade into darkness; subject and altar must not be cropped.
+Lighting/mood: ominous, sacred, foreboding; warm braziers against cool shadows, subtle volumetric ash, soft vignette.
+Constraints: no words, no letters, no logos, no interface, no watermark, no UI icons; retain clear low-contrast negative space at left for buttons; avoid photorealism, neon, excessive brightness, or unrelated characters.

@@ -3,12 +3,17 @@ extends Control
 
 signal skill_selected(id: String)
 signal skill_tree_requested
+signal title_new_game_requested
+signal title_continue_requested
+signal title_exit_requested
+signal screen_shake_setting_changed(enabled: bool)
 
 const ICON_CLEAVE := preload("res://assets/ui/ability_icons/single-1.png")
 const ICON_NOVA := preload("res://assets/ui/ability_icons/single-2.png")
 const ICON_STEP := preload("res://assets/ui/ability_icons/single-3.png")
 const ICON_POTION := preload("res://assets/ui/ability_icons/single-4.png")
 const GOTHIC_HUD_FRAME := preload("res://assets/ui/gothic_hud/gothic-hud-frame.png")
+const TITLE_BACKGROUND := preload("res://assets/ui/main_menu/ashen_covenant-title-bg-v1.png")
 const VIRTUAL_SIZE := Vector2(1280.0, 720.0)
 const HUD_SCALE := 0.70
 const SKILL_TREE_SCALE := 0.80
@@ -16,8 +21,11 @@ const GOTHIC_HUD_SOURCE := Rect2(0.0, 205.0, 1672.0, 530.0)
 const GOTHIC_HUD_RECT := Rect2(115.0, 385.0, 1050.0, 333.0)
 const LIFE_ORB_CENTER := Vector2(314.0, 603.0)
 const ESSENCE_ORB_CENTER := Vector2(966.0, 603.0)
-const SKILL_SLOT_SIZE := Vector2(84.0, 86.0)
+const HOTBAR_SLOT_COUNT := 4
+const SKILL_SLOT_SIZE := Vector2(84.0, 92.0)
 const SKILL_SLOT_GAP := 16.5
+const SKILL_ICON_SIZE := Vector2(58.0, 58.0)
+const SKILL_ICON_TOP := 5.0
 const LIQUID_REFRESH_MSEC := 33
 const LIQUID_SURFACE_SEGMENTS := 22
 const SKILL_NODE_SIZE := Vector2(250.0, 78.0)
@@ -26,6 +34,15 @@ const SKILL_RANK_Y := [310.0, 415.0, 520.0]
 const SKILL_COLORS := [Color("b55d55"), Color("d49a49"), Color("845db8")]
 const SKILL_BADGE_RECT := Rect2(785.0, 40.0, 112.0, 82.0)
 const LEVEL_UP_NOTICE_DURATION_MSEC := 2600
+const TITLE_REFRESH_MSEC := 33
+const TITLE_MENU_ORIGIN := Vector2(92.0, 308.0)
+const TITLE_MENU_SIZE := Vector2(350.0, 51.0)
+const TITLE_MENU_GAP := 11.0
+const TITLE_DETAIL_RECT := Rect2(500.0, 214.0, 630.0, 356.0)
+const TITLE_TOGGLE_RECT := Rect2(528.0, 421.0, 574.0, 49.0)
+const TITLE_BACK_RECT := Rect2(528.0, 500.0, 574.0, 45.0)
+
+enum TitleMenuAction { NEW_GAME, CONTINUE, CONTROLS, SETTINGS, QUIT }
 
 var snapshot: Dictionary = {}
 var _canvas_scale := 1.0
@@ -42,6 +59,11 @@ var _level_up_notice_level := 0
 var _level_up_notice_points := 0
 var _level_up_notice_started_msec := 0
 var _level_up_notice_duration_msec := 0
+var _last_title_redraw_msec := 0
+var _title_hovered := -1
+var _title_focused := 0
+var _title_panel := &"main"
+var _screen_shake_enabled := true
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -54,9 +76,11 @@ func _ready() -> void:
 
 func update_snapshot(data: Dictionary) -> void:
 	var next_skill_tree_mode := String(data.get("phase", "TITLE")) == "SKILL_TREE"
+	var is_title_screen := String(data.get("phase", "TITLE")) == "TITLE"
 	snapshot = data
 	if next_skill_tree_mode != _skill_tree_mode:
 		_set_skill_tree_mode(next_skill_tree_mode)
+	_set_title_mode(is_title_screen)
 	queue_redraw()
 
 func play_screen_flash(color: Color, intensity: float = 0.3, duration: float = 0.14) -> void:
@@ -86,6 +110,9 @@ func _process(_delta: float) -> void:
 	if _level_up_notice_duration_msec > 0:
 		if now_msec - _level_up_notice_started_msec >= _level_up_notice_duration_msec:
 			_level_up_notice_duration_msec = 0
+		needs_redraw = true
+	if String(snapshot.get("phase", "TITLE")) == "TITLE" and now_msec - _last_title_redraw_msec >= TITLE_REFRESH_MSEC:
+		_last_title_redraw_msec = now_msec
 		needs_redraw = true
 	if String(snapshot.get("phase", "TITLE")) != "TITLE" and now_msec - _last_liquid_redraw_msec >= LIQUID_REFRESH_MSEC:
 		_last_liquid_redraw_msec = now_msec
@@ -172,6 +199,8 @@ func _viewport_to_virtual(viewport_position: Vector2) -> Vector2:
 	return (viewport_position - _canvas_offset) / maxf(_canvas_scale, 0.001)
 
 func blocks_world_pointer(viewport_position: Vector2) -> bool:
+	if String(snapshot.get("phase", "TITLE")) == "TITLE":
+		return true
 	if String(snapshot.get("phase", "TITLE")) == "SKILL_TREE":
 		return true
 	var point := _viewport_to_virtual(viewport_position)
@@ -214,18 +243,162 @@ func _draw_vignette(canvas_size: Vector2) -> void:
 	draw_rect(Rect2(canvas_size.x - 18, 0, 18, canvas_size.y), edge)
 
 func _draw_title(canvas_size: Vector2) -> void:
-	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.015, 0.008, 0.02, 0.76))
-	var center := canvas_size * 0.5
-	for i in 4:
-		draw_arc(center - Vector2(0, 54), 132.0 + i * 19.0, 0.0, TAU, 5, Color(0.42, 0.08, 0.12, 0.18 - i * 0.03), 3.0)
-	_center_text("ASHEN COVENANT", center.y - 92.0, 54, Color("e6d4b8"), canvas_size.x)
-	_center_text("A DARK ACTION RPG DEMO", center.y - 34.0, 18, Color("b9655f"), canvas_size.x)
-	_center_text("Three soul anchors bind the Ashen Warden.", center.y + 36.0, 20, Color("c5b9ac"), canvas_size.x)
-	_center_text("Break them. Claim their relics. End the covenant.", center.y + 66.0, 20, Color("c5b9ac"), canvas_size.x)
-	_center_text("Press Enter to begin", center.y + 142.0 + sin(Time.get_ticks_msec() * 0.004) * 4.0, 24, Color("f0b75e"), canvas_size.x)
+	draw_texture_rect(TITLE_BACKGROUND, Rect2(Vector2.ZERO, canvas_size), false)
+	draw_rect(Rect2(Vector2.ZERO, canvas_size), Color(0.005, 0.004, 0.009, 0.24))
+	draw_rect(Rect2(0.0, 0.0, 530.0, canvas_size.y), Color(0.008, 0.006, 0.014, 0.62))
+	draw_rect(Rect2(0.0, 0.0, canvas_size.x, 27.0), Color(0.005, 0.003, 0.008, 0.42))
+	_draw_title_left_ornament()
+	_draw_title_brand()
+	if _title_panel == &"main":
+		_draw_title_menu()
+	else:
+		_draw_title_detail_panel()
+	_draw_title_footer(canvas_size)
+
+func _draw_title_left_ornament() -> void:
+	var pulse := 0.5 + sin(Time.get_ticks_msec() * 0.0024) * 0.5
+	var ember := Color(0.86, 0.22, 0.18, 0.28 + pulse * 0.22)
+	draw_line(Vector2(72.0, 75.0), Vector2(72.0, 651.0), Color("5c3a42"), 1.0)
+	draw_line(Vector2(78.0, 75.0), Vector2(78.0, 651.0), Color(ember, 0.66), 1.0)
+	for y in [96.0, 260.0, 467.0, 630.0]:
+		draw_circle(Vector2(75.0, y), 4.0, Color("150d16"))
+		draw_arc(Vector2(75.0, y), 7.0, 0.0, TAU, 12, ember, 1.2)
+
+func _draw_title_brand() -> void:
+	var x := 103.0
+	var pulse := 0.5 + sin(Time.get_ticks_msec() * 0.0024) * 0.5
+	_text("ASHEN", Vector2(x, 123.0), 48, Color("e9d4b0"))
+	_text("COVENANT", Vector2(x, 175.0), 48, Color("e9d4b0"))
+	draw_line(Vector2(x, 195.0), Vector2(x + 304.0, 195.0), Color("8f3d3e"), 2.0)
+	draw_line(Vector2(x + 4.0, 200.0), Vector2(x + 252.0, 200.0), Color(0.90, 0.46, 0.27, 0.42 + pulse * 0.20), 1.0)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(x + 311.0, 190.0), Vector2(x + 317.0, 196.0),
+		Vector2(x + 311.0, 202.0), Vector2(x + 305.0, 196.0)
+	]), Color("d89956"))
+	_text("A DARK ACTION RPG", Vector2(x + 2.0, 228.0), 16, Color("bc8e78"))
+	_text("Break the covenant. Claim what remains.", Vector2(x + 2.0, 258.0), 15, Color("b5a7a7"))
+
+func _draw_title_menu() -> void:
+	var entries := _title_menu_entries()
+	for i in entries.size():
+		var entry: Dictionary = entries[i]
+		_draw_title_menu_button(_title_button_rect(i), i, String(entry.label), String(entry.hint), bool(entry.disabled), bool(entry.danger))
 	if bool(snapshot.get("has_save", false)):
-		_center_text("Press C to continue from the last broken anchor", center.y + 184.0, 17, Color("8fb5c9"), canvas_size.x)
-	_center_text("Left Click Move / Attack  •  Right Click Ash Nova  •  Space Shadow Step  •  R Potion  •  K Skills", canvas_size.y - 64.0, 16, Color("91858d"), canvas_size.x)
+		_text("A saved hunt awaits at the last broken anchor.", TITLE_MENU_ORIGIN + Vector2(4.0, 5.0 * (TITLE_MENU_SIZE.y + TITLE_MENU_GAP) + 4.0), 13, Color("89aebf"))
+
+func _draw_title_menu_button(rect: Rect2, index: int, label: String, hint: String, disabled: bool, danger: bool) -> void:
+	var active := index == _title_hovered or index == _title_focused
+	var border := Color("8b554d")
+	var fill := Color(0.045, 0.026, 0.043, 0.90)
+	var text_color := Color("e3d5c4")
+	if disabled:
+		border = Color("443943")
+		fill = Color(0.022, 0.017, 0.028, 0.72)
+		text_color = Color("716973")
+	elif danger:
+		border = Color("79414b") if not active else Color("c75b55")
+		text_color = Color("cbb6b5") if not active else Color("ffd2ca")
+	elif active:
+		border = Color("d7915b")
+		fill = Color(0.16, 0.065, 0.057, 0.95)
+		text_color = Color("fff0cf")
+	_panel(rect, fill, border)
+	if active and not disabled:
+		draw_rect(rect.grow(4.0), Color(border, 0.13), false, 1.0)
+		draw_colored_polygon(PackedVector2Array([
+			rect.position + Vector2(14.0, 18.0), rect.position + Vector2(23.0, 25.5), rect.position + Vector2(14.0, 33.0)
+		]), Color("f0a35f"))
+	_text(label, rect.position + Vector2(38.0, 32.0), 18, text_color)
+	_right_text(hint, rect.position + Vector2(rect.size.x - 17.0, 31.0), 12, Color("c28e74") if active and not disabled else Color("8b7b82"))
+
+func _draw_title_detail_panel() -> void:
+	_panel(TITLE_DETAIL_RECT, Color(0.025, 0.017, 0.031, 0.95), Color("855a55"))
+	if _title_panel == &"controls":
+		_draw_title_controls_panel()
+	else:
+		_draw_title_settings_panel()
+	_draw_title_back_button()
+
+func _draw_title_controls_panel() -> void:
+	var origin := TITLE_DETAIL_RECT.position + Vector2(30.0, 44.0)
+	_text("HOW TO PLAY", origin, 26, Color("f0c891"))
+	_text("THE COVENANT DEMANDS DECISIVE ACTION.", origin + Vector2(0.0, 28.0), 13, Color("ae8a83"))
+	var controls := [
+		["LEFT CLICK", "Move, pursue, and attack"],
+		["F", "Cleave: three-hit execution combo"],
+		["RIGHT CLICK / Q", "Ash Nova: burst and slow enemies"],
+		["SPACE", "Shadow Step: evade and phase rend"],
+		["R", "Blood Vial: restore life from charges"],
+		["TAB / K", "Open character sheet / disciplines"]
+	]
+	for i in controls.size():
+		var row_y := 125.0 + float(i) * 42.0
+		var key_rect := Rect2(TITLE_DETAIL_RECT.position + Vector2(30.0, row_y), Vector2(164.0, 28.0))
+		draw_rect(key_rect, Color("16101b"))
+		draw_rect(key_rect, Color("6e4c50"), false, 1.0)
+		_text(String(controls[i][0]), key_rect.position + Vector2(12.0, 20.0), 13, Color("e5bd87"))
+		_text(String(controls[i][1]), key_rect.position + Vector2(185.0, 20.0), 15, Color("d5c8c6"))
+
+func _draw_title_settings_panel() -> void:
+	var origin := TITLE_DETAIL_RECT.position + Vector2(30.0, 44.0)
+	_text("SETTINGS", origin, 26, Color("f0c891"))
+	_text("COMFORT OPTIONS", origin + Vector2(0.0, 28.0), 13, Color("ae8a83"))
+	_text("SCREEN SHAKE", TITLE_TOGGLE_RECT.position + Vector2(17.0, 31.0), 18, Color("e3d5c4"))
+	var toggle_active := _screen_shake_enabled
+	var toggle_color := Color("e5a65e") if toggle_active else Color("65585d")
+	var switch_rect := Rect2(TITLE_TOGGLE_RECT.end - Vector2(112.0, 35.0), Vector2(85.0, 24.0))
+	_panel(TITLE_TOGGLE_RECT, Color(0.047, 0.028, 0.046, 0.92), toggle_color)
+	draw_rect(switch_rect, Color("17111a"))
+	draw_rect(switch_rect, toggle_color, false, 1.0)
+	draw_circle(Vector2(switch_rect.position.x + (68.0 if toggle_active else 17.0), switch_rect.get_center().y), 9.0, toggle_color)
+	_right_text("ON" if toggle_active else "OFF", TITLE_TOGGLE_RECT.end - Vector2(17.0, 16.0), 12, Color("fff0d5") if toggle_active else Color("aaa0a4"))
+	_text("Keeps combat impacts comfortable without changing gameplay.", TITLE_TOGGLE_RECT.position + Vector2(1.0, 85.0), 14, Color("b8a8aa"))
+
+func _draw_title_back_button() -> void:
+	var hover := TITLE_BACK_RECT.has_point(_viewport_to_virtual(get_local_mouse_position()))
+	_panel(TITLE_BACK_RECT, Color(0.05, 0.03, 0.046, 0.94), Color("c38d61") if hover else Color("72565a"))
+	_center_text_at("RETURN TO MENU", TITLE_BACK_RECT.get_center(), 15, Color("fff0d5") if hover else Color("d4c5c4"))
+
+func _draw_title_footer(canvas_size: Vector2) -> void:
+	_text("ASHEN COVENANT  •  DEMO BUILD 1.0.0", Vector2(92.0, canvas_size.y - 34.0), 12, Color("8f8188"))
+	var prompt := "ENTER  SELECT     ↑ ↓  NAVIGATE" if _title_panel == &"main" else "ESC  RETURN TO MENU"
+	_right_text(prompt, Vector2(canvas_size.x - 52.0, canvas_size.y - 34.0), 12, Color("9c8c8d"))
+
+func _title_menu_entries() -> Array[Dictionary]:
+	var has_save := bool(snapshot.get("has_save", false))
+	return [
+		{"label": "BEGIN NEW COVENANT", "hint": "ENTER", "disabled": false, "danger": false},
+		{"label": "CONTINUE THE HUNT", "hint": "C", "disabled": not has_save, "danger": false},
+		{"label": "HOW TO PLAY", "hint": "", "disabled": false, "danger": false},
+		{"label": "SETTINGS", "hint": "", "disabled": false, "danger": false},
+		{"label": "QUIT DESKTOP", "hint": "", "disabled": false, "danger": true}
+	]
+
+func _title_button_rect(index: int) -> Rect2:
+	return Rect2(TITLE_MENU_ORIGIN + Vector2(0.0, float(index) * (TITLE_MENU_SIZE.y + TITLE_MENU_GAP)), TITLE_MENU_SIZE)
+
+func _title_action_at(viewport_position: Vector2) -> int:
+	var virtual_position := _viewport_to_virtual(viewport_position)
+	for i in _title_menu_entries().size():
+		if _title_button_rect(i).has_point(virtual_position):
+			return i
+	return -1
+
+func _set_title_mode(enabled: bool) -> void:
+	if enabled:
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		focus_mode = Control.FOCUS_ALL
+		if not has_focus():
+			call_deferred("grab_focus")
+		return
+	if not _skill_tree_mode:
+		mouse_filter = Control.MOUSE_FILTER_PASS
+		focus_mode = Control.FOCUS_NONE
+		release_focus()
+		mouse_default_cursor_shape = Control.CURSOR_ARROW
+	_title_hovered = -1
+	_title_focused = 0
+	_title_panel = &"main"
 
 func _draw_quest_hud() -> void:
 	_panel(Rect2(40, 40, 390, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
@@ -332,14 +505,13 @@ func _draw_bottom_hud(canvas_size: Vector2) -> void:
 	_draw_gothic_orb_fill(ESSENCE_ORB_CENTER, 66.0, float(snapshot.get("mana_ratio", 1.0)), Color("245ab8"))
 	draw_texture_rect_region(GOTHIC_HUD_FRAME, GOTHIC_HUD_RECT, GOTHIC_HUD_SOURCE)
 	var skills := [
-		{"key": "LMB", "name": "CLEAVE", "icon": ICON_CLEAVE, "color": Color("c97755"), "cooldown": snapshot.get("attack_cd", 0.0)},
-		{"key": "RMB", "name": "ASH NOVA", "icon": ICON_NOVA, "color": Color("985ccb"), "cooldown": snapshot.get("nova_cd", 0.0)},
-		{"key": "SPACE", "name": "STEP", "icon": ICON_STEP, "color": Color("6572b8"), "cooldown": snapshot.get("dash_cd", 0.0)},
-		{"key": "R", "name": "POTION %d" % int(snapshot.get("potions", 0)), "icon": ICON_POTION, "color": Color("ba3f55"), "cooldown": 0.0}
+		{"key": "F", "name": "CLEAVE", "role": "COMBO", "icon": ICON_CLEAVE, "color": Color("c97755"), "cooldown": snapshot.get("attack_cd", 0.0)},
+		{"key": "Q", "name": "ASH NOVA", "role": "AREA SLOW", "icon": ICON_NOVA, "color": Color("985ccb"), "cooldown": snapshot.get("nova_cd", 0.0)},
+		{"key": "SPACE", "name": "SHADOW STEP", "role": "DASH REND", "icon": ICON_STEP, "color": Color("6572b8"), "cooldown": snapshot.get("dash_cd", 0.0)},
+		{"key": "R", "name": "BLOOD VIAL", "role": "HEAL  ×%d" % int(snapshot.get("potions", 0)), "icon": ICON_POTION, "color": Color("ba3f55"), "cooldown": 0.0}
 	]
-	var skill_start := _skill_row_start()
-	for i in skills.size():
-		_draw_gothic_skill(skill_start + Vector2(i * (SKILL_SLOT_SIZE.x + SKILL_SLOT_GAP), 0.0), skills[i])
+	for i in mini(HOTBAR_SLOT_COUNT, skills.size()):
+		_draw_gothic_skill(hotbar_slot_rect(i).position, skills[i])
 	_draw_gothic_orb_text(LIFE_ORB_CENTER, "LIFE", health, health_max, Color("fff2e4"))
 	_draw_gothic_orb_text(ESSENCE_ORB_CENTER, "ESSENCE", mana, mana_max, Color("e6efff"))
 	var xp_ratio := clampf(float(snapshot.get("xp_ratio", 0.0)), 0.0, 1.0)
@@ -375,8 +547,15 @@ func _draw_gothic_orb_fill(center: Vector2, radius: float, ratio: float, color: 
 	draw_circle(center + Vector2(17, 19), 13.0, Color(color.darkened(0.52), 0.2))
 
 func _skill_row_start() -> Vector2:
-	var total_width := SKILL_SLOT_SIZE.x * 4.0 + SKILL_SLOT_GAP * 3.0
+	var total_width := SKILL_SLOT_SIZE.x * HOTBAR_SLOT_COUNT + SKILL_SLOT_GAP * (HOTBAR_SLOT_COUNT - 1)
 	return Vector2(VIRTUAL_SIZE.x * 0.5 - total_width * 0.5, LIFE_ORB_CENTER.y - SKILL_SLOT_SIZE.y * 0.5)
+
+func hotbar_slot_count() -> int:
+	return HOTBAR_SLOT_COUNT
+
+func hotbar_slot_rect(index: int) -> Rect2:
+	var clamped_index := clampi(index, 0, HOTBAR_SLOT_COUNT - 1)
+	return Rect2(_skill_row_start() + Vector2(clamped_index * (SKILL_SLOT_SIZE.x + SKILL_SLOT_GAP), 0.0), SKILL_SLOT_SIZE)
 
 func _liquid_surface_points(center: Vector2, radius: float, ratio: float, phase: float) -> PackedVector2Array:
 	var points := PackedVector2Array()
@@ -434,7 +613,8 @@ func _draw_gothic_skill(draw_position: Vector2, data: Dictionary) -> void:
 	var color: Color = data.color
 	draw_rect(rect.grow(-4.0), Color(color, 0.07))
 	var icon: Texture2D = data.icon
-	draw_texture_rect(icon, Rect2(draw_position + Vector2(13, 5), Vector2(58, 58)), false, Color(1.0, 1.0, 1.0, 0.96))
+	var icon_position := draw_position + Vector2((SKILL_SLOT_SIZE.x - SKILL_ICON_SIZE.x) * 0.5, SKILL_ICON_TOP)
+	draw_texture_rect(icon, Rect2(icon_position, SKILL_ICON_SIZE), false, Color(1.0, 1.0, 1.0, 0.96))
 	var cd := clampf(float(data.cooldown), 0.0, 1.0)
 	if cd > 0.0:
 		draw_rect(Rect2(draw_position.x + 7, draw_position.y + 7 + 70.0 * (1.0 - cd), 70, 70.0 * cd), Color(0.01, 0.008, 0.012, 0.78))
@@ -443,7 +623,8 @@ func _draw_gothic_skill(draw_position: Vector2, data: Dictionary) -> void:
 	draw_rect(Rect2(draw_position + Vector2(5, 4), Vector2(key_width, 17)), Color(0.018, 0.014, 0.02, 0.92))
 	draw_rect(Rect2(draw_position + Vector2(5, 4), Vector2(key_width, 17)), Color("9b7a4d"), false, 1.0)
 	_text(key_label, draw_position + Vector2(8, 17), 11, Color("fff0d8"))
-	_center_text_at(String(data.name), draw_position + Vector2(42, 73), 11, Color("dfd2c3"))
+	_center_text_at(String(data.name), draw_position + Vector2(42, 72), 10, Color("dfd2c3"))
+	_center_text_at(String(data.get("role", "")), draw_position + Vector2(42, 84), 9, color.lightened(0.22))
 	draw_rect(rect.grow(-2.0), Color(color, 0.42), false, 1.0)
 
 func _draw_skill(draw_position: Vector2, data: Dictionary) -> void:
@@ -695,6 +876,9 @@ func _set_skill_tree_mode(enabled: bool) -> void:
 	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
+	if String(snapshot.get("phase", "TITLE")) == "TITLE":
+		_handle_title_input(event)
+		return
 	if not _skill_tree_mode:
 		if String(snapshot.get("phase", "TITLE")) != "PLAYING":
 			return
@@ -742,6 +926,89 @@ func _gui_input(event: InputEvent) -> void:
 			KEY_3: _select_skill(2)
 			_: return
 		accept_event()
+
+func _handle_title_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var pointer := _viewport_to_virtual(event.position)
+		if _title_panel == &"main":
+			var next_hovered := _title_action_at(event.position)
+			if next_hovered != _title_hovered:
+				_title_hovered = next_hovered
+				if next_hovered >= 0:
+					_title_focused = next_hovered
+				queue_redraw()
+			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if next_hovered >= 0 else Control.CURSOR_ARROW
+		else:
+			var is_interactive := TITLE_BACK_RECT.has_point(pointer) or (_title_panel == &"settings" and TITLE_TOGGLE_RECT.has_point(pointer))
+			mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if is_interactive else Control.CURSOR_ARROW
+			queue_redraw()
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var click_position := _viewport_to_virtual(event.position)
+		if _title_panel == &"main":
+			var action := _title_action_at(event.position)
+			if action >= 0:
+				_activate_title_menu_action(action)
+				accept_event()
+		elif _title_panel == &"settings" and TITLE_TOGGLE_RECT.has_point(click_position):
+			_screen_shake_enabled = not _screen_shake_enabled
+			screen_shake_setting_changed.emit(_screen_shake_enabled)
+			queue_redraw()
+			accept_event()
+		elif TITLE_BACK_RECT.has_point(click_position):
+			_title_panel = &"main"
+			mouse_default_cursor_shape = Control.CURSOR_ARROW
+			queue_redraw()
+			accept_event()
+		return
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	if _title_panel != &"main":
+		if event.is_action_pressed(&"ui_cancel") or event.physical_keycode == KEY_ESCAPE:
+			_title_panel = &"main"
+			queue_redraw()
+			accept_event()
+		elif _title_panel == &"settings" and (event.is_action_pressed(&"ui_accept") or event.physical_keycode == KEY_SPACE):
+			_screen_shake_enabled = not _screen_shake_enabled
+			screen_shake_setting_changed.emit(_screen_shake_enabled)
+			queue_redraw()
+			accept_event()
+		return
+	if event.is_action_pressed(&"ui_up"):
+		_title_focused = wrapi(_title_focused - 1, 0, _title_menu_entries().size())
+		_title_hovered = -1
+		queue_redraw()
+		accept_event()
+	elif event.is_action_pressed(&"ui_down"):
+		_title_focused = wrapi(_title_focused + 1, 0, _title_menu_entries().size())
+		_title_hovered = -1
+		queue_redraw()
+		accept_event()
+	elif event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"confirm"):
+		_activate_title_menu_action(_title_focused)
+		accept_event()
+	elif event.physical_keycode == KEY_C:
+		_activate_title_menu_action(TitleMenuAction.CONTINUE)
+		accept_event()
+
+func _activate_title_menu_action(action: int) -> void:
+	var entries := _title_menu_entries()
+	if action < 0 or action >= entries.size() or bool(entries[action].disabled):
+		return
+	match action:
+		TitleMenuAction.NEW_GAME:
+			title_new_game_requested.emit()
+		TitleMenuAction.CONTINUE:
+			title_continue_requested.emit()
+		TitleMenuAction.CONTROLS:
+			_title_panel = &"controls"
+			_title_hovered = -1
+		TitleMenuAction.SETTINGS:
+			_title_panel = &"settings"
+			_title_hovered = -1
+		TitleMenuAction.QUIT:
+			title_exit_requested.emit()
+	queue_redraw()
 
 func _select_skill(index: int) -> void:
 	var skills: Array = snapshot.get("skills", [])

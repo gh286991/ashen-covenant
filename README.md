@@ -13,10 +13,10 @@ A self-contained Godot 4.5 dark fantasy action RPG demo with a complete combat l
 
 - Left mouse on ground: pathfind and move
 - Left mouse on an enemy: pursue and attack automatically
-- F: manual weapon attack fallback
-- Right mouse / Q: Ash Nova
-- Space: Shadow Step
-- R: drink a health potion
+- F: Cleave — a quick three-hit weapon combo
+- Right mouse / Q: Ash Nova — an area burst that knocks back and slows enemies
+- Space: Shadow Step — an invulnerable dash that rends enemies at departure
+- R: Blood Vial — restore life from a limited supply
 - Tab: character and loot sheet
 - Esc: pause
 
@@ -30,3 +30,10 @@ A self-contained Godot 4.5 dark fantasy action RPG demo with a complete combat l
 - Raw generations, processed transparent sheets, individual frames, prompts, and pipeline metadata are all preserved under `assets/`
 
 The generated art is included locally, so the demo has no runtime network or font dependencies. See `assets/ART_DIRECTION.md` for the palette, lighting, and asset-pipeline rules.
+
+## Audio
+
+- CC0-licensed dungeon ambience and boss music crossfade between exploration and boss states.
+- CC0-licensed effects reinforce weapon swings and impacts, Ash Nova, Shadow Step, enemy attacks and casts, anchors, loot, potions, level-ups, UI confirmations, chests, and major boss outcomes.
+- Music automatically softens while the character sheet, skill tree, or pause screen is open.
+- See `assets/audio/ATTRIBUTION.md` for the exact source and license of every audio file.

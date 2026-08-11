@@ -14,6 +14,7 @@ signal level_up_requested(new_level: int)
 signal died
 signal action_feedback(message: String, color: Color)
 signal damaged(position: Vector2, amount: int, direction: Vector2)
+signal potion_used
 
 enum AttackPhase { NONE, WINDUP, ACTIVE, RECOVERY }
 
@@ -512,6 +513,10 @@ func try_dash() -> bool:
 	action_feedback.emit("SHADOW STEP", Color("9f7aea"))
 	return true
 
+func create_shadow_step_packet(origin: Vector2, direction: Vector2) -> DamagePacket:
+	var roll := DamageFormula.roll_player_damage(base_damage, level, gear_damage(), crit_chance() * 0.5, 0.82, rng)
+	return DamagePacket.new(roll.amount, self, origin, direction.normalized() * 255.0, DamagePacket.DamageKind.ASH, roll.critical)
+
 func try_attack() -> bool:
 	if not _can_start_attack():
 		if health > 0.0:
@@ -593,6 +598,7 @@ func use_potion() -> bool:
 	health = minf(max_health(), health + healed)
 	health_changed.emit(health, max_health())
 	potions_changed.emit(potions)
+	potion_used.emit()
 	action_feedback.emit("RESTORED %d LIFE" % int(healed), Color("77d991"))
 	return true
 

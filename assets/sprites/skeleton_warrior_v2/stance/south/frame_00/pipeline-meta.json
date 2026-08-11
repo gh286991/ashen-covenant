@@ -1,0 +1,30 @@
+{
+  "input": "assets/raw/skeleton_warrior_v2/stance/south/frame_00_raw.png",
+  "grid": {
+    "rows": 1,
+    "cols": 1,
+    "source_cell": [
+      1254,
+      1254
+    ],
+    "output_cell": 256
+  },
+  "key": "#FF00FF",
+  "anchor": "feet",
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "col": 0,
+      "source_bbox": [
+        0,
+        46,
+        961,
+        1254
+      ],
+      "edge_touch": true
+    }
+  ],
+  "valid": false,
+  "edge_margin": 2
+}

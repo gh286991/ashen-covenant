@@ -39,9 +39,13 @@ func _run_suite() -> void:
 	var save_manager := root.get_node_or_null("SaveManager")
 	_check(save_manager != null, "Save manager autoload is available")
 	_check(game.phase == AshenCovenantGame.GamePhase.TITLE, "Title phase appears")
+	var audio := game.get_node_or_null("AudioDirector") as AshenAudioDirector
+	_check(audio != null and audio.is_music_playing(), "CC0 title music begins playing")
+	_check(audio != null and audio.explore_music != null and audio.boss_music != null and audio.level_up != null, "CC0 music and level-up sound load")
 	await _tap_action(&"confirm")
 	await process_frame
 	_check(game.phase == AshenCovenantGame.GamePhase.PLAYING, "Confirm starts the hunt")
+	_check(audio != null and audio.music_state == AshenAudioDirector.MusicState.EXPLORE, "Exploration music state starts with the hunt")
 	_check(game.enemies.size() >= 9, "Enemy encounters populate all anchors")
 	_check(ResourceLoader.exists("res://assets/ui/gothic_hud/gothic-hud-frame.png"), "Gothic angel and demon HUD art is available")
 	var left_mouse_still_attacks := false
@@ -50,6 +54,10 @@ func _run_suite() -> void:
 			left_mouse_still_attacks = true
 	_check(not left_mouse_still_attacks, "Left click is reserved for contextual move and attack commands")
 	_check(game.hud.blocks_world_pointer(Vector2(300, 650)), "Gothic HUD prevents accidental world commands")
+	var hotbar_first := game.hud.surface.hotbar_slot_rect(0)
+	var hotbar_last := game.hud.surface.hotbar_slot_rect(game.hud.surface.hotbar_slot_count() - 1)
+	_check(game.hud.surface.hotbar_slot_count() == 4, "Bottom HUD keeps exactly four action slots")
+	_check(is_equal_approx((hotbar_first.position.x + hotbar_last.end.x) * 0.5, 640.0), "Four action icons stay centered in the hotbar")
 
 	var start_position := game.player.global_position
 	_check(game.issue_pointer_command(start_position + Vector2(100, 0)), "Ground click accepts a navigation command")
@@ -109,6 +117,8 @@ func _run_suite() -> void:
 	var points_before_level := game.player.skill_points
 	var level_position := game.player.global_position
 	var level_time := game.run_time
+	audio.play_level_up()
+	_check(audio.active_effect_count() > 0, "CC0 level-up sound queues for playback")
 	var required_xp := maxi(1, game.player.experience_required() - game.player.experience)
 	game.player.add_experience(required_xp)
 	await process_frame
@@ -140,16 +150,20 @@ func _run_suite() -> void:
 
 	game.player.global_position = Vector2(1100, 1200)
 	game.player.last_move_direction = Vector2.UP
+	var dash_target := game.enemies[2] as CovenantEnemy
+	dash_target.global_position = game.player.global_position + Vector2(46, 0)
+	var dash_health_before := dash_target.health
 	var dash_start := game.player.global_position
 	await _tap_action(&"dash")
 	for i in 15:
 		await physics_frame
 	_check(game.player.global_position.distance_to(dash_start) > 35.0, "Shadow Step covers burst distance")
 	_check(game.player.dash_cooldown > 0.0, "Shadow Step starts its cooldown")
+	_check(dash_target.health < dash_health_before, "Shadow Step phase rend damages enemies at its departure point")
 
 	var nearby_targets: Array[CovenantEnemy] = []
-	for i in mini(2, game.enemies.size()):
-		var enemy := game.enemies[i] as CovenantEnemy
+	for i in 2:
+		var enemy := game.enemies[i + 3] as CovenantEnemy
 		enemy.global_position = game.player.global_position + Vector2(45 + i * 24, 0)
 		nearby_targets.append(enemy)
 	var mana_before := game.player.mana
@@ -159,15 +173,20 @@ func _run_suite() -> void:
 	await _tap_action(&"skill_nova")
 	_check(game.player.mana < mana_before, "Ash Nova consumes essence")
 	var nova_damaged_enemy := false
+	var nova_ashbound_enemy := false
 	for i in nearby_targets.size():
 		if not is_instance_valid(nearby_targets[i]) or nearby_targets[i].health < nearby_health_before[i]:
 			nova_damaged_enemy = true
+		if is_instance_valid(nearby_targets[i]) and nearby_targets[i].ashbound_timer > 0.0:
+			nova_ashbound_enemy = true
 	_check(nova_damaged_enemy, "Ash Nova damages clustered enemies")
+	_check(nova_ashbound_enemy, "Ash Nova leaves clustered enemies Ashbound and slowed")
 
 	game.playtest_break_all_anchors()
 	await process_frame
 	_check(game.anchors_destroyed == 3, "All three soul anchors can be broken")
 	_check(is_instance_valid(game.boss), "Breaking anchors awakens the boss")
+	_check(audio.music_state == AshenAudioDirector.MusicState.BOSS, "Boss arrival crossfades to battle music")
 	_check(save_manager.has_save(), "Anchor progress writes a checkpoint")
 	var saved: Dictionary = save_manager.load_game()
 	_check(int(saved.get("anchors_destroyed", 0)) == 3, "Checkpoint restores objective progress")

@@ -9,6 +9,7 @@ const PickupScript := preload("res://common/loot_pickup.gd")
 const FXScript := preload("res://common/combat_fx.gd")
 const SpriteFXScript := preload("res://common/sprite_sequence_fx.gd")
 const DungeonPropScript := preload("res://common/dungeon_prop.gd")
+const AudioDirectorScript := preload("res://common/audio_director.gd")
 const DUNGEON_LAYOUT_PATH := "res://data/ashen_catacombs_layout.json"
 const POINTER_GRID_CELL_SIZE := 32.0
 const POINTER_ACTOR_RADIUS := 19.0
@@ -20,6 +21,8 @@ const POINTER_GRID_SIZE := Vector2i(69, 44)
 @onready var loot_layer: Node2D = %LootLayer
 @onready var player: CovenantPlayer = %Player
 @onready var hud: CovenantHUD = %HUD
+
+var audio: AshenAudioDirector
 
 var phase := GamePhase.TITLE
 var anchors: Array[Dictionary] = []
@@ -47,10 +50,15 @@ var combat_camera: Camera2D
 var camera_trauma := 0.0
 var camera_noise_time := 0.0
 var hit_stop_generation := 0
+var screen_shake_enabled := true
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	rng.seed = 0xD1AB10
+	audio = AudioDirectorScript.new() as AshenAudioDirector
+	audio.name = "AudioDirector"
+	add_child(audio)
+	audio.set_music_state(AshenAudioDirector.MusicState.TITLE)
 	SpriteFXScript.warm_gameplay_effects()
 	_load_dungeon_layout()
 	world_renderer.configure_layout(dungeon_layout)
@@ -63,6 +71,14 @@ func _ready() -> void:
 		hud.skill_selected.connect(purchase_skill)
 	if not hud.skill_tree_requested.is_connected(open_skill_tree):
 		hud.skill_tree_requested.connect(open_skill_tree)
+	if not hud.title_new_game_requested.is_connected(_on_title_new_game_requested):
+		hud.title_new_game_requested.connect(_on_title_new_game_requested)
+	if not hud.title_continue_requested.is_connected(_on_title_continue_requested):
+		hud.title_continue_requested.connect(_on_title_continue_requested)
+	if not hud.title_exit_requested.is_connected(_on_title_exit_requested):
+		hud.title_exit_requested.connect(_on_title_exit_requested)
+	if not hud.screen_shake_setting_changed.is_connected(_on_screen_shake_setting_changed):
+		hud.screen_shake_setting_changed.connect(_on_screen_shake_setting_changed)
 	player.set_collision_mask_value(1, true)
 	player.gameplay_enabled = false
 	world_renderer.set_interactables(chests, breakables)
@@ -298,6 +314,7 @@ func _connect_player() -> void:
 	player.level_up_requested.connect(_on_level_up)
 	player.died.connect(_on_player_died)
 	player.damaged.connect(_on_player_damaged)
+	player.potion_used.connect(_on_player_potion_used)
 	player.action_feedback.connect(_show_announcement)
 
 func _configure_camera() -> void:
@@ -420,9 +437,12 @@ func _spawn_boss() -> void:
 	_show_announcement("THE ASHEN WARDEN AWAKENS", Color("ff7454"), 3.0)
 	_spawn_fx(boss.global_position, CombatFX.FXType.ANCHOR, Color("ff6a47"), 1.1, 150.0)
 	_spawn_sprite_fx(boss.global_position, SpriteFXScript.EffectID.FIRE_RUNE, Color("ff7a52"), 1.15)
+	audio.set_music_state(AshenAudioDirector.MusicState.BOSS)
+	audio.play_boss_arrival()
 	print("[ASHEN] BOSS_SPAWNED hp=%d" % int(boss.max_health))
 
 func _on_player_attack(origin: Vector2, direction: Vector2, radius: float, packet: DamagePacket, combo: int) -> void:
+	audio.play_player_swing(combo, packet.is_critical)
 	var fx := _spawn_fx(origin, CombatFX.FXType.SLASH, Color("f2d6ae") if not packet.is_critical else Color("fff0b8"), 0.15 if combo < 3 else 0.19, radius * (1.02 if combo < 3 else 1.18))
 	fx.direction = direction
 	fx.swing_side = -1.0 if combo != 2 else 1.0
@@ -450,6 +470,7 @@ func _on_player_attack(origin: Vector2, direction: Vector2, radius: float, packe
 	last_attack_debug = {"origin": origin, "direction": direction, "radius": radius, "hits": hits, "amount": packet.amount}
 
 func _on_player_nova(origin: Vector2, radius: float, packet: DamagePacket) -> void:
+	audio.play_nova()
 	_spawn_fx(origin, CombatFX.FXType.NOVA, Color("a85ee5"), 0.68, radius)
 	_spawn_sprite_fx(origin, SpriteFXScript.EffectID.ENERGY_BALL, Color("b983ff"), 2.45, 1.1)
 	var hit_count := 0
@@ -460,6 +481,7 @@ func _on_player_nova(origin: Vector2, radius: float, packet: DamagePacket) -> vo
 			var push: Vector2 = offset.normalized() * 285.0
 			var nova_packet := DamagePacket.new(packet.amount, player, origin, push, packet.kind, packet.is_critical)
 			if enemy.take_damage(nova_packet):
+				enemy.apply_ashbound(0.58 if enemy.is_boss else 1.25)
 				hit_count += 1
 				player.total_damage += int(packet.amount)
 	for anchor in anchors:
@@ -471,7 +493,7 @@ func _on_player_nova(origin: Vector2, radius: float, packet: DamagePacket) -> vo
 		_request_hit_stop(0.055)
 		_add_camera_trauma(0.30)
 		hud.play_screen_flash(Color("b86cff"), 0.07, 0.14)
-	_show_announcement("ASH NOVA  •  %d HIT%s" % [hit_count, "S" if hit_count != 1 else ""], Color("c88cff"), 1.0)
+	_show_announcement("ASH NOVA  •  %d HIT%s  •  ASHBOUND" % [hit_count, "S" if hit_count != 1 else ""], Color("c88cff"), 1.0)
 
 func _hit_interactables(center: Vector2, radius: float) -> int:
 	var hits := 0
@@ -501,6 +523,7 @@ func _open_chest(chest: Dictionary) -> void:
 	if rng.randf() < 0.55:
 		_spawn_currency_pickup(chest_position + Vector2(24, 8), LootPickup.PickupKind.POTION, 1)
 	_spawn_fx(chest_position, CombatFX.FXType.PICKUP, Color("f0bd57"), 0.7, 58.0)
+	audio.play_chest()
 	_show_announcement("HIDDEN CACHE OPENED", Color("f0c86a"), 1.6)
 
 func _break_dungeon_prop(prop_data: Dictionary) -> void:
@@ -511,12 +534,14 @@ func _break_dungeon_prop(prop_data: Dictionary) -> void:
 		prop.set_destroyed(true)
 	var prop_position := _position_from_data(prop_data)
 	_spawn_fx(prop_position, CombatFX.FXType.DEATH, Color("ad8066"), 0.44, 34.0)
+	audio.play_enemy_death(false)
 	_spawn_currency_pickup(prop_position, LootPickup.PickupKind.GOLD, rng.randi_range(2, 8))
 	if rng.randf() < 0.16:
 		_spawn_currency_pickup(prop_position + Vector2(15, 0), LootPickup.PickupKind.POTION, 1)
 
 func _damage_anchor(anchor: Dictionary, amount: float) -> void:
 	anchor.health = maxf(0.0, float(anchor.health) - amount)
+	audio.play_anchor_hit(float(anchor.health) <= 0.0 and bool(anchor.alive))
 	_spawn_fx(anchor.position, CombatFX.FXType.HIT, Color("e74767"), 0.3, 28.0)
 	_spawn_sprite_fx(Vector2(anchor.position), SpriteFXScript.EffectID.FIRE_RUNE, Color("ef5c76"), 0.34)
 	if float(anchor.health) <= 0.0 and bool(anchor.alive):
@@ -538,6 +563,7 @@ func _damage_anchor(anchor: Dictionary, amount: float) -> void:
 	world_renderer.update_world(anchors, anchors_destroyed >= anchors.size(), is_instance_valid(boss))
 
 func _on_enemy_attack(enemy: CovenantEnemy, center: Vector2, radius: float, raw_damage: float, color: Color) -> void:
+	audio.play_enemy_attack(enemy.is_boss)
 	_spawn_fx(center, CombatFX.FXType.NOVA, color, 0.35, radius)
 	_spawn_sprite_fx(center, SpriteFXScript.EffectID.FIRE_RUNE, color, clampf(radius / 135.0, 0.42, 1.18))
 	var attack_direction := (player.global_position - enemy.global_position).normalized()
@@ -552,12 +578,14 @@ func _on_enemy_attack(enemy: CovenantEnemy, center: Vector2, radius: float, raw_
 		player.take_damage(DamagePacket.new(raw_damage, enemy, center, direction * 190.0, DamagePacket.DamageKind.PHYSICAL))
 
 func _on_projectile_requested(origin: Vector2, direction: Vector2, speed: float, raw_damage: float, color: Color) -> void:
+	audio.play_enemy_cast()
 	var projectile := ProjectileScript.new() as EnemyProjectile
 	projectile.setup(direction, speed, raw_damage, player, color)
 	projectile.movement_filter = Callable(world_renderer, "is_motion_walkable")
 	projectile.global_position = origin
 	actors.add_child(projectile)
 	projectile.impacted.connect(func(p: Vector2, c: Color) -> void:
+		audio.play_hit()
 		_spawn_fx(p, CombatFX.FXType.HIT, c, 0.28, 34.0)
 		_spawn_sprite_fx(p, SpriteFXScript.EffectID.EATER_FIRE, c, 0.42)
 	)
@@ -569,6 +597,7 @@ func _on_summon_requested(origin: Vector2, count: int) -> void:
 	_show_announcement("THE WARDEN CALLS THE DEAD", Color("d55d58"), 1.5)
 
 func _on_enemy_damaged(fx_position: Vector2, amount: int, critical: bool, impact_direction: Vector2) -> void:
+	audio.play_hit(critical)
 	var color := Color("ffd166") if critical else Color("f1e8d6")
 	var label := "%d%s" % [amount, "!" if critical else ""]
 	var hit_fx := _spawn_fx(fx_position, CombatFX.FXType.HIT, color, 0.24, 34.0 if critical else 26.0)
@@ -581,6 +610,7 @@ func _on_enemy_damaged(fx_position: Vector2, amount: int, critical: bool, impact
 	_spawn_fx(fx_position - Vector2(0, 28), CombatFX.FXType.TEXT, color, 0.72, 65.0 if critical else 35.0, label)
 
 func _on_player_damaged(fx_position: Vector2, amount: int, impact_direction: Vector2) -> void:
+	audio.play_hurt()
 	var hit_fx := _spawn_fx(fx_position, CombatFX.FXType.HIT, Color("ff6b6b"), 0.28, 32.0)
 	hit_fx.direction = impact_direction if impact_direction != Vector2.ZERO else Vector2.DOWN
 	var blade_impact := _spawn_sprite_fx(fx_position, SpriteFXScript.EffectID.BLADE_IMPACT, Color("ff7770"), 0.78)
@@ -592,7 +622,11 @@ func _on_player_damaged(fx_position: Vector2, amount: int, impact_direction: Vec
 	_add_camera_trauma(0.34)
 	hud.play_screen_flash(Color("e52f48"), 0.18, 0.18)
 
+func _on_player_potion_used() -> void:
+	audio.play_potion()
+
 func _on_enemy_died(enemy: CovenantEnemy, xp_reward: int, was_boss: bool) -> void:
+	audio.play_enemy_death(was_boss)
 	var death_position := enemy.global_position
 	enemies.erase(enemy)
 	if was_boss and boss == enemy:
@@ -648,6 +682,7 @@ func _on_pickup_collected(pickup: LootPickup) -> void:
 		LootPickup.PickupKind.GOLD:
 			player.gold += pickup.amount
 			_show_announcement("%d GOLD" % pickup.amount, Color("f1c75b"), 0.7)
+	audio.play_pickup(pickup.kind == LootPickup.PickupKind.ITEM)
 	_spawn_fx(player.global_position, CombatFX.FXType.PICKUP, pickup.pickup_color(), 0.42, 34.0)
 
 func _update_exploration(delta: float) -> void:
@@ -704,6 +739,7 @@ func _update_shortcuts() -> void:
 
 func _on_level_up(new_level: int) -> void:
 	if phase == GamePhase.PLAYING:
+		audio.play_level_up()
 		_spawn_fx(player.global_position, CombatFX.FXType.LEVEL_UP, Color("ffd16a"), 1.0, 100.0)
 		hud.play_level_up_notice(new_level, 1)
 		_show_announcement("LEVEL %d  •  SKILL POINT +1" % new_level, Color("ffd16a"), 2.0)
@@ -711,6 +747,7 @@ func _on_level_up(new_level: int) -> void:
 
 func open_skill_tree() -> void:
 	if phase == GamePhase.PLAYING:
+		audio.play_ui_confirm()
 		_set_phase(GamePhase.SKILL_TREE)
 
 func purchase_skill(skill_id: String) -> void:
@@ -719,28 +756,63 @@ func purchase_skill(skill_id: String) -> void:
 	if not player.purchase_skill(StringName(skill_id)):
 		return
 	var skill_rank := player.get_skill_rank(StringName(skill_id))
+	audio.play_ui_confirm()
 	_show_announcement("%s  •  RANK %d" % [skill_id.replace("_", " ").to_upper(), skill_rank], Color("f0cc77"), 1.7)
 
 func _on_player_died() -> void:
 	_set_phase(GamePhase.DEFEAT)
+	audio.play_defeat()
 	_spawn_fx(player.global_position, CombatFX.FXType.DEATH, Color("d33d50"), 1.1, 120.0)
 	_spawn_sprite_fx(player.global_position, SpriteFXScript.EffectID.EATER_FIRE, Color("e45765"), 1.0)
 	print("[ASHEN] PLAYER_DEFEATED time=%.1f" % run_time)
 
 func _on_victory() -> void:
 	_set_phase(GamePhase.VICTORY)
+	audio.play_victory()
 	_save_service().delete_save()
 	objective = "Covenant broken"
 	print("[ASHEN] VICTORY level=%d kills=%d gold=%d time=%.1f" % [player.level, player.kills, player.gold, run_time])
 
 func _set_phase(new_phase: GamePhase) -> void:
 	phase = new_phase
+	match phase:
+		GamePhase.TITLE:
+			audio.set_music_state(AshenAudioDirector.MusicState.TITLE)
+		GamePhase.PLAYING:
+			audio.set_music_state(AshenAudioDirector.MusicState.BOSS if is_instance_valid(boss) else AshenAudioDirector.MusicState.EXPLORE)
+		GamePhase.VICTORY:
+			audio.set_music_state(AshenAudioDirector.MusicState.VICTORY)
+		GamePhase.DEFEAT:
+			audio.set_music_state(AshenAudioDirector.MusicState.DEFEAT)
+	audio.set_menu_ducked(phase in [GamePhase.SHEET, GamePhase.SKILL_TREE, GamePhase.PAUSED])
 	player.gameplay_enabled = phase == GamePhase.PLAYING
 	if phase != GamePhase.PLAYING:
 		player.velocity = Vector2.ZERO
 		player.cancel_pointer_command()
 	if phase in [GamePhase.TITLE, GamePhase.VICTORY, GamePhase.DEFEAT]:
 		_restore_time_scale()
+
+func _on_title_new_game_requested() -> void:
+	if phase == GamePhase.TITLE:
+		audio.play_ui_confirm()
+		start_new_game()
+
+func _on_title_continue_requested() -> void:
+	if phase == GamePhase.TITLE and _save_service().has_save():
+		audio.play_ui_confirm()
+		continue_game()
+
+func _on_title_exit_requested() -> void:
+	if phase == GamePhase.TITLE:
+		get_tree().quit()
+
+func _on_screen_shake_setting_changed(enabled: bool) -> void:
+	audio.play_ui_confirm()
+	screen_shake_enabled = enabled
+	if not screen_shake_enabled:
+		camera_trauma = 0.0
+		if is_instance_valid(combat_camera):
+			combat_camera.offset = Vector2.ZERO
 
 func _show_announcement(message: String, color: Color = Color.WHITE, duration: float = 1.1) -> void:
 	announcement = message
@@ -762,6 +834,18 @@ func _spawn_sprite_fx(fx_position: Vector2, type: int, color: Color, scale_facto
 	return fx
 
 func _on_player_dash(origin: Vector2, direction: Vector2) -> void:
+	audio.play_dash()
+	var packet := player.create_shadow_step_packet(origin, direction)
+	var hits := 0
+	for enemy in enemies.duplicate():
+		if not is_instance_valid(enemy) or enemy.global_position.distance_to(origin) > 64.0:
+			continue
+		if enemy.take_damage(packet):
+			hits += 1
+	if hits > 0:
+		_spawn_fx(origin, CombatFX.FXType.HIT, Color("a987ff"), 0.28, 52.0)
+		_add_camera_trauma(0.16)
+		_show_announcement("SHADOW STEP  •  PHASE REND", Color("b7a0ff"), 0.75)
 	var dash_fx := _spawn_sprite_fx(origin - direction * 12.0, SpriteFXScript.EffectID.BLUE_TOP, Color("a987ff"), 0.36, 1.35)
 	dash_fx.rotation = direction.angle() + PI * 0.5
 
@@ -782,6 +866,8 @@ func _restore_time_scale() -> void:
 	Engine.time_scale = 1.0
 
 func _add_camera_trauma(amount: float) -> void:
+	if not screen_shake_enabled:
+		return
 	camera_trauma = clampf(maxf(camera_trauma, amount), 0.0, 1.0)
 
 func _update_camera_feedback(delta: float) -> void:

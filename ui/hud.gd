@@ -3,6 +3,10 @@ extends CanvasLayer
 
 signal skill_selected(id: String)
 signal skill_tree_requested
+signal title_new_game_requested
+signal title_continue_requested
+signal title_exit_requested
+signal screen_shake_setting_changed(enabled: bool)
 
 var surface: CovenantHUDSurface
 
@@ -14,6 +18,10 @@ func _ready() -> void:
 	add_child(surface)
 	surface.skill_selected.connect(_on_skill_selected)
 	surface.skill_tree_requested.connect(_on_skill_tree_requested)
+	surface.title_new_game_requested.connect(_on_title_new_game_requested)
+	surface.title_continue_requested.connect(_on_title_continue_requested)
+	surface.title_exit_requested.connect(_on_title_exit_requested)
+	surface.screen_shake_setting_changed.connect(_on_screen_shake_setting_changed)
 
 func update_snapshot(data: Dictionary) -> void:
 	if surface:
@@ -35,3 +43,15 @@ func _on_skill_selected(id: String) -> void:
 
 func _on_skill_tree_requested() -> void:
 	skill_tree_requested.emit()
+
+func _on_title_new_game_requested() -> void:
+	title_new_game_requested.emit()
+
+func _on_title_continue_requested() -> void:
+	title_continue_requested.emit()
+
+func _on_title_exit_requested() -> void:
+	title_exit_requested.emit()
+
+func _on_screen_shake_setting_changed(enabled: bool) -> void:
+	screen_shake_setting_changed.emit(enabled)

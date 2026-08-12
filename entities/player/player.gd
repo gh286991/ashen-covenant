@@ -1,6 +1,8 @@
 class_name CovenantPlayer
 extends CharacterBody2D
 
+const Warrior3DVisualScript = preload("res://entities/player/warrior_3d_visual.gd")
+
 signal attack_requested(origin: Vector2, facing: Vector2, radius: float, packet: DamagePacket, combo_step: int)
 signal nova_requested(origin: Vector2, radius: float, packet: DamagePacket)
 signal dash_requested(origin: Vector2, direction: Vector2)
@@ -114,6 +116,7 @@ const SKILL_DEFINITIONS := {
 var gameplay_enabled := false
 var rng := RandomNumberGenerator.new()
 var facing := Vector2.UP
+var model_facing := Vector2.UP
 var last_move_direction := Vector2.UP
 var dash_direction := Vector2.UP
 var dash_timer := 0.0
@@ -137,6 +140,7 @@ var knockback_velocity := Vector2.ZERO
 var locomotion_velocity := Vector2.ZERO
 var visual_root: Node2D
 var art_sprite: Sprite2D
+var model_visual
 var art_time := 0.0
 var death_pose_timer := 0.0
 var movement_filter: Callable
@@ -189,6 +193,14 @@ func _ready() -> void:
 	art_sprite.position = Vector2(0, -CRIMSON_FOOT_OFFSET)
 	art_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	visual_root.add_child(art_sprite)
+	model_visual = Warrior3DVisualScript.new()
+	model_visual.name = "Warrior3DVisual"
+	visual_root.add_child(model_visual)
+	if model_visual.is_available():
+		art_sprite.visible = false
+	else:
+		model_visual.queue_free()
+		model_visual = null
 	rng.seed = 0xA55E_2026
 	health = max_health()
 	mana = max_mana()
@@ -295,7 +307,10 @@ func _update_art_sprite() -> void:
 		sprite_frame = int(art_time * 6.0) % CRIMSON_FRAME_COUNTS[sprite_action]
 		var breath := sin(art_time * 2.7)
 		pose_scale = Vector2(1.0 + breath * 0.006, 1.0 - breath * 0.009)
-	_set_crimson_frame(sprite_action, sprite_direction, sprite_frame)
+	if is_instance_valid(model_visual):
+		model_visual.set_animation_state(_model_animation_for(sprite_action), _model_facing_direction())
+	else:
+		_set_crimson_frame(sprite_action, sprite_direction, sprite_frame)
 	visual_root.position = pose_position
 	visual_root.rotation = pose_rotation
 	visual_root.scale = pose_scale
@@ -307,6 +322,27 @@ func _update_art_sprite() -> void:
 		art_sprite.modulate = Color.WHITE
 	if health <= 0.0:
 		art_sprite.modulate.a = 1.0 - clampf(death_pose_timer / 0.42, 0.0, 0.72)
+	if is_instance_valid(model_visual):
+		model_visual.modulate = art_sprite.modulate
+
+func _model_animation_for(sprite_action: StringName) -> StringName:
+	match sprite_action:
+		&"walk":
+			return &"Walk"
+		&"run":
+			return &"Run"
+		&"sword_attack", &"axe_attack":
+			return &"Sword_Attack"
+		_:
+			return &"Idle"
+
+func _model_facing_direction() -> Vector2:
+	return model_facing
+
+func set_model_facing_at(target_position: Vector2) -> void:
+	var click_direction := target_position - global_position
+	if click_direction.length_squared() > 16.0:
+		model_facing = click_direction.normalized()
 
 func _set_crimson_frame(action: StringName, direction: Vector2, frame: int) -> void:
 	var direction_index := 0 # down, left, right, up

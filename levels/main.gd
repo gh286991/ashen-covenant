@@ -155,6 +155,9 @@ func _viewport_to_world(viewport_position: Vector2) -> Vector2:
 func issue_pointer_command(world_position: Vector2) -> bool:
 	if phase != GamePhase.PLAYING or not is_instance_valid(player):
 		return false
+	# The player always faces the actual click; pathfinding must not replace it
+	# with a nearby navigable cell when the clicked point is behind an obstacle.
+	player.set_model_facing_at(world_position)
 	var enemy := _enemy_at_pointer(world_position)
 	if is_instance_valid(enemy):
 		var enemy_path := _build_pointer_path(player.global_position, enemy.global_position)

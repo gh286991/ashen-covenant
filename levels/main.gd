@@ -8,7 +8,6 @@ const ProjectileScript := preload("res://entities/projectiles/projectile.gd")
 const PickupScript := preload("res://common/loot_pickup.gd")
 const FXScript := preload("res://common/combat_fx.gd")
 const SpriteFXScript := preload("res://common/sprite_sequence_fx.gd")
-const DungeonPropScript := preload("res://common/dungeon_prop.gd")
 const AudioDirectorScript := preload("res://common/audio_director.gd")
 const DUNGEON_LAYOUT_PATH := "res://data/ashen_catacombs_layout.json"
 const POINTER_GRID_CELL_SIZE := 32.0
@@ -21,6 +20,8 @@ const POINTER_GRID_SIZE := Vector2i(69, 44)
 @onready var loot_layer: Node2D = %LootLayer
 @onready var player: CovenantPlayer = %Player
 @onready var hud: CovenantHUD = %HUD
+@onready var dungeon_props_layer: Node2D = %DungeonProps
+@onready var dungeon_features_layer: Node2D = %DungeonFeatures
 
 var audio: AshenAudioDirector
 
@@ -64,6 +65,7 @@ func _ready() -> void:
 	world_renderer.configure_layout(dungeon_layout)
 	_initialize_anchors()
 	_initialize_interactables()
+	_configure_scene_features()
 	_rebuild_dungeon_props()
 	_connect_player()
 	_configure_camera()
@@ -81,8 +83,7 @@ func _ready() -> void:
 		hud.screen_shake_setting_changed.connect(_on_screen_shake_setting_changed)
 	player.set_collision_mask_value(1, true)
 	player.gameplay_enabled = false
-	world_renderer.set_interactables(chests, breakables)
-	world_renderer.update_world(anchors, false, false)
+	_refresh_world_state()
 	_update_hud()
 	print("[ASHEN] PLAYTEST_READY phase=TITLE")
 
@@ -266,49 +267,93 @@ func _smooth_pointer_path(from: Vector2, raw_path: PackedVector2Array) -> Packed
 
 func _initialize_anchors() -> void:
 	anchors.clear()
-	for source: Dictionary in dungeon_layout.get("anchors", []):
-		var maximum := float(source.get("maxHealth", 100.0))
-		anchors.append({
-			"id": StringName(String(source.get("id", "anchor"))),
-			"position": _position_from_data(source, "position"),
-			"max_health": maximum,
-			"health": maximum,
-			"alive": true
-		})
+	for feature in _map_features_of_type(DungeonMapFeature.FeatureType.SOUL_ANCHOR):
+		feature.reset_runtime_state()
+		anchors.append(feature.anchor_data())
 	anchors_destroyed = 0
 
 func _initialize_interactables() -> void:
-	chests.assign(dungeon_layout.get("chests", []).duplicate(true))
-	breakables.assign(dungeon_layout.get("breakables", []).duplicate(true))
+	chests.clear()
+	breakables.clear()
 	dungeon_props.clear()
 	discovered_rooms.clear()
 	current_room = ""
 	hazard_timers.clear()
-	for hazard: Dictionary in dungeon_layout.get("hazards", []):
-		hazard_timers[String(hazard.get("id", "hazard"))] = 0.0
+	for hazard in _map_features_of_type(DungeonMapFeature.FeatureType.SPIKE_TRAP):
+		var hazard_data := hazard.hazard_data()
+		hazard_timers[String(hazard_data.get("id", "hazard"))] = 0.0
+	for prop in _scene_dungeon_props():
+		prop.reset_runtime_state()
+		dungeon_props[String(prop.prop_id)] = prop
+		var prop_data := prop.gameplay_data()
+		if prop.gameplay_role == "Chest":
+			chests.append(prop_data)
+		elif prop.gameplay_role == "Breakable":
+			breakables.append(prop_data)
 	shortcut_cooldown = 0.0
 	world_renderer.set_interactables(chests, breakables)
 
 func _rebuild_dungeon_props() -> void:
 	dungeon_props.clear()
-	for prop_data: Dictionary in dungeon_layout.get("decorProps", []):
-		_spawn_dungeon_prop(prop_data)
+	for prop in _scene_dungeon_props():
+		dungeon_props[String(prop.prop_id)] = prop
 	for chest: Dictionary in chests:
-		var chest_visual := chest.duplicate(true)
-		chest_visual["kind"] = "closed-chest"
-		var node := _spawn_dungeon_prop(chest_visual)
-		node.set_opened(bool(chest.get("opened", false)))
-		node.highlight = not bool(chest.get("hidden", false)) and not bool(chest.get("opened", false))
+		var chest_prop := dungeon_props.get(String(chest.get("id", ""))) as DungeonProp
+		if is_instance_valid(chest_prop):
+			chest_prop.set_opened(bool(chest.get("opened", false)))
+			chest_prop.highlight = not bool(chest.get("hidden", false)) and not bool(chest.get("opened", false))
 	for breakable: Dictionary in breakables:
-		var node := _spawn_dungeon_prop(breakable)
-		node.set_destroyed(not bool(breakable.get("alive", true)))
+		var breakable_prop := dungeon_props.get(String(breakable.get("id", ""))) as DungeonProp
+		if is_instance_valid(breakable_prop):
+			breakable_prop.set_destroyed(not bool(breakable.get("alive", true)))
 
-func _spawn_dungeon_prop(prop_data: Dictionary) -> DungeonProp:
-	var prop := DungeonPropScript.new() as DungeonProp
-	prop.setup(prop_data)
-	actors.add_child(prop)
-	dungeon_props[String(prop_data.get("id", prop.name))] = prop
-	return prop
+func _scene_dungeon_props() -> Array[DungeonProp]:
+	var result: Array[DungeonProp] = []
+	for child in dungeon_props_layer.get_children():
+		if child is DungeonProp:
+			result.append(child)
+	return result
+
+func _map_features_of_type(feature_type: int) -> Array[DungeonMapFeature]:
+	var result: Array[DungeonMapFeature] = []
+	for child in dungeon_features_layer.get_children():
+		if child is DungeonMapFeature and child.feature_type == feature_type:
+			result.append(child)
+	return result
+
+func _configure_scene_features() -> void:
+	var boss_gate_data: Dictionary = {}
+	var shortcut_data: Array[Dictionary] = []
+	var hazard_data: Array[Dictionary] = []
+	for child in dungeon_features_layer.get_children():
+		var feature := child as DungeonMapFeature
+		if feature == null:
+			continue
+		match feature.feature_type:
+			DungeonMapFeature.FeatureType.BOSS_GATE:
+				boss_gate_data = feature.boss_gate_data()
+			DungeonMapFeature.FeatureType.SHORTCUT_GATE:
+				shortcut_data.append(feature.shortcut_data())
+			DungeonMapFeature.FeatureType.SPIKE_TRAP:
+				hazard_data.append(feature.hazard_data())
+	var decor_prop_data: Array[Dictionary] = []
+	for prop in _scene_dungeon_props():
+		if prop.gameplay_role == "Decoration":
+			decor_prop_data.append(prop.gameplay_data())
+	world_renderer.set_scene_features(boss_gate_data, shortcut_data, hazard_data, decor_prop_data)
+
+func _refresh_world_state() -> void:
+	world_renderer.set_interactables(chests, breakables)
+	world_renderer.update_world(anchors, anchors_destroyed >= anchors.size(), is_instance_valid(boss))
+	for feature in _map_features_of_type(DungeonMapFeature.FeatureType.SOUL_ANCHOR):
+		var anchor := _anchor_by_id(String(feature.feature_id))
+		if not anchor.is_empty():
+			feature.set_anchor_state(float(anchor.get("health", feature.max_health)), bool(anchor.get("alive", true)))
+	for feature in _map_features_of_type(DungeonMapFeature.FeatureType.SHORTCUT_GATE):
+		var anchor := _anchor_by_id(String(feature.linked_anchor_id))
+		feature.set_gate_open(not anchor.is_empty() and not bool(anchor.get("alive", true)))
+	for feature in _map_features_of_type(DungeonMapFeature.FeatureType.BOSS_GATE):
+		feature.set_gate_open(anchors_destroyed >= anchors.size())
 
 func _connect_player() -> void:
 	player.attack_requested.connect(_on_player_attack)
@@ -349,8 +394,7 @@ func start_new_game() -> void:
 	sheet_open = false
 	current_room = "entry_nave"
 	discovered_rooms.append(current_room)
-	world_renderer.set_interactables(chests, breakables)
-	world_renderer.update_world(anchors, false, false)
+	_refresh_world_state()
 	_set_phase(GamePhase.PLAYING)
 	_show_announcement("THE COVENANT STIRS", Color("e49967"), 2.4)
 	print("[ASHEN] GAME_STARTED mode=new enemies=%d" % enemies.size())
@@ -382,8 +426,7 @@ func continue_game() -> void:
 		_spawn_boss()
 	else:
 		objective = "Break the soul anchors  (%d / 3)" % anchors_destroyed
-	world_renderer.update_world(anchors, anchors_destroyed >= anchors.size(), is_instance_valid(boss))
-	world_renderer.set_interactables(chests, breakables)
+	_refresh_world_state()
 	_set_phase(GamePhase.PLAYING)
 	_show_announcement("THE COVENANT REMEMBERS", Color("8fb5c9"), 2.2)
 	print("[ASHEN] GAME_STARTED mode=continue anchors=%d" % anchors_destroyed)
@@ -396,7 +439,7 @@ func _clear_dynamic_nodes() -> void:
 	for parent in [effects, loot_layer]:
 		for child in parent.get_children(): child.queue_free()
 	for child in actors.get_children():
-		if child != player: child.queue_free()
+		if child != player and child != dungeon_props_layer: child.queue_free()
 	dungeon_props.clear()
 
 func _spawn_anchor_encounters() -> void:
@@ -436,7 +479,7 @@ func _spawn_boss() -> void:
 	enemies.clear()
 	boss = _spawn_enemy(&"boss", _position_from_data(dungeon_layout, "bossSpawn"), maxi(1, player.level), true)
 	objective = "Slay the Ashen Warden"
-	world_renderer.update_world(anchors, true, true)
+	_refresh_world_state()
 	_show_announcement("THE ASHEN WARDEN AWAKENS", Color("ff7454"), 3.0)
 	_spawn_fx(boss.global_position, CombatFX.FXType.ANCHOR, Color("ff6a47"), 1.1, 150.0)
 	_spawn_sprite_fx(boss.global_position, SpriteFXScript.EffectID.FIRE_RUNE, Color("ff7a52"), 1.15)
@@ -509,7 +552,7 @@ func _hit_interactables(center: Vector2, radius: float) -> int:
 			_break_dungeon_prop(breakable)
 			hits += 1
 	if hits > 0:
-		world_renderer.set_interactables(chests, breakables)
+		_refresh_world_state()
 	return hits
 
 func _open_chest(chest: Dictionary) -> void:
@@ -563,7 +606,7 @@ func _damage_anchor(anchor: Dictionary, amount: float) -> void:
 		print("[ASHEN] ANCHOR_DESTROYED count=%d" % anchors_destroyed)
 		if anchors_destroyed >= anchors.size():
 			_spawn_boss()
-	world_renderer.update_world(anchors, anchors_destroyed >= anchors.size(), is_instance_valid(boss))
+	_refresh_world_state()
 
 func _on_enemy_attack(enemy: CovenantEnemy, center: Vector2, radius: float, raw_damage: float, color: Color) -> void:
 	audio.play_enemy_attack(enemy.is_boss)
@@ -704,7 +747,8 @@ func _update_exploration(delta: float) -> void:
 	_update_shortcuts()
 
 func _update_hazards() -> void:
-	for hazard: Dictionary in dungeon_layout.get("hazards", []):
+	for hazard_feature in _map_features_of_type(DungeonMapFeature.FeatureType.SPIKE_TRAP):
+		var hazard := hazard_feature.hazard_data()
 		var hazard_id := String(hazard.get("id", "hazard"))
 		if float(hazard_timers.get(hazard_id, 0.0)) > 0.0:
 			continue
@@ -723,7 +767,8 @@ func _update_hazards() -> void:
 func _update_shortcuts() -> void:
 	if shortcut_cooldown > 0.0:
 		return
-	for shortcut: Dictionary in dungeon_layout.get("shortcuts", []):
+	for shortcut_feature in _map_features_of_type(DungeonMapFeature.FeatureType.SHORTCUT_GATE):
+		var shortcut := shortcut_feature.shortcut_data()
 		var anchor := _anchor_by_id(String(shortcut.get("anchor", "")))
 		if anchor.is_empty() or bool(anchor.get("alive", true)):
 			continue

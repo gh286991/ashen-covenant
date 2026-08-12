@@ -1,3 +1,4 @@
+@tool
 class_name AshenWorldRenderer
 extends Node2D
 
@@ -14,6 +15,11 @@ var layout: Dictionary = {}
 var anchors: Array[Dictionary] = []
 var chests: Array[Dictionary] = []
 var breakables: Array[Dictionary] = []
+var scene_boss_gate: Dictionary = {}
+var scene_shortcuts: Array[Dictionary] = []
+var scene_hazards: Array[Dictionary] = []
+var scene_decor_props: Array[Dictionary] = []
+var scene_features_configured := false
 var gate_open := false
 var boss_awake := false
 var elapsed := 0.0
@@ -21,30 +27,48 @@ var world_collision: StaticBody2D
 var collision_rebuild_queued := false
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+		return
 	z_index = -20
 	_ensure_world_collision()
 	_request_collision_rebuild()
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	elapsed += delta
 	queue_redraw()
 
 func configure_layout(layout_data: Dictionary) -> void:
 	layout = layout_data
-	_request_collision_rebuild()
+	if not Engine.is_editor_hint():
+		_request_collision_rebuild()
 	queue_redraw()
 
 func set_interactables(chest_data: Array[Dictionary], breakable_data: Array[Dictionary]) -> void:
 	chests = chest_data
 	breakables = breakable_data
-	_request_collision_rebuild()
+	if not Engine.is_editor_hint():
+		_request_collision_rebuild()
 	queue_redraw()
 
 func update_world(anchor_data: Array[Dictionary], opened: bool, boss_active: bool) -> void:
 	anchors = anchor_data
 	gate_open = opened
 	boss_awake = boss_active
-	_request_collision_rebuild()
+	if not Engine.is_editor_hint():
+		_request_collision_rebuild()
+	queue_redraw()
+
+func set_scene_features(boss_gate_data: Dictionary, shortcut_data: Array[Dictionary], hazard_data: Array[Dictionary], decor_prop_data: Array[Dictionary]) -> void:
+	scene_boss_gate = boss_gate_data
+	scene_shortcuts = shortcut_data
+	scene_hazards = hazard_data
+	scene_decor_props = decor_prop_data
+	scene_features_configured = true
+	if not Engine.is_editor_hint():
+		_request_collision_rebuild()
 	queue_redraw()
 
 func resolve_motion(from: Vector2, to: Vector2, actor_radius: float = 16.0) -> Vector2:
@@ -91,12 +115,12 @@ func is_point_walkable(point: Vector2, actor_radius: float = 16.0) -> bool:
 		return false
 	if not gate_open and _boss_gate_rect().grow(actor_radius).has_point(point):
 		return false
-	for shortcut: Dictionary in layout.get("shortcuts", []):
+	for shortcut: Dictionary in _shortcuts():
 		if not _anchor_is_alive(String(shortcut.get("anchor", ""))):
 			continue
 		if _shortcut_gate_rect(shortcut).grow(actor_radius).has_point(point):
 			return false
-	for prop: Dictionary in layout.get("decorProps", []):
+	for prop: Dictionary in _decor_props():
 		var blocker_rect := _decor_blocker_rect(prop)
 		if blocker_rect.has_area() and blocker_rect.grow(actor_radius).has_point(point):
 			return false
@@ -159,15 +183,27 @@ func _position_from_data(data: Dictionary) -> Vector2:
 	return Vector2(float(data.get("x", 0.0)), float(data.get("y", 0.0)))
 
 func _boss_gate_rect() -> Rect2:
-	return _rect_from_data(layout.get("bossGate", {}))
+	return _rect_from_data(_boss_gate_data())
 
 func _boss_gate_render_rect() -> Rect2:
-	var gate: Dictionary = layout.get("bossGate", {})
+	var gate := _boss_gate_data()
 	var position_data: Dictionary = gate.get("position", {})
 	var size_data: Dictionary = gate.get("renderSize", {})
 	var gate_position := Vector2(float(position_data.get("x", 1100.0)), float(position_data.get("y", 447.0)))
 	var gate_size := Vector2(float(size_data.get("w", 220.0)), float(size_data.get("h", 92.0)))
 	return Rect2(gate_position - Vector2(gate_size.x * 0.5, gate_size.y), gate_size)
+
+func _boss_gate_data() -> Dictionary:
+	return scene_boss_gate if scene_features_configured else layout.get("bossGate", {})
+
+func _shortcuts() -> Array[Dictionary]:
+	return scene_shortcuts if scene_features_configured else layout.get("shortcuts", [])
+
+func _hazards() -> Array[Dictionary]:
+	return scene_hazards if scene_features_configured else layout.get("hazards", [])
+
+func _decor_props() -> Array[Dictionary]:
+	return scene_decor_props if scene_features_configured else layout.get("decorProps", [])
 
 func _shortcut_gate_rect(shortcut: Dictionary) -> Rect2:
 	var render_rect := _shortcut_gate_render_rect(shortcut)
@@ -224,10 +260,10 @@ func _rebuild_world_colliders() -> void:
 		boundary_index += 1
 	if not gate_open:
 		_add_rect_blocker("BossGate", _boss_gate_rect())
-	for shortcut: Dictionary in layout.get("shortcuts", []):
+	for shortcut: Dictionary in _shortcuts():
 		if _anchor_is_alive(String(shortcut.get("anchor", ""))):
 			_add_rect_blocker("ShortcutGate_%s" % String(shortcut.get("id", "gate")), _shortcut_gate_rect(shortcut))
-	for prop: Dictionary in layout.get("decorProps", []):
+	for prop: Dictionary in _decor_props():
 		var blocker_rect := _decor_blocker_rect(prop)
 		if blocker_rect.has_area():
 			_add_rect_blocker("Decor_%s" % String(prop.get("id", "blocker")), blocker_rect)
@@ -303,13 +339,15 @@ func _anchor_is_alive(anchor_id: String) -> bool:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, MAP_SIZE), Color("07060b"))
 	draw_texture_rect(DUNGEON_BASE_TEXTURE, Rect2(Vector2.ZERO, MAP_SIZE), false, Color.WHITE)
+	if Engine.is_editor_hint():
+		return
 	_draw_hazards()
 	_draw_anchors()
 	_draw_shortcuts()
 	_draw_gate()
 
 func _draw_hazards() -> void:
-	for hazard: Dictionary in layout.get("hazards", []):
+	for hazard: Dictionary in _hazards():
 		var p := _position_from_data(hazard)
 		var radius := float(hazard.get("radius", 44.0))
 		var pulse := 0.5 + sin(elapsed * 4.8 + p.x * 0.01) * 0.5
@@ -336,7 +374,7 @@ func _draw_anchors() -> void:
 				draw_colored_polygon(PackedVector2Array([p + Vector2.from_angle(angle) * 12.0, p + Vector2.from_angle(angle + 0.2) * 32.0, p + Vector2.from_angle(angle - 0.2) * 25.0]), Color("4c3239"))
 
 func _draw_shortcuts() -> void:
-	for shortcut: Dictionary in layout.get("shortcuts", []):
+	for shortcut: Dictionary in _shortcuts():
 		var anchor_id := String(shortcut.get("anchor", ""))
 		var render_rect := _shortcut_gate_render_rect(shortcut)
 		var p := Vector2(render_rect.get_center().x, render_rect.end.y)

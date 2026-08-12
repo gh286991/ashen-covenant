@@ -1,3 +1,4 @@
+@tool
 class_name DungeonProp
 extends Node2D
 
@@ -11,16 +12,26 @@ const TEXTURES := {
 	"collapsed-column": preload("res://assets/props/dungeon/collapsed-column/prop.png"),
 }
 
-var prop_id := ""
-var prop_kind := ""
-var render_size := Vector2(80, 80)
+@export_category("Dungeon Prop")
+@export var prop_id: StringName = &"prop"
+@export_enum("Decoration", "Chest", "Breakable") var gameplay_role := "Decoration"
+@export var prop_kind := "funerary-urns":
+	set(value):
+		prop_kind = value
+		queue_redraw()
+@export var render_size := Vector2(80, 80):
+	set(value):
+		render_size = value
+		queue_redraw()
+@export var blocker_offset := Vector2.ZERO
+@export var blocker_size := Vector2.ZERO
 var opened := false
 var destroyed := false
 var highlight := false
 var elapsed := 0.0
 
 func setup(data: Dictionary) -> DungeonProp:
-	prop_id = String(data.get("id", "prop"))
+	prop_id = StringName(String(data.get("id", "prop")))
 	prop_kind = String(data.get("kind", "closed-chest"))
 	position = Vector2(float(data.get("x", 0.0)), float(data.get("y", 0.0)))
 	render_size = Vector2(float(data.get("w", 80.0)), float(data.get("h", 80.0)))
@@ -28,10 +39,36 @@ func setup(data: Dictionary) -> DungeonProp:
 	return self
 
 func _ready() -> void:
-	name = "DungeonProp_%s" % prop_id
 	queue_redraw()
 
+func reset_runtime_state() -> void:
+	opened = false
+	destroyed = false
+	highlight = false
+	visible = true
+	queue_redraw()
+
+func gameplay_data() -> Dictionary:
+	var data := {
+		"id": String(prop_id),
+		"kind": prop_kind,
+		"x": global_position.x,
+		"y": global_position.y,
+		"w": render_size.x,
+		"h": render_size.y
+	}
+	if blocker_size.x > 0.0 and blocker_size.y > 0.0:
+		data["blocker"] = {
+			"x": global_position.x + blocker_offset.x,
+			"y": global_position.y + blocker_offset.y,
+			"w": blocker_size.x,
+			"h": blocker_size.y
+		}
+	return data
+
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	elapsed += delta
 	if prop_kind == "ritual-brazier" or highlight:
 		queue_redraw()

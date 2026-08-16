@@ -1,88 +1,69 @@
 {
-  "mapSize": {"width": 2200, "height": 1400},
-  "spawn": {"x": 1100, "y": 1250},
-  "continueSpawn": {"x": 1100, "y": 1080},
-  "bossSpawn": {"x": 1100, "y": 190},
+  "mapSize": {"width": 1920, "height": 1280},
+  "spawn": {"x": 820, "y": 1100},
+  "continueSpawn": {"x": 820, "y": 1030},
+  "bossSpawn": {"x": 1280, "y": 170},
   "rooms": [
-    {"id": "entry_nave", "name": "SEPULCHRAL NAVE", "shape": "rect", "x": 930, "y": 875, "w": 340, "h": 470},
-    {"id": "ritual_court", "name": "RITUAL COURT", "shape": "ellipse", "x": 1100, "y": 670, "rx": 375, "ry": 280, "minimap": {"x": 725, "y": 390, "w": 750, "h": 560}},
-    {"id": "west_gallery", "name": "WESTERN GALLERY", "shape": "rect", "x": 570, "y": 575, "w": 270, "h": 180},
-    {"id": "west_crypt", "name": "CRYPT OF DUST", "shape": "ellipse", "x": 390, "y": 680, "rx": 295, "ry": 255, "minimap": {"x": 95, "y": 425, "w": 590, "h": 510}},
-    {"id": "west_alcove", "name": "FORGOTTEN ALCOVE", "shape": "rect", "x": 55, "y": 590, "w": 210, "h": 155},
-    {"id": "west_stair", "name": "WESTERN SHORTCUT", "shape": "rect", "x": 385, "y": 790, "w": 185, "h": 245},
-    {"id": "east_gallery", "name": "EASTERN GALLERY", "shape": "rect", "x": 1360, "y": 575, "w": 270, "h": 180},
-    {"id": "east_ossuary", "name": "THE OSSUARY", "shape": "ellipse", "x": 1810, "y": 680, "rx": 295, "ry": 255, "minimap": {"x": 1515, "y": 425, "w": 590, "h": 510}},
-    {"id": "east_alcove", "name": "BONEKEEPER'S CACHE", "shape": "rect", "x": 1935, "y": 590, "w": 210, "h": 155},
-    {"id": "east_stair", "name": "EASTERN SHORTCUT", "shape": "rect", "x": 1630, "y": 790, "w": 185, "h": 245},
-    {"id": "gate_passage", "name": "COVENANT GATE", "shape": "rect", "x": 1000, "y": 235, "w": 200, "h": 265},
-    {"id": "boss_sanctum", "name": "WARDEN'S SANCTUM", "shape": "rect", "x": 690, "y": 45, "w": 820, "h": 250}
+    {"id": "entry_hall", "name": "THE IRON ARRIVAL", "shape": "rect", "x": 256, "y": 960, "w": 1408, "h": 240, "minimap": {"x": 128, "y": 900, "w": 1664, "h": 240}},
+    {"id": "cell_block", "name": "THE SILENT CELLS", "shape": "rect", "x": 224, "y": 624, "w": 992, "h": 336, "minimap": {"x": 128, "y": 520, "w": 1088, "h": 360}},
+    {"id": "gearworks", "name": "THE GEARWORKS", "shape": "rect", "x": 512, "y": 96, "w": 672, "h": 560, "minimap": {"x": 352, "y": 80, "w": 736, "h": 520}},
+    {"id": "bloodworks", "name": "THE BLOODWORKS", "shape": "rect", "x": 1216, "y": 512, "w": 640, "h": 480, "minimap": {"x": 1216, "y": 480, "w": 640, "h": 480}},
+    {"id": "warden_approach", "name": "THE WARDEN'S APPROACH", "shape": "rect", "x": 896, "y": 288, "w": 768, "h": 352, "minimap": {"x": 896, "y": 288, "w": 768, "h": 312}},
+    {"id": "warden_sanctum", "name": "THE KEEPER'S SANCTUM", "shape": "rect", "x": 768, "y": 64, "w": 896, "h": 256, "minimap": {"x": 768, "y": 64, "w": 896, "h": 224}}
   ],
   "walkables": [
-    {"shape": "rect", "x": 930, "y": 875, "w": 340, "h": 470},
-    {"shape": "ellipse", "x": 1100, "y": 670, "rx": 375, "ry": 280},
-    {"shape": "rect", "x": 570, "y": 575, "w": 270, "h": 180},
-    {"shape": "ellipse", "x": 390, "y": 680, "rx": 295, "ry": 255},
-    {"shape": "rect", "x": 55, "y": 590, "w": 210, "h": 155},
-    {"shape": "rect", "x": 385, "y": 790, "w": 185, "h": 245},
-    {"shape": "rect", "x": 1360, "y": 575, "w": 270, "h": 180},
-    {"shape": "ellipse", "x": 1810, "y": 680, "rx": 295, "ry": 255},
-    {"shape": "rect", "x": 1935, "y": 590, "w": 210, "h": 155},
-    {"shape": "rect", "x": 1630, "y": 790, "w": 185, "h": 245},
-    {"shape": "rect", "x": 1000, "y": 235, "w": 200, "h": 265},
-    {"shape": "rect", "x": 690, "y": 45, "w": 820, "h": 250}
+    {"shape": "rect", "x": 256, "y": 960, "w": 1408, "h": 240},
+    {"shape": "rect", "x": 224, "y": 624, "w": 992, "h": 336},
+    {"shape": "rect", "x": 512, "y": 96, "w": 672, "h": 560},
+    {"shape": "rect", "x": 1216, "y": 512, "w": 640, "h": 480},
+    {"shape": "rect", "x": 896, "y": 288, "w": 768, "h": 352},
+    {"shape": "rect", "x": 768, "y": 64, "w": 896, "h": 288}
   ],
-  "bossGate": {"id": "boss_gate", "x": 995, "y": 405, "w": 210, "h": 58, "position": {"x": 1100, "y": 447}, "renderSize": {"w": 220, "h": 92}},
+  "bossGate": {"id": "warden_gate", "x": 896, "y": 292, "w": 768, "h": 56, "position": {"x": 1280, "y": 320}, "renderSize": {"w": 240, "h": 104}},
   "shortcuts": [
-    {"id": "west_shortcut", "anchor": "west", "trigger": {"x": 410, "y": 870, "w": 135, "h": 135}, "target": {"x": 985, "y": 1045}, "gatePosition": {"x": 477, "y": 858}, "renderSize": {"w": 150, "h": 74}},
-    {"id": "east_shortcut", "anchor": "east", "trigger": {"x": 1655, "y": 870, "w": 135, "h": 135}, "target": {"x": 1215, "y": 1045}, "gatePosition": {"x": 1722, "y": 858}, "renderSize": {"w": 150, "h": 74}}
+    {"id": "cell_shortcut", "anchor": "cells", "trigger": {"x": 400, "y": 840, "w": 150, "h": 120}, "target": {"x": 820, "y": 1050}, "gatePosition": {"x": 475, "y": 860}, "renderSize": {"w": 144, "h": 88}},
+    {"id": "bloodworks_shortcut", "anchor": "bloodworks", "trigger": {"x": 1550, "y": 840, "w": 150, "h": 120}, "target": {"x": 1090, "y": 1050}, "gatePosition": {"x": 1625, "y": 860}, "renderSize": {"w": 144, "h": 88}}
   ],
   "anchors": [
-    {"id": "west", "position": {"x": 390, "y": 690}, "maxHealth": 110},
-    {"id": "east", "position": {"x": 1810, "y": 690}, "maxHealth": 125},
-    {"id": "north", "position": {"x": 1100, "y": 670}, "maxHealth": 145}
+    {"id": "cells", "position": {"x": 432, "y": 760}, "maxHealth": 115},
+    {"id": "gearworks", "position": {"x": 820, "y": 420}, "maxHealth": 135},
+    {"id": "bloodworks", "position": {"x": 1580, "y": 760}, "maxHealth": 155}
   ],
   "encounters": [
-    {"anchor": "west", "spawns": [
-      {"kind": "ghoul", "x": 270, "y": 720}, {"kind": "ghoul", "x": 505, "y": 745}, {"kind": "wraith", "x": 390, "y": 535}, {"kind": "ghoul", "x": 170, "y": 650}
+    {"anchor": "cells", "spawns": [
+      {"kind": "ghoul", "x": 320, "y": 720}, {"kind": "ghoul", "x": 560, "y": 750}, {"kind": "wraith", "x": 420, "y": 620}, {"kind": "brute", "x": 700, "y": 830}
     ]},
-    {"anchor": "east", "spawns": [
-      {"kind": "ghoul", "x": 1690, "y": 730}, {"kind": "ghoul", "x": 1930, "y": 745}, {"kind": "wraith", "x": 1810, "y": 535}, {"kind": "brute", "x": 2030, "y": 655}
+    {"anchor": "gearworks", "spawns": [
+      {"kind": "ghoul", "x": 650, "y": 320}, {"kind": "ghoul", "x": 980, "y": 300}, {"kind": "wraith", "x": 760, "y": 520}, {"kind": "brute", "x": 1030, "y": 500}
     ]},
-    {"anchor": "north", "spawns": [
-      {"kind": "ghoul", "x": 955, "y": 720}, {"kind": "ghoul", "x": 1245, "y": 720}, {"kind": "wraith", "x": 1100, "y": 520}, {"kind": "brute", "x": 1320, "y": 625}
+    {"anchor": "bloodworks", "spawns": [
+      {"kind": "ghoul", "x": 1380, "y": 700}, {"kind": "ghoul", "x": 1710, "y": 740}, {"kind": "wraith", "x": 1500, "y": 570}, {"kind": "brute", "x": 1700, "y": 900}
     ]}
   ],
   "hazards": [
-    {"id": "nave_spikes", "x": 1100, "y": 1045, "radius": 48, "damage": 12, "period": 1.1},
-    {"id": "west_spikes", "x": 705, "y": 665, "radius": 44, "damage": 13, "period": 1.0},
-    {"id": "east_spikes", "x": 1495, "y": 665, "radius": 44, "damage": 13, "period": 1.0},
-    {"id": "gate_spikes", "x": 1100, "y": 345, "radius": 42, "damage": 16, "period": 0.95}
+    {"id": "cell_spikes", "x": 610, "y": 900, "radius": 46, "damage": 13, "period": 1.0},
+    {"id": "gear_spikes", "x": 1000, "y": 560, "radius": 44, "damage": 15, "period": 0.95},
+    {"id": "blood_spikes", "x": 1440, "y": 880, "radius": 50, "damage": 16, "period": 0.9},
+    {"id": "approach_spikes", "x": 1180, "y": 430, "radius": 42, "damage": 17, "period": 0.85}
   ],
   "decorProps": [
-    {"id": "brazier_entry_l", "kind": "ritual-brazier", "x": 970, "y": 905, "w": 68, "h": 115},
-    {"id": "brazier_entry_r", "kind": "ritual-brazier", "x": 1230, "y": 905, "w": 68, "h": 115},
-    {"id": "brazier_west", "kind": "ritual-brazier", "x": 740, "y": 625, "w": 62, "h": 104},
-    {"id": "brazier_east", "kind": "ritual-brazier", "x": 1460, "y": 625, "w": 62, "h": 104},
-    {"id": "sarcophagus_w1", "kind": "sarcophagus", "x": 285, "y": 550, "w": 150, "h": 92, "blocker": {"x": 225, "y": 515, "w": 120, "h": 52}},
-    {"id": "sarcophagus_w2", "kind": "sarcophagus", "x": 505, "y": 565, "w": 150, "h": 92, "blocker": {"x": 445, "y": 530, "w": 120, "h": 52}},
-    {"id": "sarcophagus_w3", "kind": "sarcophagus", "x": 255, "y": 825, "w": 140, "h": 86, "blocker": {"x": 200, "y": 792, "w": 110, "h": 48}},
-    {"id": "urns_e1", "kind": "funerary-urns", "x": 1705, "y": 560, "w": 92, "h": 100, "blocker": {"x": 1671, "y": 525, "w": 68, "h": 48}},
-    {"id": "urns_e2", "kind": "funerary-urns", "x": 1950, "y": 590, "w": 86, "h": 92, "blocker": {"x": 1918, "y": 558, "w": 64, "h": 44}},
-    {"id": "bones_e1", "kind": "bone-pile", "x": 1880, "y": 825, "w": 118, "h": 82},
-    {"id": "column_court_l", "kind": "collapsed-column", "x": 820, "y": 565, "w": 108, "h": 112, "blocker": {"x": 785, "y": 528, "w": 70, "h": 50}},
-    {"id": "column_court_r", "kind": "collapsed-column", "x": 1380, "y": 820, "w": 108, "h": 112, "blocker": {"x": 1345, "y": 783, "w": 70, "h": 50}}
+    {"id": "cell_barrels", "kind": "funerary-urns", "x": 300, "y": 890, "w": 80, "h": 112, "blocker": {"x": 278, "y": 850, "w": 44, "h": 54}},
+    {"id": "gear_stones", "kind": "collapsed-column", "x": 1010, "y": 200, "w": 76, "h": 76, "blocker": {"x": 984, "y": 168, "w": 52, "h": 44}},
+    {"id": "blood_bones", "kind": "bone-pile", "x": 1760, "y": 600, "w": 76, "h": 76, "blocker": {"x": 1738, "y": 570, "w": 44, "h": 42}},
+    {"id": "entry_sconce_l", "kind": "ritual-brazier", "x": 840, "y": 1060, "w": 44, "h": 56},
+    {"id": "entry_sconce_r", "kind": "ritual-brazier", "x": 1080, "y": 1060, "w": 44, "h": 56}
   ],
   "chests": [
-    {"id": "west_cache", "x": 145, "y": 690, "w": 92, "h": 88, "opened": false, "hidden": true},
-    {"id": "east_cache", "x": 2055, "y": 690, "w": 92, "h": 88, "opened": false, "hidden": true},
-    {"id": "nave_cache", "x": 1010, "y": 1185, "w": 86, "h": 82, "opened": false, "hidden": false}
+    {"id": "entry_cache", "x": 960, "y": 1110, "w": 78, "h": 78, "opened": false, "hidden": false},
+    {"id": "cell_cache", "x": 300, "y": 700, "w": 78, "h": 78, "opened": false, "hidden": true},
+    {"id": "blood_cache", "x": 1760, "y": 820, "w": 78, "h": 78, "opened": false, "hidden": true}
   ],
   "breakables": [
-    {"id": "urn_1", "kind": "funerary-urns", "x": 1080, "y": 1160, "w": 62, "h": 68, "alive": true},
-    {"id": "urn_2", "kind": "funerary-urns", "x": 1195, "y": 965, "w": 58, "h": 64, "alive": true},
-    {"id": "urn_3", "kind": "funerary-urns", "x": 520, "y": 640, "w": 60, "h": 66, "alive": true},
-    {"id": "urn_4", "kind": "funerary-urns", "x": 1655, "y": 635, "w": 60, "h": 66, "alive": true},
-    {"id": "urn_5", "kind": "funerary-urns", "x": 1050, "y": 480, "w": 58, "h": 64, "alive": true},
-    {"id": "urn_6", "kind": "bone-pile", "x": 1260, "y": 815, "w": 80, "h": 58, "alive": true}
+    {"id": "barrel_1", "kind": "funerary-urns", "x": 360, "y": 900, "w": 54, "h": 82, "alive": true},
+    {"id": "barrel_2", "kind": "funerary-urns", "x": 520, "y": 900, "w": 54, "h": 82, "alive": true},
+    {"id": "barrel_3", "kind": "funerary-urns", "x": 690, "y": 280, "w": 54, "h": 82, "alive": true},
+    {"id": "barrel_4", "kind": "funerary-urns", "x": 1080, "y": 280, "w": 54, "h": 82, "alive": true},
+    {"id": "bones_1", "kind": "bone-pile", "x": 1340, "y": 880, "w": 58, "h": 58, "alive": true},
+    {"id": "bones_2", "kind": "bone-pile", "x": 1640, "y": 600, "w": 58, "h": 58, "alive": true}
   ]
 }

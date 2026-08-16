@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_straight_2p6.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="1_collision"]
+size = Vector3(3.83, 4.24, 0.62)
+
+[node name="WallStraight_2p6" type="Node3D"]
+script = ExtResource("1_script")
+piece_id = &"WALL_STRAIGHT_2P6"
+piece_role = "Straight Wall"
+footprint = Vector3(3.83, 4.24, 0.62)
+editor_note = "Straight 2.6 m stone wall. Local X is its length; rotate Y by 90 degrees for a side wall."
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Wall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0.62, 2.12, 0)
+shape = SubResource("1_collision")

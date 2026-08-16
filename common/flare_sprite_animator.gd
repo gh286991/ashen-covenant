@@ -25,6 +25,29 @@ func setup(definition_path: String, source_root: String, display_scale: float) -
 	set_animation(&"stance", Vector2.DOWN, 0.0)
 
 
+func fit_to_max_dimension(target_size: float) -> void:
+	var max_dimension := _max_idle_frame_dimension()
+	if max_dimension <= 0.0:
+		return
+	var fitted_scale := target_size / max_dimension
+	if fitted_scale < scale.x:
+		scale = Vector2.ONE * fitted_scale
+
+
+func _max_idle_frame_dimension() -> float:
+	var max_dimension := 0.0
+	for action in [&"stance", &"run"]:
+		var directions: Dictionary = _frames_by_action.get(action, {})
+		for frame_list_variant in directions.values():
+			var frame_list: Array = frame_list_variant
+			for frame_variant in frame_list:
+				var frame_texture := (frame_variant as Dictionary).get("texture") as Texture2D
+				if frame_texture != null:
+					var frame_size := frame_texture.get_size()
+					max_dimension = maxf(max_dimension, maxf(frame_size.x, frame_size.y))
+	return max_dimension
+
+
 func set_animation(requested_action: StringName, facing: Vector2, delta: float, desired_duration: float = 0.0) -> void:
 	var action := _resolve_action(requested_action)
 	var direction := _direction_for(facing)

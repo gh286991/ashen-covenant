@@ -1,0 +1,361 @@
+[gd_scene load_steps=8 format=3 uid="uid://etkv2masrxvn"]
+
+[ext_resource type="PackedScene" path="res://levels/kit/floor_block_3p9.tscn" id="1_floor"]
+[ext_resource type="PackedScene" path="res://levels/kit/wall_straight_2p6.tscn" id="2_wall"]
+[ext_resource type="PackedScene" path="res://levels/kit/wall_corner_2p6.tscn" id="3_corner"]
+[ext_resource type="PackedScene" path="res://levels/kit/doorway_3p6.tscn" id="4_doorway"]
+[ext_resource type="PackedScene" path="res://levels/kit/pillar_crypt.tscn" id="5_pillar"]
+[ext_resource type="PackedScene" path="res://levels/kit/altar_coffin.tscn" id="6_altar"]
+[ext_resource type="PackedScene" path="res://levels/kit/brazier_blue.tscn" id="7_brazier"]
+
+[node name="ModularKitMap" type="Node3D"]
+editor_description = "真正由基本單元組成的地圖。展開 FloorBlocks、Walls、Doorways、Props 後，可直接複製、移動、旋轉各個積木。"
+
+[node name="FloorBlocks" type="Node3D" parent="."]
+editor_description = "地板每塊是 3.9m。複製一個 FloorBlock 後，以約 3.95m 的間距排列即可擴建房間。"
+
+[node name="A_Floor_01" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.946, 0, -3.946)
+
+[node name="A_Floor_02" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -3.946)
+
+[node name="A_Floor_03" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.054, 0, -3.946)
+
+[node name="A_Floor_04" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.946, 0, 0)
+
+[node name="A_Floor_05" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
+
+[node name="A_Floor_06" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.054, 0, 0)
+
+[node name="A_Floor_07" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.946, 0, 3.946)
+
+[node name="A_Floor_08" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 3.946)
+
+[node name="A_Floor_09" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 0.9997091, -0.02411811, 0, 0.02411811, 0.9997091, -3.054, 0, 3.946)
+
+[node name="A_Floor_09" parent="FloorBlocks/A_Floor_09" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 0.9997091, -0.02411811, 0, 0.02411811, 0.9997091, -3.054, 0, 3.946)
+
+[node name="A_Floor_09" parent="FloorBlocks/A_Floor_09/A_Floor_09" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 0.99970925, -0.024118103, 0, 0.024118103, 0.99970925, 4.1086845, 2.5749469, 3.8591666)
+
+[node name="AB_Corridor_Floor" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+
+[node name="B_Floor_01" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.054, 0, -3.946)
+
+[node name="B_Floor_02" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -3.946)
+
+[node name="B_Floor_03" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.946, 0, -3.946)
+
+[node name="B_Floor_04" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.054, 0, 0)
+
+[node name="B_Floor_05" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="B_Floor_06" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.946, 0, 0)
+
+[node name="B_Floor_07" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.054, 0, 3.946)
+
+[node name="B_Floor_08" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 3.946)
+
+[node name="B_Floor_09" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.946, 0, 3.946)
+
+[node name="BC_Corridor_Floor" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
+
+[node name="C_Floor_01" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.054, 0, -3.946)
+
+[node name="C_Floor_02" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, -3.946)
+
+[node name="C_Floor_03" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.946, 0, -3.946)
+
+[node name="C_Floor_04" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.054, 0, 0)
+
+[node name="C_Floor_05" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 0)
+
+[node name="C_Floor_06" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.946, 0, 0)
+
+[node name="C_Floor_07" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.054, 0, 3.946)
+
+[node name="C_Floor_08" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 3.946)
+
+[node name="C_Floor_09" parent="FloorBlocks" instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.946, 0, 3.946)
+
+[node name="Walls" type="Node3D" parent="."]
+editor_description = "直牆可旋轉 Y 軸 90 度改成側牆。名稱含 Cutaway 的牆預設不渲染，以保持俯視鏡頭看得見室內。"
+
+[node name="A_North_01" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -6)
+
+[node name="A_North_02" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.18, 0, -6)
+
+[node name="A_North_03" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.36, 0, -6)
+
+[node name="A_South_01_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 6)
+visible = false
+
+[node name="A_South_02_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.18, 0, 6)
+visible = false
+
+[node name="A_South_03_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.36, 0, 6)
+visible = false
+
+[node name="A_West_01" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -13, 0, -3.8)
+
+[node name="A_West_02" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -13, 0, 0)
+
+[node name="A_West_03" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -13, 0, 3.8)
+
+[node name="A_East_Lower_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1, 0, -4)
+visible = false
+
+[node name="A_East_Upper_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1, 0, 4)
+visible = false
+
+[node name="B_North_01" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -6)
+
+[node name="B_North_02" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82, 0, -6)
+
+[node name="B_North_03" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.64, 0, -6)
+
+[node name="B_South_01_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 6)
+visible = false
+
+[node name="B_South_02_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82, 0, 6)
+visible = false
+
+[node name="B_South_03_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.64, 0, 6)
+visible = false
+
+[node name="B_West_Lower" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 2, 0, -4)
+
+[node name="B_West_Upper" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 2, 0, 4)
+
+[node name="B_East_01_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14, 0, -3.8)
+visible = false
+
+[node name="B_East_02_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14, 0, 0)
+visible = false
+
+[node name="B_East_03_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14, 0, 3.8)
+visible = false
+
+[node name="C_North_01" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -6)
+
+[node name="C_North_02" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.82, 0, -6)
+
+[node name="C_North_03" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.64, 0, -6)
+
+[node name="C_South_01_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 6)
+visible = false
+
+[node name="C_South_02_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.82, 0, 6)
+visible = false
+
+[node name="C_South_03_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.64, 0, 6)
+visible = false
+
+[node name="C_West_Lower" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17, 0, -4)
+
+[node name="C_West_Upper" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17, 0, 4)
+
+[node name="C_East_01_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 29, 0, -3.8)
+visible = false
+
+[node name="C_East_02_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 29, 0, 0)
+visible = false
+
+[node name="C_East_03_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 29, 0, 3.8)
+visible = false
+
+[node name="AB_Corridor_North" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2.2)
+
+[node name="AB_Corridor_South_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2.2)
+visible = false
+
+[node name="BC_Corridor_North" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, -2.2)
+
+[node name="BC_Corridor_South_Cutaway" parent="Walls" instance=ExtResource("2_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, 2.2)
+visible = false
+
+[node name="Corners" type="Node3D" parent="."]
+editor_description = "每個轉角是完整 L 形牆，可旋轉 90 度以重複使用。"
+
+[node name="A_Corner_NW" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -6)
+
+[node name="A_Corner_NE" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1, 0, -6)
+
+[node name="A_Corner_SW_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13, 0, 6)
+visible = false
+
+[node name="A_Corner_SE_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1, 0, 6)
+visible = false
+
+[node name="B_Corner_NW" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -6)
+
+[node name="B_Corner_NE" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14, 0, -6)
+
+[node name="B_Corner_SW_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2, 0, 6)
+visible = false
+
+[node name="B_Corner_SE_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14, 0, 6)
+visible = false
+
+[node name="C_Corner_NW" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, -6)
+
+[node name="C_Corner_NE" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 29, 0, -6)
+
+[node name="C_Corner_SW_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 17, 0, 6)
+visible = false
+
+[node name="C_Corner_SE_Cutaway" parent="Corners" instance=ExtResource("3_corner")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 29, 0, 6)
+visible = false
+
+[node name="Doorways" type="Node3D" parent="."]
+editor_description = "這些是視覺門洞；真正的切換觸發區在主場景的 Doors。要新增連通門時，同時複製一個 Door Area3D。"
+
+[node name="Doorway_A_to_B" parent="Doorways" instance=ExtResource("4_doorway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Doorway_B_to_C" parent="Doorways" instance=ExtResource("4_doorway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 0)
+
+[node name="Props" type="Node3D" parent="."]
+editor_description = "柱子、祭壇、火盆也是單獨場景；直接 Ctrl+D 複製即可在房間內擺放。"
+
+[node name="A_Pillar_NW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -3)
+
+[node name="A_Pillar_NE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -3)
+
+[node name="A_Pillar_SW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 3)
+
+[node name="A_Pillar_SE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 3)
+
+[node name="A_Altar" parent="Props" instance=ExtResource("6_altar")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7, 0, 0)
+
+[node name="A_Brazier_N" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -4.5)
+
+[node name="A_Brazier_S" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 4.5)
+
+[node name="B_Pillar_NW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -3)
+
+[node name="B_Pillar_NE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -3)
+
+[node name="B_Pillar_SW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 3)
+
+[node name="B_Pillar_SE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 3)
+
+[node name="B_Altar" parent="Props" instance=ExtResource("6_altar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="B_Brazier_N" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -4.5)
+
+[node name="B_Brazier_S" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 4.5)
+
+[node name="C_Pillar_NW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -3)
+
+[node name="C_Pillar_NE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -3)
+
+[node name="C_Pillar_SW" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 3)
+
+[node name="C_Pillar_SE" parent="Props" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 3)
+
+[node name="C_Altar" parent="Props" instance=ExtResource("6_altar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 0)
+
+[node name="C_Brazier_N" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, -4.5)
+
+[node name="C_Brazier_S" parent="Props" instance=ExtResource("7_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 4.5)

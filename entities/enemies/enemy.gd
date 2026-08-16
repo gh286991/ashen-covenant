@@ -12,6 +12,8 @@ enum AttackStyle { MELEE, PROJECTILE, RADIAL, CHARGE }
 
 const DEATH_DURATION := 0.82
 const BOSS_DEATH_DURATION := 1.1
+const ENEMY_ART_SCALE_FACTOR := 0.80
+const ACTOR_ART_MAX_DIMENSION := 128.0
 const FlareSpriteAnimatorScript := preload("res://common/flare_sprite_animator.gd")
 const FLARE_BESTIARY_ROOT := "res://assets/sprites/flare_bestiary"
 
@@ -53,6 +55,7 @@ var visual_root: Node2D
 var art_sprite: Sprite2D
 var flare_animator: FlareSpriteAnimator
 var art_scale := 0.5
+var art_visual_scale_ratio := 1.0
 var movement_filter: Callable
 var activation_radius := 520.0
 var death_timer := 0.0
@@ -122,7 +125,7 @@ func _ready() -> void:
 	var shape_node := CollisionShape2D.new()
 	shape_node.name = "BodyShape"
 	var circle := CircleShape2D.new()
-	circle.radius = 30.0 if is_boss else (23.0 if enemy_kind == &"brute" else 16.0)
+	circle.radius = 26.0 if is_boss else (19.0 if enemy_kind == &"brute" else 14.0)
 	shape_node.shape = circle
 	add_child(shape_node)
 	visual_root = Node2D.new()
@@ -140,18 +143,20 @@ func _configure_art_sprite() -> void:
 	match enemy_kind:
 		&"wraith":
 			definition_path = FLARE_BESTIARY_ROOT.path_join("skeleton_mage.txt")
-			art_scale = 0.47
+			art_scale = 0.47 * ENEMY_ART_SCALE_FACTOR
 		&"brute":
 			definition_path = FLARE_BESTIARY_ROOT.path_join("zombie.txt")
-			art_scale = 0.58
+			art_scale = 0.58 * ENEMY_ART_SCALE_FACTOR
 		&"boss":
 			definition_path = FLARE_BESTIARY_ROOT.path_join("minotaur.txt")
-			art_scale = 0.62
+			art_scale = 0.62 * ENEMY_ART_SCALE_FACTOR
 		_:
 			definition_path = FLARE_BESTIARY_ROOT.path_join("skeleton.txt")
-			art_scale = 0.52
+			art_scale = 0.52 * ENEMY_ART_SCALE_FACTOR
 	visual_root.add_child(flare_animator)
 	flare_animator.setup(definition_path, FLARE_BESTIARY_ROOT, art_scale)
+	flare_animator.fit_to_max_dimension(ACTOR_ART_MAX_DIMENSION)
+	art_visual_scale_ratio = flare_animator.scale.x / maxf(0.001, art_scale)
 	art_sprite = flare_animator.sprite
 
 func _physics_process(delta: float) -> void:
@@ -201,7 +206,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 35.0, 2165.0)
 	global_position.y = clampf(global_position.y, 30.0, 1370.0)
-	if movement_filter.is_valid() and not bool(movement_filter.call(previous_position, global_position, 18.0 if not is_boss else 30.0)):
+	var actor_radius := 26.0 if is_boss else (19.0 if enemy_kind == &"brute" else 14.0)
+	if movement_filter.is_valid() and not bool(movement_filter.call(previous_position, global_position, actor_radius)):
 		global_position = previous_position
 		velocity = Vector2.ZERO
 		locomotion_velocity = Vector2.ZERO
@@ -433,12 +439,12 @@ func _draw() -> void:
 	if state == AIState.DEAD:
 		death_fade = 1.0 - clampf(death_timer / (BOSS_DEATH_DURATION if is_boss else DEATH_DURATION), 0.0, 1.0)
 	draw_set_transform(Vector2(0, 12), 0.0, Vector2(1.4, 0.48))
-	var shadow_radius := 38.0 if is_boss else (29.0 if enemy_kind == &"brute" else 20.0)
+	var shadow_radius := (38.0 if is_boss else (29.0 if enemy_kind == &"brute" else 20.0)) * ENEMY_ART_SCALE_FACTOR * art_visual_scale_ratio
 	draw_circle(Vector2.ZERO, shadow_radius, Color(0.0, 0.0, 0.0, 0.42 * death_fade))
 	draw_set_transform(Vector2.ZERO)
 	if state != AIState.DEAD and (is_boss or health < max_health):
-		var width := 112.0 if is_boss else (62.0 if enemy_kind == &"brute" else 48.0)
-		var bar_y := -136.0 if is_boss else (-112.0 if enemy_kind == &"brute" else -94.0)
+		var width := (112.0 if is_boss else (62.0 if enemy_kind == &"brute" else 48.0)) * ENEMY_ART_SCALE_FACTOR * art_visual_scale_ratio
+		var bar_y := (-136.0 if is_boss else (-112.0 if enemy_kind == &"brute" else -94.0)) * ENEMY_ART_SCALE_FACTOR * art_visual_scale_ratio
 		draw_rect(Rect2(-width * 0.5, bar_y, width, 7.0), Color("241a24"))
 		draw_rect(Rect2(-width * 0.5 + 1.0, bar_y + 1.0, (width - 2.0) * health_ratio(), 5.0), Color("cc3d52") if not is_boss else Color("f06a43"))
 

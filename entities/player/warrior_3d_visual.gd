@@ -3,14 +3,16 @@ extends Node2D
 
 const MODEL_PATH := "res://assets/models/animated/fantasy_warrior_gameplay_head_level.glb"
 const VIEWPORT_SIZE := Vector2i(512, 512)
-const DISPLAY_SCALE := 0.36
-# Align the rendered boots with the CharacterBody2D origin and its ground shadow.
-const DISPLAY_OFFSET := Vector2(0.0, -34.0)
+const DISPLAY_SCALE := 0.25
+# The player uses the requested 128x128 gameplay footprint while keeping
+# the rendered boots aligned with the CharacterBody2D origin.
+const DISPLAY_OFFSET := Vector2(0.0, -24.0)
 const FRONT_TARGET := Vector3(0.0, 0.72, 0.0)
 
 var _viewport: SubViewport
 var _pivot: Node3D
 var _animation_player: AnimationPlayer
+var _display: Sprite2D
 var _active_animation := StringName()
 var _available := false
 
@@ -20,6 +22,9 @@ func _ready() -> void:
 
 func is_available() -> bool:
 	return _available
+
+func get_display_sprite() -> Sprite2D:
+	return _display
 
 func set_animation_state(state: StringName, facing: Vector2) -> void:
 	if not _available:
@@ -79,13 +84,13 @@ func _build_viewport() -> void:
 	camera.look_at(FRONT_TARGET, Vector3.UP)
 	camera.current = true
 
-	var display := Sprite2D.new()
-	display.name = "Warrior3DDisplay"
-	display.texture = _viewport.get_texture()
-	display.position = DISPLAY_OFFSET
-	display.scale = Vector2.ONE * DISPLAY_SCALE
-	display.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	add_child(display)
+	_display = Sprite2D.new()
+	_display.name = "Warrior3DDisplay"
+	_display.texture = _viewport.get_texture()
+	_display.position = DISPLAY_OFFSET
+	_display.scale = Vector2.ONE * DISPLAY_SCALE
+	_display.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	add_child(_display)
 
 func _build_model() -> bool:
 	# Parse the GLB directly so a fresh project can use the model before Godot's

@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="MeshLibrary" path="res://levels/kit/dungeon_kit_mesh_library.tres" id="1_vhj04"]
+
+[node name="DungeonGridMap" type="Node3D"]
+editor_description = "快速筆刷地圖。選取 DungeonGridMap/GridMap 後，從下方 GridMap 面板挑選素材並直接在 3D 視窗繪製。"
+
+[node name="FloorGridMap" type="GridMap" parent="."]
+editor_description = "只畫地板；所有房間與走廊的基底。"
+mesh_library = ExtResource("1_vhj04")
+cell_size = Vector3(3.946, 3.946, 3.946)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(65533, 65535, 12, 65533, 0, 12, 65533, 1, 12, 65534, 65535, 12, 65534, 0, 12, 65534, 1, 12, 65535, 65535, 12, 65535, 0, 12, 65535, 1, 12, 1, 65535, 12, 1, 0, 12, 1, 1, 12, 2, 65535, 12, 2, 0, 12, 2, 1, 12, 3, 65535, 12, 3, 0, 12, 3, 1, 12, 5, 65535, 12, 5, 0, 12, 5, 1, 12, 6, 65535, 12, 6, 0, 12, 6, 1, 12, 7, 65535, 12, 7, 0, 12, 7, 1, 12, 0, 65535, 12, 0, 0, 12, 0, 1, 12, 4, 65535, 12, 4, 0, 12, 4, 1, 12)
+}
+
+[node name="StructureGridMap" type="GridMap" parent="."]
+editor_description = "畫直牆、轉角與門洞。要新增互動門，仍請在 dungeon_3d.tscn 的 Doors 複製 Area3D。"
+mesh_library = ExtResource("1_vhj04")
+cell_size = Vector3(3.946, 3.946, 3.946)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(65533, 65535, 11, 65533, 1, 655371, 65534, 65535, 11, 65534, 1, 655371, 65535, 65535, 11, 65535, 1, 655371, 1, 65535, 11, 1, 1, 655371, 2, 65535, 11, 2, 1, 655371, 3, 65535, 11, 3, 1, 655371, 5, 65535, 11, 5, 1, 655371, 6, 65535, 11, 6, 1, 655371, 7, 65535, 11, 7, 1, 655371, 0, 0, 3, 4, 0, 3)
+}
+
+[node name="BoundaryGridMap" type="GridMap" parent="."]
+editor_description = "畫左右邊界牆；與 StructureGridMap 的上下牆分層，讓房間四角不會互相覆蓋。"
+mesh_library = ExtResource("1_vhj04")
+cell_size = Vector3(3.946, 3.946, 3.946)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(65533, 65535, 1048587, 65535, 65535, 1441803, 65533, 0, 1048587, 65533, 1, 1048587, 65535, 1, 1441803, 1, 65535, 1048587, 3, 65535, 1441803, 1, 1, 1048587, 3, 1, 1441803, 5, 65535, 1048587, 7, 65535, 1441803, 7, 0, 1441803, 5, 1, 1048587, 7, 1, 1441803)
+}
+
+[node name="PropGridMap" type="GridMap" parent="."]
+editor_description = "畫柱子、祭壇、火盆等靜態裝飾。"
+mesh_library = ExtResource("1_vhj04")
+cell_size = Vector3(3.946, 3.946, 3.946)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(65534, 0, 1048581, 65534, 65535, 6, 65534, 1, 6, 65533, 65535, 4, 65535, 65535, 4, 65533, 1, 4, 65535, 1, 4, 2, 0, 1048581, 2, 65535, 6, 2, 1, 6, 1, 65535, 4, 3, 65535, 4, 1, 1, 4, 3, 1, 4, 6, 0, 1048581, 6, 65535, 6, 6, 1, 6, 5, 65535, 4, 7, 65535, 4, 5, 1, 4, 7, 1, 4)
+}

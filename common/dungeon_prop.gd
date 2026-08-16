@@ -3,13 +3,13 @@ class_name DungeonProp
 extends Node2D
 
 const TEXTURES := {
-	"closed-chest": preload("res://assets/props/dungeon/closed-chest/prop.png"),
-	"open-chest": preload("res://assets/props/dungeon/open-chest/prop.png"),
-	"sarcophagus": preload("res://assets/props/dungeon/sarcophagus/prop.png"),
-	"ritual-brazier": preload("res://assets/props/dungeon/ritual-brazier/prop.png"),
-	"funerary-urns": preload("res://assets/props/dungeon/funerary-urns/prop.png"),
-	"bone-pile": preload("res://assets/props/dungeon/bone-pile/prop.png"),
-	"collapsed-column": preload("res://assets/props/dungeon/collapsed-column/prop.png"),
+	"closed-chest": preload("res://assets/old_prison/runtime/chest_closed.png"),
+	"open-chest": preload("res://assets/old_prison/runtime/chest_open.png"),
+	"sarcophagus": preload("res://assets/old_prison/runtime/stone.png"),
+	"ritual-brazier": preload("res://assets/old_prison/runtime/wall_sconce.png"),
+	"funerary-urns": preload("res://assets/old_prison/runtime/barrel.png"),
+	"bone-pile": preload("res://assets/old_prison/runtime/bones.png"),
+	"collapsed-column": preload("res://assets/old_prison/runtime/stone.png"),
 }
 
 @export_category("Dungeon Prop")

@@ -1,0 +1,148 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://entities/enemies/dungeon_monster_3d.gd" id="1_monster"]
+
+[sub_resource type="CapsuleShape3D" id="MonsterShape"]
+radius = 0.42
+height = 1.25
+
+[sub_resource type="CapsuleMesh" id="MonsterBodyMesh"]
+radius = 0.42
+height = 1.25
+radial_segments = 12
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="MonsterBodyMaterial"]
+shading_mode = 1
+albedo_color = Color(0.22, 0.045, 0.3, 1)
+roughness = 0.72
+metallic = 0.12
+
+[sub_resource type="SphereMesh" id="MonsterCoreMesh"]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="MonsterCoreMaterial"]
+shading_mode = 1
+albedo_color = Color(0.78, 0.08, 0.9, 1)
+emission_enabled = true
+emission = Color(0.86, 0.06, 1, 1)
+emission_energy_multiplier = 2.4
+roughness = 0.35
+
+[sub_resource type="SphereMesh" id="MonsterEyeMesh"]
+radius = 0.07
+height = 0.14
+
+[sub_resource type="StandardMaterial3D" id="MonsterEyeMaterial"]
+shading_mode = 0
+albedo_color = Color(1, 0.32, 0.08, 1)
+emission_enabled = true
+emission = Color(1, 0.12, 0.02, 1)
+emission_energy_multiplier = 2.2
+
+[sub_resource type="CylinderMesh" id="MonsterHornMesh"]
+top_radius = 0.0
+bottom_radius = 0.13
+height = 0.46
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="MonsterHornMaterial"]
+shading_mode = 1
+albedo_color = Color(0.48, 0.12, 0.58, 1)
+roughness = 0.82
+
+[sub_resource type="TorusMesh" id="HoverRingMesh"]
+inner_radius = 0.5
+outer_radius = 0.58
+rings = 16
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="HoverRingMaterial"]
+shading_mode = 0
+albedo_color = Color(1, 0.86, 0.28, 1)
+emission_enabled = true
+emission = Color(1, 0.48, 0.04, 1)
+emission_energy_multiplier = 2.8
+
+[sub_resource type="TorusMesh" id="SelectedRingMesh"]
+inner_radius = 0.54
+outer_radius = 0.68
+rings = 20
+ring_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="SelectedRingMaterial"]
+shading_mode = 0
+albedo_color = Color(1, 0.25, 0.08, 1)
+emission_enabled = true
+emission = Color(1, 0.08, 0.015, 1)
+emission_energy_multiplier = 3.6
+
+[sub_resource type="SphereMesh" id="SelectedDiamondMesh"]
+radius = 0.18
+height = 0.42
+radial_segments = 4
+rings = 2
+
+[node name="DungeonMonster3D" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_monster")
+
+[node name="BodyShape" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.63, 0)
+shape = SubResource("MonsterShape")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.63, 0)
+mesh = SubResource("MonsterBodyMesh")
+material_override = SubResource("MonsterBodyMaterial")
+
+[node name="Core" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 1.05, 0)
+scale = Vector3(0.72, 0.72, 0.72)
+mesh = SubResource("MonsterCoreMesh")
+material_override = SubResource("MonsterCoreMaterial")
+
+[node name="EyeLeft" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.14, 0.85, -0.34)
+mesh = SubResource("MonsterEyeMesh")
+material_override = SubResource("MonsterEyeMaterial")
+
+[node name="EyeRight" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.14, 0.85, -0.34)
+mesh = SubResource("MonsterEyeMesh")
+material_override = SubResource("MonsterEyeMaterial")
+
+[node name="HornLeft" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.23, 1.07, 0)
+rotation_degrees = Vector3(0, 0, -22)
+mesh = SubResource("MonsterHornMesh")
+material_override = SubResource("MonsterHornMaterial")
+
+[node name="HornRight" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.23, 1.07, 0)
+rotation_degrees = Vector3(0, 0, 22)
+mesh = SubResource("MonsterHornMesh")
+material_override = SubResource("MonsterHornMaterial")
+
+[node name="SelectionIndicator" type="Node3D" parent="."]
+position = Vector3(0, 0.04, 0)
+
+[node name="HoverRing" type="MeshInstance3D" parent="SelectionIndicator"]
+visible = false
+mesh = SubResource("HoverRingMesh")
+material_override = SubResource("HoverRingMaterial")
+
+[node name="SelectedRing" type="MeshInstance3D" parent="SelectionIndicator"]
+visible = false
+mesh = SubResource("SelectedRingMesh")
+material_override = SubResource("SelectedRingMaterial")
+
+[node name="SelectedDiamond" type="MeshInstance3D" parent="SelectionIndicator"]
+visible = false
+position = Vector3(0, 2.12, 0)
+mesh = SubResource("SelectedDiamondMesh")
+material_override = SubResource("SelectedRingMaterial")

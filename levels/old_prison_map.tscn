@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://levels/old_prison_tilemap.tscn" id="1_tilemap"]
+
+[node name="OldPrisonMap" type="Node2D"]
+metadata/display_name = "Old Prison TileMap compatibility scene"
+metadata/tile_size = 32
+metadata/source_pack = "EPIC RPG World Pack - Old Prison V1.7.1"
+
+[node name="OldPrisonTileMap" parent="." instance=ExtResource("1_tilemap")]

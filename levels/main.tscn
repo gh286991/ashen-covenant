@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cqd25iv0ahd7f"]
+[gd_scene load_steps=8 format=3 uid="uid://bh7rnsyostp1c"]
 
 [ext_resource type="Script" uid="uid://cncpg5rx43f8o" path="res://levels/main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://ih3l7fquuvqm" path="res://levels/world_renderer.gd" id="2_world"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dmffukrkqbv4c" path="res://ui/hud.gd" id="4_hud"]
 [ext_resource type="Script" uid="uid://cvd53yom86s73" path="res://common/dungeon_prop.gd" id="5_prop"]
 [ext_resource type="Script" uid="uid://dh3fjnua7vo57" path="res://common/dungeon_map_feature.gd" id="6_feature"]
+[ext_resource type="PackedScene" uid="uid://cddplaakja71i" path="res://levels/old_prison_tilemap.tscn" id="7_map"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -15,272 +16,219 @@ unique_name_in_owner = true
 z_index = -20
 script = ExtResource("2_world")
 
+[node name="OldPrisonTileMap" parent="." instance=ExtResource("7_map")]
+
 [node name="ArenaWalls" type="StaticBody2D" parent="."]
 
 [node name="Actors" type="Node2D" parent="."]
 unique_name_in_owner = true
 y_sort_enabled = true
-position = Vector2(61, -47)
 
 [node name="Player" type="CharacterBody2D" parent="Actors"]
 unique_name_in_owner = true
-position = Vector2(1100, 1190)
+position = Vector2(820, 1100)
 script = ExtResource("3_player")
 
 [node name="Camera" type="Camera2D" parent="Actors/Player"]
-position_smoothing_enabled = true
-position_smoothing_speed = 7.5
 
 [node name="DungeonProps" type="Node2D" parent="."]
 unique_name_in_owner = true
 z_index = -10
 
-[node name="BrazierEntryLeft" type="Node2D" parent="DungeonProps"]
-position = Vector2(968, 882)
+[node name="CellBarrels" type="Node2D" parent="DungeonProps"]
+position = Vector2(300, 890)
 script = ExtResource("5_prop")
-prop_id = &"brazier_entry_l"
-prop_kind = "ritual-brazier"
-render_size = Vector2(68, 115)
+prop_id = &"cell_barrels"
+render_size = Vector2(80, 112)
+blocker_offset = Vector2(-22, -40)
+blocker_size = Vector2(44, 54)
 
-[node name="BrazierEntryRight" type="Node2D" parent="DungeonProps"]
-position = Vector2(1232, 892)
+[node name="GearStones" type="Node2D" parent="DungeonProps"]
+position = Vector2(1010, 200)
 script = ExtResource("5_prop")
-prop_id = &"brazier_entry_r"
-prop_kind = "ritual-brazier"
-render_size = Vector2(68, 115)
+prop_id = &"gear_stones"
+prop_kind = "collapsed-column"
+render_size = Vector2(76, 76)
+blocker_offset = Vector2(-26, -32)
+blocker_size = Vector2(52, 44)
 
-[node name="BrazierWest" type="Node2D" parent="DungeonProps"]
-position = Vector2(817, 654)
+[node name="BloodBones" type="Node2D" parent="DungeonProps"]
+position = Vector2(1760, 600)
 script = ExtResource("5_prop")
-prop_id = &"brazier_west"
-prop_kind = "ritual-brazier"
-render_size = Vector2(62, 104)
-
-[node name="BrazierEast" type="Node2D" parent="DungeonProps"]
-position = Vector2(1460, 625)
-script = ExtResource("5_prop")
-prop_id = &"brazier_east"
-prop_kind = "ritual-brazier"
-render_size = Vector2(62, 104)
-
-[node name="SarcophagusWest1" type="Node2D" parent="DungeonProps"]
-position = Vector2(330, 603)
-script = ExtResource("5_prop")
-prop_id = &"sarcophagus_w1"
-prop_kind = "sarcophagus"
-render_size = Vector2(150, 92)
-blocker_offset = Vector2(-60, -35)
-blocker_size = Vector2(120, 52)
-
-[node name="SarcophagusWest2" type="Node2D" parent="DungeonProps"]
-position = Vector2(1217, 593)
-script = ExtResource("5_prop")
-prop_id = &"sarcophagus_w2"
-prop_kind = "sarcophagus"
-render_size = Vector2(150, 92)
-blocker_offset = Vector2(-60, -35)
-blocker_size = Vector2(120, 52)
-
-[node name="SarcophagusWest3" type="Node2D" parent="DungeonProps"]
-position = Vector2(335, 826)
-script = ExtResource("5_prop")
-prop_id = &"sarcophagus_w3"
-prop_kind = "sarcophagus"
-render_size = Vector2(140, 86)
-blocker_offset = Vector2(-55, -33)
-blocker_size = Vector2(110, 48)
-
-[node name="UrnsEast1" type="Node2D" parent="DungeonProps"]
-position = Vector2(1705, 560)
-script = ExtResource("5_prop")
-prop_id = &"urns_e1"
-render_size = Vector2(92, 100)
-blocker_offset = Vector2(-34, -35)
-blocker_size = Vector2(68, 48)
-
-[node name="UrnsEast2" type="Node2D" parent="DungeonProps"]
-position = Vector2(1861, 585)
-script = ExtResource("5_prop")
-prop_id = &"urns_e2"
-render_size = Vector2(86, 92)
-blocker_offset = Vector2(-32, -32)
-blocker_size = Vector2(64, 44)
-
-[node name="BonesEast" type="Node2D" parent="DungeonProps"]
-position = Vector2(1880, 825)
-script = ExtResource("5_prop")
-prop_id = &"bones_e1"
+prop_id = &"blood_bones"
 prop_kind = "bone-pile"
-render_size = Vector2(118, 82)
+render_size = Vector2(76, 76)
+blocker_offset = Vector2(-22, -30)
+blocker_size = Vector2(44, 42)
 
-[node name="ColumnCourtLeft" type="Node2D" parent="DungeonProps"]
-position = Vector2(883, 579)
+[node name="EntrySconceLeft" type="Node2D" parent="DungeonProps"]
+position = Vector2(840, 1060)
 script = ExtResource("5_prop")
-prop_id = &"column_court_l"
-prop_kind = "collapsed-column"
-render_size = Vector2(108, 112)
-blocker_offset = Vector2(-35, -37)
-blocker_size = Vector2(70, 50)
+prop_id = &"entry_sconce_l"
+prop_kind = "ritual-brazier"
+render_size = Vector2(44, 56)
 
-[node name="ColumnCourtRight" type="Node2D" parent="DungeonProps"]
-position = Vector2(1371, 870)
+[node name="EntrySconceRight" type="Node2D" parent="DungeonProps"]
+position = Vector2(1080, 1060)
 script = ExtResource("5_prop")
-prop_id = &"column_court_r"
-prop_kind = "collapsed-column"
-render_size = Vector2(108, 112)
-blocker_offset = Vector2(-35, -37)
-blocker_size = Vector2(70, 50)
+prop_id = &"entry_sconce_r"
+prop_kind = "ritual-brazier"
+render_size = Vector2(44, 56)
 
-[node name="WestCache" type="Node2D" parent="DungeonProps"]
-position = Vector2(145, 690)
+[node name="EntryCache" type="Node2D" parent="DungeonProps"]
+position = Vector2(960, 1110)
 script = ExtResource("5_prop")
-prop_id = &"west_cache"
+prop_id = &"entry_cache"
 gameplay_role = "Chest"
 prop_kind = "closed-chest"
-render_size = Vector2(92, 88)
+render_size = Vector2(78, 78)
 
-[node name="EastCache" type="Node2D" parent="DungeonProps"]
-position = Vector2(2055, 690)
+[node name="CellCache" type="Node2D" parent="DungeonProps"]
+position = Vector2(300, 700)
 script = ExtResource("5_prop")
-prop_id = &"east_cache"
+prop_id = &"cell_cache"
 gameplay_role = "Chest"
 prop_kind = "closed-chest"
-render_size = Vector2(92, 88)
+render_size = Vector2(78, 78)
 
-[node name="NaveCache" type="Node2D" parent="DungeonProps"]
-position = Vector2(1010, 1185)
+[node name="BloodCache" type="Node2D" parent="DungeonProps"]
+position = Vector2(1760, 820)
 script = ExtResource("5_prop")
-prop_id = &"nave_cache"
+prop_id = &"blood_cache"
 gameplay_role = "Chest"
 prop_kind = "closed-chest"
-render_size = Vector2(86, 82)
+render_size = Vector2(78, 78)
 
-[node name="BreakableUrn1" type="Node2D" parent="DungeonProps"]
-position = Vector2(1019, 1062)
+[node name="Barrel1" type="Node2D" parent="DungeonProps"]
+position = Vector2(360, 900)
 script = ExtResource("5_prop")
-prop_id = &"urn_1"
+prop_id = &"barrel_1"
 gameplay_role = "Breakable"
-render_size = Vector2(62, 68)
+render_size = Vector2(54, 82)
 
-[node name="BreakableUrn2" type="Node2D" parent="DungeonProps"]
-position = Vector2(1195, 965)
+[node name="Barrel2" type="Node2D" parent="DungeonProps"]
+position = Vector2(520, 900)
 script = ExtResource("5_prop")
-prop_id = &"urn_2"
+prop_id = &"barrel_2"
 gameplay_role = "Breakable"
-render_size = Vector2(58, 64)
+render_size = Vector2(54, 82)
 
-[node name="BreakableUrn3" type="Node2D" parent="DungeonProps"]
-position = Vector2(509, 587)
+[node name="Barrel3" type="Node2D" parent="DungeonProps"]
+position = Vector2(690, 280)
 script = ExtResource("5_prop")
-prop_id = &"urn_3"
+prop_id = &"barrel_3"
 gameplay_role = "Breakable"
-render_size = Vector2(60, 66)
+render_size = Vector2(54, 82)
 
-[node name="BreakableUrn4" type="Node2D" parent="DungeonProps"]
-position = Vector2(1655, 635)
+[node name="Barrel4" type="Node2D" parent="DungeonProps"]
+position = Vector2(1080, 280)
 script = ExtResource("5_prop")
-prop_id = &"urn_4"
+prop_id = &"barrel_4"
 gameplay_role = "Breakable"
-render_size = Vector2(60, 66)
+render_size = Vector2(54, 82)
 
-[node name="BreakableUrn5" type="Node2D" parent="DungeonProps"]
-position = Vector2(958, 514)
+[node name="Bones1" type="Node2D" parent="DungeonProps"]
+position = Vector2(1340, 880)
 script = ExtResource("5_prop")
-prop_id = &"urn_5"
-gameplay_role = "Breakable"
-render_size = Vector2(58, 64)
-
-[node name="BreakableBones" type="Node2D" parent="DungeonProps"]
-position = Vector2(1288, 790)
-script = ExtResource("5_prop")
-prop_id = &"urn_6"
+prop_id = &"bones_1"
 gameplay_role = "Breakable"
 prop_kind = "bone-pile"
-render_size = Vector2(80, 58)
+render_size = Vector2(58, 58)
+
+[node name="Bones2" type="Node2D" parent="DungeonProps"]
+position = Vector2(1640, 600)
+script = ExtResource("5_prop")
+prop_id = &"bones_2"
+gameplay_role = "Breakable"
+prop_kind = "bone-pile"
+render_size = Vector2(58, 58)
 
 [node name="DungeonFeatures" type="Node2D" parent="."]
 unique_name_in_owner = true
 z_index = -19
 
-[node name="SoulAnchorWest" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(401, 693)
+[node name="SoulAnchorCells" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(432, 760)
 script = ExtResource("6_feature")
-feature_id = &"west"
-max_health = 110.0
+feature_id = &"cells"
+max_health = 115.0
 
-[node name="SoulAnchorEast" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1810, 690)
+[node name="SoulAnchorGearworks" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(820, 420)
 script = ExtResource("6_feature")
-feature_id = &"east"
-max_health = 125.0
+feature_id = &"gearworks"
+max_health = 135.0
 
-[node name="SoulAnchorNorth" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1100, 670)
+[node name="SoulAnchorBloodworks" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(1580, 760)
 script = ExtResource("6_feature")
-feature_id = &"north"
-max_health = 145.0
+feature_id = &"bloodworks"
+max_health = 155.0
 
-[node name="NaveSpikes" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1100, 1045)
+[node name="CellSpikes" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(610, 900)
 script = ExtResource("6_feature")
 feature_type = 1
-feature_id = &"nave_spikes"
-period = 1.1
-radius = 48.0
-
-[node name="WestSpikes" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(705, 665)
-script = ExtResource("6_feature")
-feature_type = 1
-feature_id = &"west_spikes"
+feature_id = &"cell_spikes"
 damage = 13.0
+radius = 46.0
 
-[node name="EastSpikes" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1495, 665)
+[node name="GearSpikes" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(1000, 560)
 script = ExtResource("6_feature")
 feature_type = 1
-feature_id = &"east_spikes"
-damage = 13.0
-
-[node name="GateSpikes" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1100, 345)
-script = ExtResource("6_feature")
-feature_type = 1
-feature_id = &"gate_spikes"
-damage = 16.0
+feature_id = &"gear_spikes"
+damage = 15.0
 period = 0.95
+
+[node name="BloodSpikes" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(1440, 880)
+script = ExtResource("6_feature")
+feature_type = 1
+feature_id = &"blood_spikes"
+damage = 16.0
+period = 0.9
+radius = 50.0
+
+[node name="ApproachSpikes" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(1180, 430)
+script = ExtResource("6_feature")
+feature_type = 1
+feature_id = &"approach_spikes"
+damage = 17.0
+period = 0.85
 radius = 42.0
 
-[node name="WestShortcut" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(477, 858)
+[node name="CellShortcut" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(475, 860)
 script = ExtResource("6_feature")
 feature_type = 2
-feature_id = &"west_shortcut"
-linked_anchor_id = &"west"
-render_size = Vector2(150, 74)
-trigger_offset = Vector2(-67, 12)
-trigger_size = Vector2(135, 135)
-target_position = Vector2(985, 1045)
+feature_id = &"cell_shortcut"
+linked_anchor_id = &"cells"
+render_size = Vector2(144, 88)
+trigger_offset = Vector2(-75, -20)
+trigger_size = Vector2(150, 120)
+target_position = Vector2(820, 1050)
 
-[node name="EastShortcut" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1722, 858)
+[node name="BloodworksShortcut" type="Node2D" parent="DungeonFeatures"]
+position = Vector2(1625, 860)
 script = ExtResource("6_feature")
 feature_type = 2
-feature_id = &"east_shortcut"
-linked_anchor_id = &"east"
-render_size = Vector2(150, 74)
-trigger_offset = Vector2(-67, 12)
-trigger_size = Vector2(135, 135)
-target_position = Vector2(1215, 1045)
+feature_id = &"bloodworks_shortcut"
+linked_anchor_id = &"bloodworks"
+render_size = Vector2(144, 88)
+trigger_offset = Vector2(-75, -20)
+trigger_size = Vector2(150, 120)
+target_position = Vector2(1090, 1050)
 
 [node name="BossGate" type="Node2D" parent="DungeonFeatures"]
-position = Vector2(1100, 447)
+position = Vector2(1280, 320)
 script = ExtResource("6_feature")
 feature_type = 3
-feature_id = &"boss_gate"
-render_size = Vector2(220, 92)
-collision_offset = Vector2(-105, -42)
-collision_size = Vector2(210, 58)
+feature_id = &"warden_gate"
+render_size = Vector2(240, 104)
+collision_offset = Vector2(-384, -28)
+collision_size = Vector2(768, 56)
 
 [node name="Effects" type="Node2D" parent="."]
 unique_name_in_owner = true

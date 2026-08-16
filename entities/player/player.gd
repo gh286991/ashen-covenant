@@ -37,8 +37,9 @@ const NOVA_MANA_COST := 28.0
 const POINTER_STOP_DISTANCE := 10.0
 const POINTER_ATTACK_DISTANCE := 68.0
 const POINTER_WAYPOINT_DISTANCE := 14.0
+const PLAYER_BODY_RADIUS := 14.0
 const CRIMSON_FRAME_SIZE := Vector2(80.0, 80.0)
-const CRIMSON_ART_SCALE := 2.55
+const CRIMSON_ART_SCALE := 1.6
 const CRIMSON_PAINTED_FOOT_OFFSET := 16.0
 const CRIMSON_FOOT_OFFSET := CRIMSON_PAINTED_FOOT_OFFSET * CRIMSON_ART_SCALE
 const CRIMSON_FRAME_COUNTS := {
@@ -149,6 +150,11 @@ var pointer_path_index := 0
 var pointer_command_active := false
 var pointer_target: CovenantEnemy
 var pointer_attack_point := Vector2.ZERO
+
+# The foreground wall shader reads this sprite's alpha as the occlusion mask.
+# The property is updated every frame because the animation frame and pose can
+# change while the player is moving or attacking.
+var occlusion_sprite: Sprite2D
 var pointer_attack_point_active := false
 
 var level := 1
@@ -177,7 +183,7 @@ func _ready() -> void:
 	var shape_node := CollisionShape2D.new()
 	shape_node.name = "BodyShape"
 	var circle := CircleShape2D.new()
-	circle.radius = 17.0
+	circle.radius = PLAYER_BODY_RADIUS
 	shape_node.shape = circle
 	add_child(shape_node)
 	visual_root = Node2D.new()
@@ -198,9 +204,11 @@ func _ready() -> void:
 	visual_root.add_child(model_visual)
 	if model_visual.is_available():
 		art_sprite.visible = false
+		occlusion_sprite = model_visual.get_display_sprite()
 	else:
 		model_visual.queue_free()
 		model_visual = null
+		occlusion_sprite = art_sprite
 	rng.seed = 0xA55E_2026
 	health = max_health()
 	mana = max_mana()
@@ -237,9 +245,8 @@ func _update_art_sprite() -> void:
 	if not is_instance_valid(art_sprite) or not is_instance_valid(visual_root):
 		return
 	var moving := locomotion_velocity.length_squared() > 625.0 or dash_timer > 0.0
-	# Crimson Warrior uses 80px horizontal strips. Its painted feet sit 16px
-	# below the cell center, so the scaled art is anchored on the floor rather
-	# than the bottom of its transparent frame.
+	# The Old Prison TileSet is authored on a 32px grid. Keep the fallback
+	# Keep the fallback player at the requested 128x128 footprint.
 	art_sprite.position = Vector2(0, -CRIMSON_FOOT_OFFSET)
 	art_sprite.scale = Vector2.ONE * CRIMSON_ART_SCALE
 	var pose_position := Vector2.ZERO
@@ -530,7 +537,7 @@ func _update_aim_from_input() -> void:
 func _constrain_to_world(previous_position: Vector2) -> void:
 	global_position.x = clampf(global_position.x, 40.0, 2160.0)
 	global_position.y = clampf(global_position.y, 35.0, 1365.0)
-	if movement_filter.is_valid() and not bool(movement_filter.call(previous_position, global_position, 17.0)):
+	if movement_filter.is_valid() and not bool(movement_filter.call(previous_position, global_position, PLAYER_BODY_RADIUS)):
 		global_position = previous_position
 		velocity = Vector2.ZERO
 		locomotion_velocity = Vector2.ZERO
@@ -851,8 +858,8 @@ func _emit_all_stats() -> void:
 func _draw() -> void:
 	var speed_ratio := clampf(velocity.length() / DASH_SPEED, 0.0, 1.0)
 	draw_set_transform(Vector2(0, 3), 0.0, Vector2(1.0, 0.32))
-	draw_circle(Vector2.ZERO, 25.0 + speed_ratio * 4.0, Color(0.0, 0.0, 0.0, 0.28))
-	draw_circle(Vector2.ZERO, 17.0 + speed_ratio * 2.0, Color(0.0, 0.0, 0.0, 0.42))
+	draw_circle(Vector2.ZERO, 22.0 + speed_ratio * 4.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_circle(Vector2.ZERO, PLAYER_BODY_RADIUS + speed_ratio * 2.0, Color(0.0, 0.0, 0.0, 0.42))
 	draw_set_transform(Vector2.ZERO)
 	if dash_timer > 0.0:
 		for i in 4:

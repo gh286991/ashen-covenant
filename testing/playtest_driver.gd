@@ -42,7 +42,7 @@ func _drive_playtest() -> void:
 		target.start_new_game()
 	if elapsed >= 2.1 and not prepared_encounter and target.phase == AshenCovenantGame.GamePhase.PLAYING:
 		prepared_encounter = true
-		target.player.global_position = Vector2(1100, 1090)
+		target.player.global_position = Vector2(820, 1060)
 		var offsets := [Vector2(100, -20), Vector2(145, 68), Vector2(-115, 28), Vector2(20, -135)]
 		for i in mini(offsets.size(), target.enemies.size()):
 			target.enemies[i].global_position = target.player.global_position + offsets[i]
@@ -80,16 +80,16 @@ func _drive_playtest() -> void:
 		_send_ui_action(&"toggle_sheet")
 	if elapsed >= 9.9 and sheet_closed and not gate_collision_staged:
 		gate_collision_staged = true
-		target.player.global_position = Vector2(1100, 520)
+		target.player.global_position = Vector2(1280, 380)
 		target.player.velocity = Vector2.ZERO
 		target.player.locomotion_velocity = Vector2.ZERO
 		target.player.facing = Vector2.UP
 		target.player.last_move_direction = Vector2.UP
-		target.issue_pointer_command(Vector2(1100, 350))
+		target.issue_pointer_command(Vector2(1280, 180))
 	if elapsed >= 10.9 and gate_collision_staged and not boss_triggered:
 		boss_triggered = true
 		target.playtest_break_all_anchors()
-		target.player.global_position = Vector2(1100, 510)
+		target.player.global_position = Vector2(1280, 380)
 		target.player.facing = Vector2.UP
 		target.player.last_move_direction = Vector2.UP
 	if elapsed >= 11.1 and boss_triggered and not boss_clicked and is_instance_valid(target.boss):

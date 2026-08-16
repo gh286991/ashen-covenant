@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="64" viewBox="0 0 128 64">
+  <!-- Row 0: void and walkable stone floor variants. -->
+  <g>
+    <rect width="16" height="16" fill="#08070c"/>
+    <rect x="16" width="16" height="16" fill="#302a2c"/><path d="M16 5h16M16 11h16M23 0v5M27 5v6M20 11v5" stroke="#4b4140" stroke-width="1"/><path d="M17 1l6 4 8-3M17 13l6-2 8 4" stroke="#1e1b21" stroke-width="1"/>
+    <rect x="32" width="16" height="16" fill="#393032"/><path d="M32 4h16M32 10h16M37 0v4M44 4v6M34 10v6" stroke="#514647" stroke-width="1"/><path d="M33 2l4 2-2 6 6 3 5-3" fill="none" stroke="#252028" stroke-width="1"/>
+    <rect x="48" width="16" height="16" fill="#2d292e"/><path d="M48 3h16M48 9h16M53 0v3M60 3v6M50 9v7" stroke="#494149" stroke-width="1"/><path d="M52 5l4 2-2 5 6 2" fill="none" stroke="#17151d" stroke-width="1"/>
+    <rect x="64" width="16" height="16" fill="#362c2d"/><path d="M64 5h16M64 12h16M70 0v5M76 5v7M67 12v4" stroke="#554141" stroke-width="1"/><circle cx="70" cy="8" r="2" fill="none" stroke="#70424a"/><path d="M70 5v6M67 8h6" stroke="#70424a" stroke-width="1"/>
+    <rect x="80" width="16" height="16" fill="#34282b"/><path d="M80 5h16M80 11h16M86 0v5M92 5v6M83 11v5" stroke="#4e3d40" stroke-width="1"/><path d="M81 13l6-3 2-5 6-3" fill="none" stroke="#6f3034" stroke-width="1" opacity=".85"/>
+    <rect x="96" width="16" height="16" fill="#29262b"/><path d="M96 4h16M96 10h16M101 0v4M108 4v6M99 10v6" stroke="#45404a" stroke-width="1"/><path d="M97 2l8 2 5-2M97 13l5-3 9 2" stroke="#1b1820" stroke-width="1"/>
+    <rect x="112" width="16" height="16" fill="#3c3030"/><path d="M112 5h16M112 11h16M117 0v5M124 5v6M115 11v5" stroke="#5b4947" stroke-width="1"/><path d="M113 7h5l2-3 3 4h4" fill="none" stroke="#251b22" stroke-width="1"/>
+  </g>
+  <!-- Row 1: wall edges and corners. -->
+  <g>
+    <rect y="16" width="16" height="16" fill="#120f16"/><path d="M0 17h16M0 23h16M0 29h16" stroke="#3d3038"/><path d="M0 17h16" stroke="#80635f" stroke-width="2"/><path d="M4 17v6M12 23v6" stroke="#221a24"/>
+    <rect x="16" y="16" width="16" height="16" fill="#130f16"/><path d="M16 18h16M16 24h16M16 30h16" stroke="#44323b"/><path d="M16 30h16" stroke="#80635f" stroke-width="2"/><path d="M21 18v6M28 24v6" stroke="#221a24"/>
+    <rect x="32" y="16" width="16" height="16" fill="#140f17"/><path d="M33 16v16M39 16v16M45 16v16" stroke="#43313a"/><path d="M33 16v16" stroke="#80635f" stroke-width="2"/><path d="M33 4v6M39 12v4" stroke="#221a24" transform="translate(0 16)"/>
+    <rect x="48" y="16" width="16" height="16" fill="#140f17"/><path d="M49 16v16M55 16v16M61 16v16" stroke="#43313a"/><path d="M63 16v16" stroke="#80635f" stroke-width="2"/><path d="M55 16v6M61 24v6" stroke="#221a24"/>
+    <rect x="64" y="16" width="16" height="16" fill="#120f16"/><path d="M64 17h16M64 23h7M71 16v16" stroke="#44323b"/><path d="M64 17h7M64 17v7" stroke="#80635f" stroke-width="2"/>
+    <rect x="80" y="16" width="16" height="16" fill="#120f16"/><path d="M80 17h16M89 16v16M80 23h9" stroke="#44323b"/><path d="M89 17h7M95 17v7" stroke="#80635f" stroke-width="2"/>
+    <rect x="96" y="16" width="16" height="16" fill="#120f16"/><path d="M96 31h16M96 25h7M103 16v16" stroke="#44323b"/><path d="M96 31h7M96 24v7" stroke="#80635f" stroke-width="2"/>
+    <rect x="112" y="16" width="16" height="16" fill="#120f16"/><path d="M112 31h16M121 16v16M112 25h9" stroke="#44323b"/><path d="M121 31h7M127 24v7" stroke="#80635f" stroke-width="2"/>
+  </g>
+  <!-- Row 2: heavier masonry, thresholds, and worn floor overlays. -->
+  <g>
+    <rect y="32" width="16" height="16" fill="#211a22"/><path d="M0 35h16M0 40h16M0 45h16M5 32v3M12 35v5M3 40v5M10 45v3" stroke="#4a3840"/><path d="M0 33h16" stroke="#8b5552" stroke-width="1"/>
+    <rect x="16" y="32" width="16" height="16" fill="#211a22"/><path d="M16 35h16M16 40h16M16 45h16M21 32v3M28 35v5M19 40v5M26 45v3" stroke="#4a3840"/><path d="M16 47h16" stroke="#8b5552" stroke-width="1"/>
+    <rect x="32" y="32" width="16" height="16" fill="#2e2529"/><path d="M32 37h16M32 43h16M37 32v5M44 37v6" stroke="#594449"/><path d="M32 33h16M32 47h16" stroke="#9a6a59" stroke-width="1"/>
+    <rect x="48" y="32" width="16" height="16" fill="#2e2529"/><path d="M53 32v16M59 32v16M48 37v6" stroke="#594449"/><path d="M49 32v16M63 32v16" stroke="#9a6a59" stroke-width="1"/>
+    <rect x="64" y="32" width="16" height="16" fill="#332a2c"/><path d="M64 4h16M64 10h16M69 0v4M76 4v6M67 10v6" stroke="#564649" stroke-width="1" transform="translate(0 32)"/><path d="M68 38l8 4M68 44l7-4" stroke="#80605a" stroke-width="1" opacity=".7"/>
+    <rect x="80" y="32" width="16" height="16" fill="#34292e"/><path d="M80 5h16M80 11h16M86 0v5M92 5v6M83 11v5" stroke="#55424a" stroke-width="1" transform="translate(0 32)"/><circle cx="88" cy="40" r="4" fill="none" stroke="#86515b" opacity=".7"/>
+    <rect x="96" y="32" width="16" height="16" fill="#32282d"/><path d="M96 5h16M96 11h16M101 0v5M108 5v6M99 11v5" stroke="#51414a" stroke-width="1" transform="translate(0 32)"/><path d="M98 46l3-5 4 3 5-5" fill="none" stroke="#190f16" stroke-width="1"/>
+    <rect x="112" y="32" width="16" height="16" fill="#2f262a"/><path d="M112 5h16M112 11h16M117 0v5M124 5v6M115 11v5" stroke="#514148" stroke-width="1" transform="translate(0 32)"/><path d="M114 37l10 8M114 45l8-8" stroke="#632e35" stroke-width="1" opacity=".7"/>
+  </g>
+  <!-- Row 3: sparse overlays for runes, debris, and dim embers. -->
+  <g>
+    <rect y="48" width="16" height="16" fill="none"/><path d="M2 10l5-4 5 4-5 4zM7 2v12" stroke="#7e4b53" stroke-width="1" opacity=".7" transform="translate(0 48)"/>
+    <rect x="16" y="48" width="16" height="16" fill="none"/><path d="M3 13l4-3 2 2 4-6M3 6l3 2 2-3" fill="none" stroke="#5c5558" stroke-width="1" transform="translate(16 48)"/>
+    <rect x="32" y="48" width="16" height="16" fill="none"/><circle cx="40" cy="56" r="4" fill="none" stroke="#833637" opacity=".72"/><path d="M40 50v12M34 56h12" stroke="#833637" opacity=".45"/>
+    <rect x="48" y="48" width="16" height="16" fill="none"/><path d="M51 60l4-8 4 8M54 57h3" stroke="#c06a35" opacity=".65"/><circle cx="55" cy="53" r="2" fill="#c04b2f" opacity=".45"/>
+    <rect x="64" y="48" width="16" height="16" fill="none"/><path d="M66 59l3-3 2 2 3-5 4 6" fill="none" stroke="#62555d" stroke-width="1"/>
+    <rect x="80" y="48" width="16" height="16" fill="none"/><path d="M82 51h12M82 57h12M86 51v6M91 57v5" stroke="#90635d" opacity=".6"/>
+    <rect x="96" y="48" width="16" height="16" fill="none"/><path d="M99 61l3-10 3 4 4-3" fill="none" stroke="#7c2f38" opacity=".65"/>
+    <rect x="112" y="48" width="16" height="16" fill="none"/><path d="M115 59l4-6 3 3 3-4" fill="none" stroke="#6d6466" opacity=".65"/>
+  </g>
+</svg>

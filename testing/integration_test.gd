@@ -69,9 +69,25 @@ func _run_suite() -> void:
 	for i in 10:
 		await physics_frame
 	_check(player_art != null and is_equal_approx(player_art.position.y, grounded_art_y), "Player art keeps a fixed foot anchor instead of vertical hovering")
-	_check(player_art != null and is_equal_approx(player_art.scale.x, 2.55) and is_equal_approx(player_art.position.y, -40.8), "Player art is reduced while keeping its feet on the ground")
+	_check(player_art != null and is_equal_approx(player_art.scale.x, 1.6) and is_equal_approx(player_art.position.y, -25.6), "Fallback player art uses the 128x128 footprint")
+	var model_display := game.player.get_node_or_null("VisualRoot/Warrior3DVisual/Warrior3DDisplay") as Sprite2D
+	_check(model_display == null or is_equal_approx(model_display.scale.x, 0.25), "3D player display uses the 128x128 footprint")
+	var enemy_art_fits := true
+	for enemy: CovenantEnemy in game.enemies:
+		var enemy_sprite := enemy.art_sprite as Sprite2D
+		if enemy_sprite == null or enemy_sprite.texture == null:
+			enemy_art_fits = false
+			continue
+		var rendered_frame_size := enemy_sprite.texture.get_size() * enemy.flare_animator.scale
+		if maxf(rendered_frame_size.x, rendered_frame_size.y) > 128.5:
+			enemy_art_fits = false
+	_check(enemy_art_fits, "Enemy art fits the adjusted 128x128 actor footprint")
+	var gameplay_camera := game.player.get_node_or_null("Camera") as Camera2D
+	_check(gameplay_camera != null and is_equal_approx(gameplay_camera.zoom.x, 1.5), "Gameplay camera uses the closer 1.5x view")
 
 	var target_enemy := game.enemies[0] as CovenantEnemy
+	game.player.cancel_pointer_command()
+	game.player.global_position = Vector2(820, 1060)
 	_check(target_enemy.active_art_animation() == &"stance", "Flare bestiary supplies a directional stance animation")
 	target_enemy.flare_animator.set_animation(&"stance", Vector2.RIGHT, 0.0)
 	_check(target_enemy.flare_animator.current_direction() == 5, "Flare east-facing frames match enemy movement")
@@ -148,7 +164,7 @@ func _run_suite() -> void:
 	await _tap_action(&"toggle_skills")
 	_check(game.phase == AshenCovenantGame.GamePhase.PLAYING, "Skill tree returns to gameplay with K")
 
-	game.player.global_position = Vector2(1100, 1200)
+	game.player.global_position = Vector2(820, 1060)
 	game.player.last_move_direction = Vector2.UP
 	var dash_target := game.enemies[2] as CovenantEnemy
 	dash_target.global_position = game.player.global_position + Vector2(46, 0)
@@ -164,6 +180,7 @@ func _run_suite() -> void:
 	var nearby_targets: Array[CovenantEnemy] = []
 	for i in 2:
 		var enemy := game.enemies[i + 3] as CovenantEnemy
+		enemy.health = maxf(enemy.health, 1000.0)
 		enemy.global_position = game.player.global_position + Vector2(45 + i * 24, 0)
 		nearby_targets.append(enemy)
 	var mana_before := game.player.mana

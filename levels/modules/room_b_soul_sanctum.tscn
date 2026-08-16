@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_module_3d.gd" id="1_module"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/room_b_soul_sanctum.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="BoxFloor"]
+size = Vector3(14, 0.4, 14)
+
+[sub_resource type="BoxShape3D" id="BoxLongWall"]
+size = Vector3(14.8, 4.8, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShortWall"]
+size = Vector3(0.8, 4.8, 14.8)
+
+[sub_resource type="BoxShape3D" id="BoxDoorSide"]
+size = Vector3(0.8, 4.8, 5.2)
+
+[node name="RoomB_SoulSanctum" type="Node3D"]
+script = ExtResource("1_module")
+module_id = &"ROOM_B_SOUL_SANCTUM"
+footprint = Vector3(14, 4.8, 14)
+door_width = 3.6
+editor_note = "靈魂聖所。西側門口對準走廊東端；可在 dungeon_3d.tscn 內複製並移動。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+position = Vector3(-1, 0, 0)
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Collision"]
+position = Vector3(7, -0.2, 0)
+shape = SubResource("BoxFloor")
+
+[node name="NorthWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(7, 2.4, -7)
+shape = SubResource("BoxLongWall")
+
+[node name="SouthWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(7, 2.4, 7)
+shape = SubResource("BoxLongWall")
+
+[node name="EastWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(14, 2.4, 0)
+shape = SubResource("BoxShortWall")
+
+[node name="WestWallLower" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, -5.1)
+shape = SubResource("BoxDoorSide")
+
+[node name="WestWallUpper" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, 5.1)
+shape = SubResource("BoxDoorSide")

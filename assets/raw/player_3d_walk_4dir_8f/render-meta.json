@@ -1,0 +1,15 @@
+{
+  "source_model": "assets/models/animated/fantasy_warrior_gameplay_head_level.glb",
+  "action": "Walk",
+  "source_frame_size": 512,
+  "frames_per_direction": 8,
+  "directions": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "camera": "orthographic three-quarter",
+  "background": "transparent",
+  "color_processing": "none; retained as source renders"
+}

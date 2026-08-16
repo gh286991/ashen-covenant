@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/pillar_crypt.glb" id="2_visual"]
+
+[sub_resource type="CylinderShape3D" id="1_collision"]
+radius = 0.59
+height = 4.17
+
+[node name="PillarCrypt" type="Node3D"]
+script = ExtResource("1_script")
+piece_id = &"PILLAR_CRYPT"
+piece_role = "Prop"
+footprint = Vector3(1.18, 4.17, 1.18)
+editor_note = "Crypt pillar. Its origin sits on the floor at the centre of the base."
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.085, 0)
+shape = SubResource("1_collision")

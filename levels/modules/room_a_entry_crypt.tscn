@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_module_3d.gd" id="1_module"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/room_a_entry_crypt.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="BoxFloor"]
+size = Vector3(12, 0.4, 12)
+
+[sub_resource type="BoxShape3D" id="BoxLongWall"]
+size = Vector3(12.8, 4.8, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShortWall"]
+size = Vector3(0.8, 4.8, 12.8)
+
+[sub_resource type="BoxShape3D" id="BoxDoorSide"]
+size = Vector3(0.8, 4.8, 4.2)
+
+[node name="RoomA_EntryCrypt" type="Node3D"]
+script = ExtResource("1_module")
+module_id = &"ROOM_A_ENTRY_CRYPT"
+footprint = Vector3(12, 4.8, 12)
+door_width = 3.6
+editor_note = "入口房間。東側門口對準走廊西端；可在 dungeon_3d.tscn 內複製並移動。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+position = Vector3(1, 0, 0)
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-6, -0.2, 0)
+shape = SubResource("BoxFloor")
+
+[node name="NorthWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-6, 2.4, -6)
+shape = SubResource("BoxLongWall")
+
+[node name="SouthWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-6, 2.4, 6)
+shape = SubResource("BoxLongWall")
+
+[node name="WestWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(-12, 2.4, 0)
+shape = SubResource("BoxShortWall")
+
+[node name="EastWallLower" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, -3.9)
+shape = SubResource("BoxDoorSide")
+
+[node name="EastWallUpper" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, 3.9)
+shape = SubResource("BoxDoorSide")

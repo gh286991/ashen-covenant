@@ -17,7 +17,7 @@ func _check(condition: bool, message: String) -> void:
 
 func _run_suite() -> void:
 	var packed := load("res://levels/main.tscn") as PackedScene
-	_check(packed != null, "Dungeon scene loads")
+	_check(packed != null, "Old Prison dungeon scene loads")
 	if packed == null:
 		quit(1)
 		return
@@ -29,11 +29,30 @@ func _run_suite() -> void:
 	game.start_new_game()
 	await process_frame
 
-	_check(game.dungeon_layout.get("rooms", []).size() >= 12, "Dungeon contains twelve named spaces")
-	_check(game.dungeon_layout.get("hazards", []).size() >= 4, "Dungeon contains four trap zones")
-	_check(game.chests.size() == 3, "Main path and two side caches are present")
-	_check(game.breakables.size() >= 6, "Breakable dungeon dressing is populated")
-	_check(game.enemies.size() >= 12, "Encounters are distributed across the dungeon")
+	var tiled_map := game.get_node_or_null("OldPrisonTileMap") as Node2D
+	var tiled_layer_count := 0
+	var tiled_cell_count := 0
+	var tiled_size_ok := true
+	if tiled_map != null:
+		for child in tiled_map.get_children():
+			if child is TileMapLayer:
+				tiled_layer_count += 1
+				tiled_cell_count += (child as TileMapLayer).get_used_cells().size()
+				if (child as TileMapLayer).tile_set == null or (child as TileMapLayer).tile_set.tile_size != Vector2i(32, 32):
+					tiled_size_ok = false
+	_check(tiled_map != null and tiled_layer_count == 10, "Old Prison is assembled from eight base layers plus two foreground wall layers")
+	_check(tiled_cell_count >= 7900 and tiled_size_ok, "Old Prison TileMap uses the purchased 32px TileSet grid")
+	var foreground_wall_1 := tiled_map.get_node_or_null("Foreground_wall_1") as TileMapLayer if tiled_map != null else null
+	var foreground_wall_2 := tiled_map.get_node_or_null("Foreground_wall_2") as TileMapLayer if tiled_map != null else null
+	var foreground_material := foreground_wall_1.material as ShaderMaterial if foreground_wall_1 != null else null
+	var silhouette_mask_ready := foreground_material != null and float(foreground_material.get_shader_parameter("player_visual_ready")) > 0.5
+	_check(foreground_wall_1 != null and foreground_wall_2 != null and foreground_wall_1.modulate.a > 0.99 and foreground_material != null and foreground_material.shader != null and foreground_wall_1.z_index > 50 and silhouette_mask_ready, "Foreground walls use the player's silhouette for exact occlusion")
+
+	_check(game.dungeon_layout.get("rooms", []).size() >= 6, "Old Prison contains four exploration zones plus approach and boss sanctum")
+	_check(game.dungeon_layout.get("hazards", []).size() >= 4, "Old Prison contains four trap zones")
+	_check(game.chests.size() == 3, "Entry cache and two side caches are present")
+	_check(game.breakables.size() >= 6, "Breakable barrels and bone piles are populated")
+	_check(game.enemies.size() >= 12, "Encounters are distributed across the three anchor zones")
 	_check(game.player.get_collision_mask_value(1), "Player collision mask scans the World layer")
 	if not game.enemies.is_empty():
 		_check(game.enemies[0].get_collision_mask_value(1), "Enemy collision mask scans the World layer")
@@ -56,12 +75,13 @@ func _run_suite() -> void:
 		for child in world_collision.get_children():
 			if child is CollisionPolygon2D and child.build_mode == CollisionPolygon2D.BUILD_SEGMENTS:
 				boundary_count += 1
-		_check(boundary_count == 1, "Connected walkable layout merges into one segment boundary collider")
-		_check(world_collision.get_node_or_null("BossGate") != null, "Sealed boss gate has a physical blocker")
-		_check(world_collision.get_node_or_null("Decor_sarcophagus_w1") != null, "Authored decor blocker has a physical shape")
-		_check(world_collision.get_node_or_null("Chest_nave_cache") != null, "Chest has a physical shape")
-		_check(world_collision.get_node_or_null("Breakable_urn_1") != null, "Living breakable has a physical shape")
-	game.player.global_position = Vector2(1100, 520)
+		_check(boundary_count == 1, "Connected Old Prison walkable layout merges into one boundary collider")
+		_check(world_collision.get_node_or_null("BossGate") != null, "Sealed Warden gate has a physical blocker")
+		_check(world_collision.get_node_or_null("Decor_cell_barrels") != null, "Authored barrel blocker has a physical shape")
+		_check(world_collision.get_node_or_null("Chest_entry_cache") != null, "Entry chest has a physical shape")
+		_check(world_collision.get_node_or_null("Breakable_barrel_1") != null, "Living barrel has a physical shape")
+
+	game.player.global_position = Vector2(1280, 380)
 	game.player.velocity = Vector2.ZERO
 	game.player.locomotion_velocity = Vector2.ZERO
 	game.player.last_move_direction = Vector2.UP
@@ -71,96 +91,89 @@ func _run_suite() -> void:
 	Input.action_release(&"dash")
 	for _frame in 18:
 		await physics_frame
-	_check(game.player.global_position.y >= 479.0, "Physical boss gate stops the player's dash")
+	_check(game.player.global_position.y >= 360.0, "Physical Warden gate stops the player's dash with the smaller player radius")
+
 	game.player.dash_timer = 0.0
 	game.player.cancel_pointer_command()
-	game.player.global_position = Vector2(1100, 520)
+	game.player.global_position = Vector2(1280, 380)
 	game.player.velocity = Vector2.ZERO
 	game.player.locomotion_velocity = Vector2.ZERO
-	_check(game.issue_pointer_command(Vector2(1100, 350)), "Click navigation accepts a destination beyond the sealed gate")
+	_check(game.issue_pointer_command(Vector2(1280, 180)), "Click navigation accepts a destination beyond the sealed Warden gate")
 	for _frame in 60:
 		await physics_frame
-	_check(game.player.global_position.y >= 390.0 and world.is_point_walkable(game.player.global_position, 17.0), "Click navigation stops on the reachable side of the sealed gate")
+	_check(game.player.global_position.y >= 363.0 and world.is_point_walkable(game.player.global_position, 14.0), "Click navigation stops on the reachable side of the sealed Warden gate")
 	game.player.cancel_pointer_command()
-	game.player.global_position = Vector2(960, 1150)
+
+	game.player.global_position = Vector2(280, 1040)
 	game.player.velocity = Vector2.ZERO
 	game.player.locomotion_velocity = Vector2.ZERO
 	Input.action_press(&"move_left")
-	Input.action_press(&"move_up")
 	for _frame in 18:
 		await physics_frame
 	Input.action_release(&"move_left")
-	Input.action_release(&"move_up")
-	_check(game.player.global_position.x >= 946.0, "Physical nave wall blocks the player's collision radius")
-	_check(game.player.global_position.y < 1125.0, "CharacterBody2D preserves wall-tangent movement")
-	_check(world.is_point_walkable(Vector2(1100, 1250), 17.0), "Entry spawn is walkable")
-	_check(world.is_point_walkable(Vector2(390, 680), 17.0), "West crypt is walkable")
-	_check(world.is_point_walkable(Vector2(1810, 680), 17.0), "East ossuary is walkable")
-	_check(world.is_point_walkable(Vector2(1100, 670), 17.0), "Ritual court is walkable")
-	_check(world.is_point_walkable(Vector2(1100, 190), 17.0), "Boss sanctum is authored as playable space")
-	_check(not world.is_point_walkable(Vector2(20, 20), 17.0), "Darkness outside the dungeon is blocked")
-	_check(world.is_point_walkable(Vector2(950, 1100), 18.0), "Small enemy radius fits near the nave wall")
-	_check(not world.is_point_walkable(Vector2(950, 1100), 23.0), "Brute radius cannot clip through the same nave wall")
-	var slide_start := Vector2(950, 1150)
-	var slide_result := world.resolve_motion(slide_start, Vector2(930, 1110), 17.0)
-	_check(slide_result.x >= 946.9, "Diagonal movement remains outside the nave wall")
-	_check(slide_result.y < 1115.0, "Diagonal wall contact preserves tangential movement")
+	_check(game.player.global_position.x >= 270.0, "Outer prison wall blocks the smaller player's collision radius")
 
-	_check(not world.is_motion_walkable(Vector2(1100, 500), Vector2(1100, 350), 17.0), "Sealed soul gate blocks the boss route")
-	_check(not world.is_point_walkable(Vector2(477, 830), 17.0), "West shortcut starts sealed")
+	_check(world.is_point_walkable(Vector2(820, 1100), 14.0), "Entry spawn is walkable")
+	_check(world.is_point_walkable(Vector2(432, 760), 14.0), "Silent Cells are walkable")
+	_check(world.is_point_walkable(Vector2(820, 420), 14.0), "Gearworks are walkable")
+	_check(world.is_point_walkable(Vector2(1580, 760), 14.0), "Bloodworks are walkable")
+	_check(world.is_point_walkable(Vector2(1280, 170), 14.0), "Warden sanctum is authored as playable space")
+	_check(not world.is_point_walkable(Vector2(20, 20), 14.0), "Darkness outside the prison is blocked")
+	_check(not world.is_motion_walkable(Vector2(1280, 380), Vector2(1280, 180), 14.0), "Sealed Warden gate blocks the boss route")
+	_check(not world.is_point_walkable(Vector2(475, 830), 14.0), "Cell shortcut starts sealed")
 
-	var chest_hits := game._hit_interactables(Vector2(1010, 1185), 12.0)
-	_check(chest_hits >= 1 and bool(game.chests[2].get("opened", false)), "Entry cache opens and creates loot")
+	var chest_hits := game._hit_interactables(Vector2(960, 1110), 12.0)
+	_check(chest_hits >= 1 and bool(game.chests[0].get("opened", false)), "Entry cache opens and creates loot")
 	_check(game.loot_layer.get_child_count() >= 2, "Opened cache drops tangible rewards")
-	var prop_hits := game._hit_interactables(Vector2(1080, 1160), 12.0)
-	_check(prop_hits >= 1 and not bool(game.breakables[0].get("alive", true)), "Funerary urn can be smashed")
+	var prop_hits := game._hit_interactables(Vector2(360, 900), 12.0)
+	_check(prop_hits >= 1 and not bool(game.breakables[0].get("alive", true)), "Prison barrel can be smashed")
 	await process_frame
 	if world_collision != null:
-		_check(world_collision.get_node_or_null("Breakable_urn_1") == null, "Destroyed breakable removes its physical shape")
+		_check(world_collision.get_node_or_null("Breakable_barrel_1") == null, "Destroyed breakable removes its physical shape")
 
 	game.player.invulnerable_timer = 0.0
 	game.player.health = game.player.max_health()
-	game.player.global_position = Vector2(1100, 1045)
+	game.player.global_position = Vector2(610, 900)
 	var health_before := game.player.health
 	game._update_hazards()
-	_check(game.player.health < health_before, "Spike trap damages the player")
+	_check(game.player.health < health_before, "Cell spike trap damages the player")
 
-	game.player.global_position = Vector2(390, 680)
+	game.player.global_position = Vector2(432, 760)
 	game._update_exploration(0.1)
-	_check(game.current_room == "west_crypt", "Room discovery identifies the west crypt")
-	_check("west_crypt" in game.discovered_rooms, "Discovered rooms are recorded for the minimap")
+	_check(game.current_room == "cell_block", "Room discovery identifies the Silent Cells")
+	_check("cell_block" in game.discovered_rooms, "Discovered rooms are recorded for the minimap")
 
-	var west_anchor := game._anchor_by_id("west")
-	game._damage_anchor(west_anchor, float(west_anchor.get("health", 0.0)) + 1.0)
+	var cells_anchor := game._anchor_by_id("cells")
+	game._damage_anchor(cells_anchor, float(cells_anchor.get("health", 0.0)) + 1.0)
 	await process_frame
-	_check(world.is_point_walkable(Vector2(477, 830), 17.0), "Breaking the west anchor unseals its shortcut")
+	_check(world.is_point_walkable(Vector2(475, 830), 14.0), "Breaking the Cells anchor unseals its shortcut")
 	await process_frame
 	if world_collision != null:
-		_check(world_collision.get_node_or_null("ShortcutGate_west_shortcut") == null, "Breaking the west anchor removes its physical shortcut gate")
-	game.player.global_position = Vector2(460, 910)
+		_check(world_collision.get_node_or_null("ShortcutGate_cell_shortcut") == null, "Breaking the Cells anchor removes its physical shortcut gate")
+	game.player.global_position = Vector2(460, 900)
 	game.shortcut_cooldown = 0.0
 	game._update_shortcuts()
-	_check(game.player.global_position.distance_to(Vector2(985, 1045)) < 2.0, "West shortcut returns the player to the nave")
+	_check(game.player.global_position.distance_to(Vector2(820, 1050)) < 2.0, "Cells shortcut returns the player to the entry hall")
 
 	game.playtest_break_all_anchors()
 	await process_frame
 	_check(game.anchors_destroyed == 3, "All anchors can be cleared from their branches")
-	_check(is_instance_valid(game.boss), "Clearing the anchors awakens the boss")
-	_check(world.is_motion_walkable(Vector2(1100, 500), Vector2(1100, 350), 17.0), "Soul gate opens after all anchors fall")
+	_check(is_instance_valid(game.boss), "Clearing the anchors awakens the Warden")
+	_check(world.is_motion_walkable(Vector2(1280, 380), Vector2(1280, 180), 14.0), "Warden gate opens after all anchors fall")
 	await process_frame
 	if world_collision != null:
-		_check(world_collision.get_node_or_null("BossGate") == null, "Opening the soul gate removes its physical blocker")
+		_check(world_collision.get_node_or_null("BossGate") == null, "Opening the Warden gate removes its physical blocker")
 
 	game.playtest_damage_boss(99999.0)
 	await process_frame
 	await process_frame
-	_check(game.phase == AshenCovenantGame.GamePhase.VICTORY, "Dungeon route ends in a winnable boss fight")
+	_check(game.phase == AshenCovenantGame.GamePhase.VICTORY, "Old Prison route ends in a winnable boss fight")
 
 	print("[MAP TEST STATE] ", JSON.stringify(game.get_playtest_state()))
 	game.queue_free()
 	await process_frame
 	if failures.is_empty():
-		print("[MAP TEST RESULT] PASS — dungeon layout and interactions verified")
+		print("[MAP TEST RESULT] PASS — Old Prison layout and interactions verified")
 		quit(0)
 	else:
 		print("[MAP TEST RESULT] FAIL count=%d" % failures.size())

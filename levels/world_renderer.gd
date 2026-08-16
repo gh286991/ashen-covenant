@@ -2,14 +2,13 @@
 class_name AshenWorldRenderer
 extends Node2D
 
-const MAP_SIZE := Vector2(2200, 1400)
+const MAP_SIZE := Vector2(1920, 1280)
 const WORLD_COLLISION_LAYER := 1
 const ELLIPSE_COLLISION_SEGMENTS := 48
 const MOTION_SAMPLE_STEP := 4.0
-const DUNGEON_BASE_TEXTURE := preload("res://assets/map/ashen_catacombs-base.png")
 const SOUL_ANCHOR_TEXTURE := preload("res://assets/props/soul_anchor/single-1.png")
 const IRON_FENCE_TEXTURE := preload("res://assets/props/dungeon/iron-fence/prop.png")
-const SPIKE_TRAP_TEXTURE := preload("res://assets/props/dungeon/spike-trap/prop.png")
+const SPIKE_TRAP_TEXTURE := preload("res://assets/old_prison/runtime/pit_spike.png")
 
 var layout: Dictionary = {}
 var anchors: Array[Dictionary] = []
@@ -337,8 +336,6 @@ func _anchor_is_alive(anchor_id: String) -> bool:
 	return true
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, MAP_SIZE), Color("07060b"))
-	draw_texture_rect(DUNGEON_BASE_TEXTURE, Rect2(Vector2.ZERO, MAP_SIZE), false, Color.WHITE)
 	if Engine.is_editor_hint():
 		return
 	_draw_hazards()

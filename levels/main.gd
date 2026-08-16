@@ -11,8 +11,9 @@ const SpriteFXScript := preload("res://common/sprite_sequence_fx.gd")
 const AudioDirectorScript := preload("res://common/audio_director.gd")
 const DUNGEON_LAYOUT_PATH := "res://data/ashen_catacombs_layout.json"
 const POINTER_GRID_CELL_SIZE := 32.0
-const POINTER_ACTOR_RADIUS := 19.0
-const POINTER_GRID_SIZE := Vector2i(69, 44)
+const POINTER_ACTOR_RADIUS := 15.0
+const POINTER_GRID_SIZE := Vector2i(60, 40)
+const GAMEPLAY_CAMERA_ZOOM := 1.5
 
 @onready var world_renderer: AshenWorldRenderer = %WorldRenderer
 @onready var actors: Node2D = %Actors
@@ -371,12 +372,21 @@ func _configure_camera() -> void:
 		return
 	combat_camera = camera
 	camera.enabled = true
-	camera.position_smoothing_enabled = true
-	camera.position_smoothing_speed = 7.5
-	camera.limit_left = 0
-	camera.limit_top = 0
-	camera.limit_right = 2200
-	camera.limit_bottom = 1400
+	# The camera is a child of Player, so zero local position keeps the player
+	# at the exact viewport center. Do not use a drag dead-zone here: this is an
+	# action RPG view, not a platformer camera.
+	camera.position = Vector2.ZERO
+	camera.zoom = Vector2.ONE * GAMEPLAY_CAMERA_ZOOM
+	camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
+	camera.drag_horizontal_enabled = false
+	camera.drag_vertical_enabled = false
+	camera.position_smoothing_enabled = false
+	# Extend the limits by half a viewport so the player can remain centered at
+	# the edge of the authored 2200x1400 dungeon instead of being clamped inward.
+	camera.limit_left = -640
+	camera.limit_top = -360
+	camera.limit_right = 2560
+	camera.limit_bottom = 1640
 	camera.limit_smoothed = true
 
 func start_new_game() -> void:
@@ -392,7 +402,7 @@ func start_new_game() -> void:
 	_spawn_anchor_encounters()
 	objective = "Break the soul anchors  (0 / 3)"
 	sheet_open = false
-	current_room = "entry_nave"
+	current_room = "entry_hall"
 	discovered_rooms.append(current_room)
 	_refresh_world_state()
 	_set_phase(GamePhase.PLAYING)
@@ -418,7 +428,7 @@ func continue_game() -> void:
 	for chest: Dictionary in chests:
 		if String(chest.get("id", "")) in opened_chests:
 			chest["opened"] = true
-	discovered_rooms.assign(data.get("discovered_rooms", ["entry_nave"]))
+	discovered_rooms.assign(data.get("discovered_rooms", ["entry_hall"]))
 	_rebuild_dungeon_props()
 	player.global_position = _position_from_data(dungeon_layout, "continueSpawn")
 	_spawn_anchor_encounters()

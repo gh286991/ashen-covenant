@@ -4,10 +4,11 @@ A self-contained Godot 4.5 dark fantasy action RPG demo with a complete combat l
 
 ## Dungeon
 
-- Twelve named spaces across a main nave, ritual court, two combat branches, hidden side caches, shortcut stairs, a sealed gate passage, and the Warden's sanctum
-- Three branch objectives that unlock two return shortcuts and the final boss gate
-- Four spike-trap zones, three loot chests, six breakable props, room discovery, and a live exploration minimap
-- Authored walkable regions and blockers keep the player, enemies, and projectiles inside the visible architecture
+- A purchased Old Prison World Pack layout with four exploration zones: the Iron Arrival, Silent Cells, Gearworks, and Bloodworks
+- Three soul-anchor objectives unlock two return shortcuts and the sealed Warden gate
+- The Keeper's Sanctum is the final area, where the Ashen Warden becomes the dungeon boss
+- Four spike-trap zones, three loot chests, six breakable prison props, room discovery, and a live exploration minimap
+- Authored walkable regions and blockers keep the player, enemies, and projectiles inside the visible prison architecture
 
 ## Controls
 
@@ -22,10 +23,12 @@ A self-contained Godot 4.5 dark fantasy action RPG demo with a complete combat l
 
 ## Art
 
+- Old Prison tiles, props, prison gates, and the original Tiled source are preserved under `assets/old_prison/`; the runtime map is assembled as editable `TileMapLayer` layers
+
 - Four-direction hand-painted sprites for the player, Ash Ghouls, Void Wraiths, Grave Brutes, and the Ashen Warden
 - A matching Soul Anchor prop and four illustrated ability icons
 - An original gothic altar HUD with an angel-bound life orb and demon-bound essence orb
-- A hand-painted 2200×1400 catacomb map plus matching chests, sarcophagi, braziers, urns, bones, columns, fences, and spike traps
+- Original hand-painted combat characters, Soul Anchor art, HUD illustrations, and effects remain available alongside the new prison environment
 - Procedural combat effects retained for motion, glow, telegraphs, and readability
 - Raw generations, processed transparent sheets, individual frames, prompts, and pipeline metadata are all preserved under `assets/`
 

@@ -1,0 +1,166 @@
+{
+  "source": "dungeon_two_rooms.blend",
+  "assets": [
+    {
+      "id": "floor_block_3p9",
+      "role": "Floor",
+      "note": "Five-by-five stone-floor tiles. Place on the 3.9 m floor grid.",
+      "bounds": {
+        "min": [
+          -1.9707,
+          -1.9756,
+          -0.01
+        ],
+        "max": [
+          1.9713,
+          1.9709,
+          0.12
+        ],
+        "size": [
+          3.942,
+          3.9466,
+          0.13
+        ]
+      },
+      "file": "floor_block_3p9.glb"
+    },
+    {
+      "id": "wall_straight_2p6",
+      "role": "Straight Wall",
+      "note": "Three-brick-wide straight wall. Local +X is the wall length; rotate 90 degrees for side walls.",
+      "bounds": {
+        "min": [
+          -1.2904,
+          -0.31,
+          0.0
+        ],
+        "max": [
+          2.536,
+          0.31,
+          4.24
+        ],
+        "size": [
+          3.8264,
+          0.62,
+          4.24
+        ]
+      },
+      "file": "wall_straight_2p6.glb"
+    },
+    {
+      "id": "wall_corner_2p6",
+      "role": "Corner Wall",
+      "note": "Outer corner. The two wall arms meet at the local origin and extend toward local -X and -Y.",
+      "bounds": {
+        "min": [
+          -3.65,
+          -3.2,
+          0.0
+        ],
+        "max": [
+          0.31,
+          0.31,
+          4.24
+        ],
+        "size": [
+          3.96,
+          3.51,
+          4.24
+        ]
+      },
+      "file": "wall_corner_2p6.glb"
+    },
+    {
+      "id": "doorway_3p6",
+      "role": "Doorway",
+      "note": "3.6 m arched doorway. Put its origin at the centre of a wall opening.",
+      "bounds": {
+        "min": [
+          -0.41,
+          -2.19,
+          -0.0
+        ],
+        "max": [
+          0.41,
+          2.19,
+          4.89
+        ],
+        "size": [
+          0.82,
+          4.38,
+          4.89
+        ]
+      },
+      "file": "doorway_3p6.glb"
+    },
+    {
+      "id": "pillar_crypt",
+      "role": "Pillar",
+      "note": "Standalone crypt pillar. The origin is on the floor at the centre of its base.",
+      "bounds": {
+        "min": [
+          -0.5924,
+          -0.5924,
+          0.0
+        ],
+        "max": [
+          0.5924,
+          0.5924,
+          4.17
+        ],
+        "size": [
+          1.1848,
+          1.1848,
+          4.17
+        ]
+      },
+      "file": "pillar_crypt.glb"
+    },
+    {
+      "id": "altar_coffin",
+      "role": "Set Dressing",
+      "note": "Altar and coffin decoration for a focal point inside a room.",
+      "bounds": {
+        "min": [
+          -1.75,
+          -1.125,
+          0.06
+        ],
+        "max": [
+          1.75,
+          1.125,
+          1.62
+        ],
+        "size": [
+          3.5,
+          2.25,
+          1.56
+        ]
+      },
+      "file": "altar_coffin.glb"
+    },
+    {
+      "id": "brazier_blue",
+      "role": "Set Dressing",
+      "note": "Blue-flame brazier. Add a Godot OmniLight3D beside it if a local light is wanted.",
+      "bounds": {
+        "min": [
+          -0.48,
+          -0.48,
+          0.045
+        ],
+        "max": [
+          0.48,
+          0.48,
+          2.19
+        ],
+        "size": [
+          0.96,
+          0.96,
+          2.145
+        ]
+      },
+      "file": "brazier_blue.glb"
+    }
+  ]
+}

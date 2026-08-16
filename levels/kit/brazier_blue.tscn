@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/brazier_blue.glb" id="2_visual"]
+
+[sub_resource type="CylinderShape3D" id="1_collision"]
+radius = 0.48
+height = 2.15
+
+[node name="BrazierBlue" type="Node3D"]
+script = ExtResource("1_script")
+piece_id = &"BRAZIER_BLUE"
+piece_role = "Prop"
+footprint = Vector3(0.96, 2.15, 0.96)
+editor_note = "Blue brazier decoration. Add an OmniLight3D as a sibling if you want it to illuminate the room."
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 1.12, 0)
+shape = SubResource("1_collision")

@@ -5,8 +5,8 @@ extends Node2D
 enum FeatureType { SOUL_ANCHOR, SPIKE_TRAP, SHORTCUT_GATE, BOSS_GATE }
 
 const SOUL_ANCHOR_TEXTURE := preload("res://assets/props/soul_anchor/single-1.png")
-const IRON_FENCE_TEXTURE := preload("res://assets/props/dungeon/iron-fence/prop.png")
-const SPIKE_TRAP_TEXTURE := preload("res://assets/props/dungeon/spike-trap/prop.png")
+const IRON_FENCE_TEXTURE := preload("res://assets/old_prison/runtime/prison_gate.png")
+const SPIKE_TRAP_TEXTURE := preload("res://assets/old_prison/runtime/pit_spike.png")
 
 @export_category("Feature")
 @export var feature_type: FeatureType = FeatureType.SOUL_ANCHOR:

@@ -5,8 +5,8 @@ const MIN_CUTE_FLOOR_EXTENT := 3.5
 const USER_WALL_ID := 11
 const TRIPO_FLOOR_ID := 12
 const GRID_SIZE := 3.946
-const EXPECTED_FLOOR_CELLS := 33
-const EXPECTED_STRUCTURE_CELLS := 20
+const EXPECTED_FLOOR_CELLS := 31
+const EXPECTED_STRUCTURE_CELLS := 19
 const EXPECTED_BOUNDARY_CELLS := 14
 
 
@@ -106,13 +106,14 @@ func _check_grid(root: Node, path: String, failures: Array[String]) -> void:
 
 
 func _check_layout(floor_grid: GridMap, structure_grid: GridMap, boundary_grid: GridMap, failures: Array[String]) -> void:
-	var rooms := [Vector2i(-3, -1), Vector2i(1, 3), Vector2i(5, 7)]
+	var rooms := [Vector2i(-3, -1), Vector2i(2, 4), Vector2i(7, 9)]
 	for room_index in rooms.size():
 		var room: Vector2i = rooms[room_index]
 		for x in range(room.x, room.y + 1):
 			for z in range(-1, 2):
 				_expect_item(floor_grid, Vector3i(x, 0, z), TRIPO_FLOOR_ID, failures)
-			_expect_wall(structure_grid, Vector3i(x, 0, -1), 0, failures)
+			if not (room_index == 1 and x == 3):
+				_expect_wall(structure_grid, Vector3i(x, 0, -1), 0, failures)
 			_expect_wall(structure_grid, Vector3i(x, 0, 1), 180, failures)
 		for z in [-1, 0, 1]:
 			if room_index == 0 or z != 0:
@@ -120,10 +121,10 @@ func _check_layout(floor_grid: GridMap, structure_grid: GridMap, boundary_grid: 
 			if room_index == rooms.size() - 1 or z != 0:
 				_expect_wall(boundary_grid, Vector3i(room.y, 0, z), 270, failures)
 
-	for corridor_x in [0, 4]:
-		for z in range(-1, 2):
-			_expect_item(floor_grid, Vector3i(corridor_x, 0, z), TRIPO_FLOOR_ID, failures)
-		_expect_item(structure_grid, Vector3i(corridor_x, 0, 0), 3, failures)
+	for corridor_x in [0, 1, 5, 6]:
+		_expect_item(floor_grid, Vector3i(corridor_x, 0, 0), TRIPO_FLOOR_ID, failures)
+	for doorway_x in [0, 5]:
+		_expect_item(structure_grid, Vector3i(doorway_x, 0, 0), 3, failures)
 
 
 func _expect_wall(grid: GridMap, cell: Vector3i, rotation_degrees: float, failures: Array[String]) -> void:

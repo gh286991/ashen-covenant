@@ -1,0 +1,205 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://levels/kit/floor_stone_tripo_3p9.tscn" id="1_floor"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_straight_3p946.tscn" id="2_wall_straight"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_doorway_3p946.tscn" id="3_doorway"]
+
+[node name="CorridorBranchRoomsLarge_3p946" type="Node3D"]
+editor_description = "放大的分支房間模組：兩格寬主走道，左右各一間 3x3 房間。外圍牆面完整封閉，只在入口與左右分支保留拱門；沿 3.946m 格點組合。"
+
+[node name="Floors" type="Node3D" parent="."]
+
+[node name="MainFloor_North" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(5.919, 0, -7.892)
+
+[node name="MainFloor_NorthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(9.865, 0, -7.892)
+
+[node name="MainFloor_CenterWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(5.919, 0, -11.838)
+
+[node name="MainFloor_CenterEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(9.865, 0, -11.838)
+
+[node name="MainFloor_SouthWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(5.919, 0, -15.784)
+
+[node name="MainFloor_SouthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(9.865, 0, -15.784)
+
+[node name="MainFloor_DeepWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(5.919, 0, -19.73)
+
+[node name="MainFloor_DeepEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(9.865, 0, -19.73)
+
+[node name="WestRoom_NorthWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-5.919, 0, -9.865)
+
+[node name="WestRoom_NorthCenter" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-1.973, 0, -9.865)
+
+[node name="WestRoom_NorthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(1.973, 0, -9.865)
+
+[node name="WestRoom_CenterWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-5.919, 0, -13.811)
+
+[node name="WestRoom_Center" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-1.973, 0, -13.811)
+
+[node name="WestRoom_CenterEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(1.973, 0, -13.811)
+
+[node name="WestRoom_SouthWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-5.919, 0, -17.757)
+
+[node name="WestRoom_SouthCenter" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(-1.973, 0, -17.757)
+
+[node name="WestRoom_SouthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(1.973, 0, -17.757)
+
+[node name="EastRoom_NorthWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(13.811, 0, -9.865)
+
+[node name="EastRoom_NorthCenter" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(17.757, 0, -9.865)
+
+[node name="EastRoom_NorthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(21.703, 0, -9.865)
+
+[node name="EastRoom_CenterWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(13.811, 0, -13.811)
+
+[node name="EastRoom_Center" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(17.757, 0, -13.811)
+
+[node name="EastRoom_CenterEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(21.703, 0, -13.811)
+
+[node name="EastRoom_SouthWest" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(13.811, 0, -17.757)
+
+[node name="EastRoom_SouthCenter" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(17.757, 0, -17.757)
+
+[node name="EastRoom_SouthEast" parent="Floors" instance=ExtResource("1_floor")]
+position = Vector3(21.703, 0, -17.757)
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="EntryDoorway" parent="Walls" instance=ExtResource("3_doorway")]
+position = Vector3(7.892, 0, -5.919)
+
+[node name="EntryWallLeft" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(3.946, 0, -5.919)
+
+[node name="EntryWallRight" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(11.838, 0, -5.919)
+
+[node name="WestShared_North" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(3.946, 0, -7.892)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestBranchDoorway" parent="Walls" instance=ExtResource("3_doorway")]
+position = Vector3(3.946, 0, -11.838)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestShared_South" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(3.946, 0, -15.784)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestShared_Deep" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(3.946, 0, -19.73)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastShared_North" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(11.838, 0, -7.892)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastBranchDoorway" parent="Walls" instance=ExtResource("3_doorway")]
+position = Vector3(11.838, 0, -11.838)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastShared_South" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(11.838, 0, -15.784)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastShared_Deep" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(11.838, 0, -19.73)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestRoom_NorthWest" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-5.919, 0, -7.892)
+
+[node name="WestRoom_NorthCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-1.973, 0, -7.892)
+
+[node name="WestRoom_NorthEast" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(1.973, 0, -7.892)
+
+[node name="WestRoom_SouthWest" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-5.919, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="WestRoom_SouthCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-1.973, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="WestRoom_SouthEast" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(1.973, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="WestRoom_OuterNorth" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-7.892, 0, -9.865)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestRoom_OuterCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-7.892, 0, -13.811)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestRoom_OuterSouth" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(-7.892, 0, -17.757)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastRoom_NorthWest" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(13.811, 0, -7.892)
+
+[node name="EastRoom_NorthCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(17.757, 0, -7.892)
+
+[node name="EastRoom_NorthEast" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(21.703, 0, -7.892)
+
+[node name="EastRoom_SouthWest" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(13.811, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="EastRoom_SouthCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(17.757, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="EastRoom_SouthEast" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(21.703, 0, -19.73)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="EastRoom_OuterNorth" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(23.676, 0, -9.865)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastRoom_OuterCenter" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(23.676, 0, -13.811)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastRoom_OuterSouth" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(23.676, 0, -17.757)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="MainSouthEndWest" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(5.919, 0, -21.703)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="MainSouthEnd" parent="Walls" instance=ExtResource("2_wall_straight")]
+position = Vector3(9.865, 0, -21.703)
+rotation_degrees = Vector3(0, 180, 0)

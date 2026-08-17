@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_module_3d.gd" id="1_module"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/corridor_t_3p946.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(3.946, 0.24, 3.6)
+
+[sub_resource type="BoxShape3D" id="BackWallShape"]
+size = Vector3(4.046, 4.8, 0.62)
+
+[node name="CorridorT_3p946" type="Node3D"]
+script = ExtResource("1_module")
+module_id = &"CORRIDOR_T_3P946"
+footprint = Vector3(3.946, 4.8, 3.6)
+door_width = 3.6
+editor_note = "T 字分岔，開口朝西、東、北；可用作支線選擇點。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.12, 0)
+shape = SubResource("FloorShape")
+
+[node name="BackWall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, 1.49)
+shape = SubResource("BackWallShape")

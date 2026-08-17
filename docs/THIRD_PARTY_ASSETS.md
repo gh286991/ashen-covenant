@@ -9,6 +9,22 @@
 
 The original pack includes 100 seamless 32×32 tiles and a Tiled example map. Attribution is not required, but the source is recorded here for project provenance.
 
+## Castle Wall Slates PBR (previous variant)
+
+- Source: [Poly Haven — Castle Wall Slates](https://polyhaven.com/a/castle_wall_slates)
+- Imported maps: `assets/3d_dungeon/kit/textures/castle_wall_slates/`
+- Material: `assets/3d_dungeon/kit/textures/castle_wall_slates/castle_wall_slates_material.tres`
+- Licence: CC0
+- Use: retained as an alternate material for comparison; the user wall scenes remain available for rollback/reference
+
+## Stylized Mossy Dungeon Wall PBR (active variant)
+
+- Source: [Stylized Mossy Dungeon Wall by kaczor237](https://kaczor237.itch.io/stylized-mossy-dungeon-wall-seamless-pbr-texture)
+- Imported maps: `assets/3d_dungeon/kit/textures/castle_wall_stylized/`
+- Material: `assets/3d_dungeon/kit/textures/castle_wall_stylized/castle_wall_stylized_material.tres`
+- Licence: CC0 / Public Domain
+- Use: active PBR material for the Castle wrappers; its normal/AO strength is kept moderate so the hand-painted stone stays closer to the game's cartoon palette
+
 ## EPIC RPG World Pack — Old Prison V1.7.1
 
 - Source: user-provided purchased asset pack at `assets/old_prison/source/`

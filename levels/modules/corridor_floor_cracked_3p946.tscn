@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_piece"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/corridor_floor_cracked_3p946.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(3.946, 0.24, 3.946)
+
+[node name="FloorCracked_3p946" type="Node3D"]
+script = ExtResource("1_piece")
+piece_id = &"FLOOR_CRACKED_3P946"
+piece_role = "Floor"
+footprint = Vector3(3.946, 0.2, 3.946)
+editor_note = "獨立裂紋地板磚，可交錯鋪設。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.12, 0)
+shape = SubResource("FloorShape")

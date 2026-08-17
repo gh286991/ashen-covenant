@@ -1,42 +1,394 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=8 format=3 uid="uid://doh5fyfbtjivs"]
 
-[ext_resource type="MeshLibrary" path="res://levels/kit/dungeon_kit_mesh_library.tres" id="1_vhj04"]
+[ext_resource type="MeshLibrary" uid="uid://ba65nvhx03144" path="res://levels/kit/dungeon_kit_mesh_library.tres" id="1_r0fbt"]
+[ext_resource type="PackedScene" path="res://levels/kit/floor_stone_tripo_3p9.tscn" id="2_j65ym"]
+[ext_resource type="PackedScene" path="res://levels/kit/wall_castle_pbr_2p6.tscn" id="4_pj1yr"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_doorway_3p946.tscn" id="5_w6k8y"]
+[ext_resource type="PackedScene" path="res://levels/kit/brazier_blue.tscn" id="6_w43vo"]
+[ext_resource type="PackedScene" path="res://levels/kit/altar_coffin.tscn" id="7_cr8nt"]
+[ext_resource type="PackedScene" path="res://levels/modules/corridor_branch_rooms_large_3p946.tscn" id="8_bld33"]
 
 [node name="DungeonGridMap" type="Node3D"]
-editor_description = "快速筆刷地圖。選取 DungeonGridMap/GridMap 後，從下方 GridMap 面板挑選素材並直接在 3D 視窗繪製。"
+editor_description = "實際地圖在 ModularAssembly：房間四邊用牆封住，只在 Doorways 開入口；走道兩側也有碰撞牆。四組 GridMap 是隱藏筆刷參考層。"
 
 [node name="FloorGridMap" type="GridMap" parent="."]
 editor_description = "只畫地板；所有房間與走廊的基底。"
-mesh_library = ExtResource("1_vhj04")
+visible = false
+mesh_library = ExtResource("1_r0fbt")
 cell_size = Vector3(3.946, 3.946, 3.946)
 cell_center_y = false
+collision_layer = 0
+collision_mask = 0
 data = {
-"cells": PackedInt32Array(65533, 65535, 12, 65533, 0, 12, 65533, 1, 12, 65534, 65535, 12, 65534, 0, 12, 65534, 1, 12, 65535, 65535, 12, 65535, 0, 12, 65535, 1, 12, 1, 65535, 12, 1, 0, 12, 1, 1, 12, 2, 65535, 12, 2, 0, 12, 2, 1, 12, 3, 65535, 12, 3, 0, 12, 3, 1, 12, 5, 65535, 12, 5, 0, 12, 5, 1, 12, 6, 65535, 12, 6, 0, 12, 6, 1, 12, 7, 65535, 12, 7, 0, 12, 7, 1, 12, 0, 65535, 12, 0, 0, 12, 0, 1, 12, 4, 65535, 12, 4, 0, 12, 4, 1, 12)
+"cells": PackedInt32Array(65533, 65535, 12, 65533, 0, 12, 65533, 1, 12, 65534, 65535, 12, 65534, 0, 12, 65534, 1, 12, 65535, 65535, 12, 65535, 0, 12, 65535, 1, 12, 2, 65535, 12, 2, 0, 12, 2, 1, 12, 3, 65535, 12, 3, 0, 12, 3, 1, 12, 4, 65535, 12, 4, 0, 12, 4, 1, 12, 7, 65535, 12, 7, 0, 12, 7, 1, 12, 8, 65535, 12, 8, 0, 12, 8, 1, 12, 9, 65535, 12, 9, 0, 12, 9, 1, 12, 0, 0, 12, 1, 0, 12, 5, 0, 12, 6, 0, 12)
 }
 
 [node name="StructureGridMap" type="GridMap" parent="."]
 editor_description = "畫直牆、轉角與門洞。要新增互動門，仍請在 dungeon_3d.tscn 的 Doors 複製 Area3D。"
-mesh_library = ExtResource("1_vhj04")
+visible = false
+mesh_library = ExtResource("1_r0fbt")
 cell_size = Vector3(3.946, 3.946, 3.946)
 cell_center_y = false
+collision_layer = 0
+collision_mask = 0
 data = {
-"cells": PackedInt32Array(65533, 65535, 11, 65533, 1, 655371, 65534, 65535, 11, 65534, 1, 655371, 65535, 65535, 11, 65535, 1, 655371, 1, 65535, 11, 1, 1, 655371, 2, 65535, 11, 2, 1, 655371, 3, 65535, 11, 3, 1, 655371, 5, 65535, 11, 5, 1, 655371, 6, 65535, 11, 6, 1, 655371, 7, 65535, 11, 7, 1, 655371, 0, 0, 3, 4, 0, 3)
+"cells": PackedInt32Array(65533, 65535, 11, 65533, 1, 655371, 65534, 65535, 11, 65534, 1, 655371, 65535, 65535, 11, 65535, 1, 655371, 2, 65535, 11, 2, 1, 655371, 3, 1, 655371, 4, 65535, 11, 4, 1, 655371, 7, 65535, 11, 7, 1, 655371, 8, 65535, 11, 8, 1, 655371, 9, 65535, 11, 9, 1, 655371, 0, 0, 3, 5, 0, 3)
 }
 
 [node name="BoundaryGridMap" type="GridMap" parent="."]
 editor_description = "畫左右邊界牆；與 StructureGridMap 的上下牆分層，讓房間四角不會互相覆蓋。"
-mesh_library = ExtResource("1_vhj04")
+visible = false
+mesh_library = ExtResource("1_r0fbt")
 cell_size = Vector3(3.946, 3.946, 3.946)
 cell_center_y = false
+collision_layer = 0
+collision_mask = 0
 data = {
-"cells": PackedInt32Array(65533, 65535, 1048587, 65535, 65535, 1441803, 65533, 0, 1048587, 65533, 1, 1048587, 65535, 1, 1441803, 1, 65535, 1048587, 3, 65535, 1441803, 1, 1, 1048587, 3, 1, 1441803, 5, 65535, 1048587, 7, 65535, 1441803, 7, 0, 1441803, 5, 1, 1048587, 7, 1, 1441803)
+"cells": PackedInt32Array(65533, 65535, 1048587, 65535, 65535, 1441803, 65533, 0, 1048587, 65533, 1, 1048587, 65535, 1, 1441803, 2, 65535, 1048587, 4, 65535, 1441803, 2, 1, 1048587, 4, 1, 1441803, 7, 65535, 1048587, 9, 65535, 1441803, 9, 0, 1441803, 7, 1, 1048587, 9, 1, 1441803)
 }
 
 [node name="PropGridMap" type="GridMap" parent="."]
 editor_description = "畫柱子、祭壇、火盆等靜態裝飾。"
-mesh_library = ExtResource("1_vhj04")
+visible = false
+mesh_library = ExtResource("1_r0fbt")
 cell_size = Vector3(3.946, 3.946, 3.946)
 cell_center_y = false
+collision_layer = 0
+collision_mask = 0
 data = {
-"cells": PackedInt32Array(65534, 0, 1048581, 65534, 65535, 6, 65534, 1, 6, 65533, 65535, 4, 65535, 65535, 4, 65533, 1, 4, 65535, 1, 4, 2, 0, 1048581, 2, 65535, 6, 2, 1, 6, 1, 65535, 4, 3, 65535, 4, 1, 1, 4, 3, 1, 4, 6, 0, 1048581, 6, 65535, 6, 6, 1, 6, 5, 65535, 4, 7, 65535, 4, 5, 1, 4, 7, 1, 4)
+"cells": PackedInt32Array(65534, 0, 1048581, 65534, 65535, 6, 65534, 1, 6, 65533, 65535, 4, 65535, 65535, 4, 65533, 1, 4, 65535, 1, 4, 3, 0, 1048581, 3, 65535, 6, 3, 1, 6, 2, 65535, 4, 4, 65535, 4, 2, 1, 4, 4, 1, 4, 8, 0, 1048581, 8, 65535, 6, 8, 1, 6, 7, 65535, 4, 9, 65535, 4, 7, 1, 4, 9, 1, 4)
 }
+
+[node name="ModularAssembly" type="Node3D" parent="."]
+editor_description = "混合組裝的實際遊戲幾何：三個房間由兩段兩格長走道串起。房間與主走道沿用原本石板地板和石牆，北側分支使用新的可拆式牆體與轉角。"
+
+[node name="Rooms" type="Node3D" parent="ModularAssembly"]
+editor_description = "3x3 房間模組：沿用原本石板地板與原本石牆完整封邊，只在門洞與北側支線留出入口；房間之間保留清楚的走道距離。"
+
+[node name="RoomA_EntryCrypt" type="Node3D" parent="ModularAssembly/Rooms"]
+editor_description = "房間 RoomA_EntryCrypt：3x3 格，原本地板、連續石牆、門洞與裝飾分組。"
+
+[node name="Floors" type="Node3D" parent="ModularAssembly/Rooms/RoomA_EntryCrypt"]
+editor_description = "房間地板；可替換 Plain、Cracked、Rune 三種地板。"
+
+[node name="OriginalFloor_-3_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.838, 0, -3.946)
+
+[node name="OriginalFloor_-3_0" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.838, 0, 0)
+
+[node name="OriginalFloor_-3_1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.838, 0, 3.946)
+
+[node name="OriginalFloor_-2_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, -3.946)
+
+[node name="OriginalFloor_-2_0" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, 0)
+
+[node name="OriginalFloor_-2_1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, 3.946)
+
+[node name="OriginalFloor_-1_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.946, 0, -3.946)
+
+[node name="OriginalFloor_-1_0" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.946, 0, 0)
+
+[node name="OriginalFloor_-1_1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.946, 0, 3.946)
+
+[node name="Walls" type="Node3D" parent="ModularAssembly/Rooms/RoomA_EntryCrypt"]
+editor_description = "封閉房間外框的阻擋牆；只有 Doorways 位置留出可通行入口。每個牆片都帶 StaticBody3D 碰撞。"
+
+[node name="OriginalNorth_-3" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.838, 0, -3.946)
+
+[node name="OriginalSouth_-3" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -11.838, 0, 3.946)
+
+[node name="OriginalNorth_-2" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, -3.946)
+
+[node name="OriginalSouth_-2" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -7.892, 0, 3.946)
+
+[node name="OriginalNorth_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.946, 0, -3.946)
+
+[node name="OriginalSouth_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3.946, 0, 3.946)
+
+[node name="OriginalWest_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -11.838, 0, -3.946)
+
+[node name="OriginalEast_-1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -3.946, 0, -3.946)
+
+[node name="OriginalWest_0" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -11.838, 0, 0)
+
+[node name="OriginalWest_1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -11.838, 0, 3.946)
+
+[node name="OriginalEast_1" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -3.946, 0, 3.946)
+
+[node name="Corners" type="Node3D" parent="ModularAssembly/Rooms/RoomA_EntryCrypt"]
+editor_description = "主房間以原本石牆連續封邊；L 型角牆零件集中用在北側支線轉彎，避免不同牆體散落在房間內。"
+
+[node name="Doorways" type="Node3D" parent="ModularAssembly/Rooms/RoomA_EntryCrypt"]
+editor_description = "房間邊界中央的門洞；門洞不封死可走路空間。"
+
+[node name="EastDoorway" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Doorways" instance=ExtResource("5_w6k8y")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -1.973, 0, 0)
+
+[node name="Props" type="Node3D" parent="ModularAssembly/Rooms/RoomA_EntryCrypt"]
+editor_description = "房間內的原本地下城裝飾；保持中央動線，讓房間不只是空地板。"
+
+[node name="Brazier_N" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, -3.946)
+
+[node name="Brazier_S" parent="ModularAssembly/Rooms/RoomA_EntryCrypt/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, 3.946)
+
+[node name="RoomB_SoulSanctum" type="Node3D" parent="ModularAssembly/Rooms"]
+editor_description = "房間 RoomB_SoulSanctum：3x3 格，原本地板、連續石牆、門洞與裝飾分組。"
+
+[node name="Floors" type="Node3D" parent="ModularAssembly/Rooms/RoomB_SoulSanctum"]
+editor_description = "房間地板；可替換 Plain、Cracked、Rune 三種地板。"
+
+[node name="OriginalFloor_2_-1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.892, 0, -3.946)
+
+[node name="OriginalFloor_2_0" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.892, 0, 0)
+
+[node name="OriginalFloor_2_1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.892, 0, 3.946)
+
+[node name="OriginalFloor_3_-1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.838, 0, -3.946)
+
+[node name="OriginalFloor_3_0" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.838, 0, 0)
+
+[node name="OriginalFloor_3_1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.838, 0, 3.946)
+
+[node name="OriginalFloor_4_-1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.784, 0, -3.946)
+
+[node name="OriginalFloor_4_0" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.784, 0, 0)
+
+[node name="OriginalFloor_4_1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.784, 0, 3.946)
+
+[node name="Walls" type="Node3D" parent="ModularAssembly/Rooms/RoomB_SoulSanctum"]
+editor_description = "封閉房間外框的阻擋牆；只有 Doorways 位置留出可通行入口。每個牆片都帶 StaticBody3D 碰撞。"
+
+[node name="OriginalNorth_2" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.892, 0, -3.946)
+
+[node name="OriginalSouth_2" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 7.892, 0, 3.946)
+
+[node name="OriginalSouth_3" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 11.838, 0, 3.946)
+
+[node name="OriginalNorth_4" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.784, 0, -3.946)
+
+[node name="OriginalSouth_4" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 15.784, 0, 3.946)
+
+[node name="OriginalWest_-1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 7.892, 0, -3.946)
+
+[node name="OriginalEast_-1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 15.784, 0, -3.946)
+
+[node name="OriginalWest_1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 7.892, 0, 3.946)
+
+[node name="OriginalEast_1" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 15.784, 0, 3.946)
+
+[node name="Corners" type="Node3D" parent="ModularAssembly/Rooms/RoomB_SoulSanctum"]
+editor_description = "主房間以原本石牆連續封邊；L 型角牆零件集中用在北側支線轉彎，避免不同牆體散落在房間內。"
+
+[node name="Doorways" type="Node3D" parent="ModularAssembly/Rooms/RoomB_SoulSanctum"]
+editor_description = "房間邊界中央的門洞；門洞不封死可走路空間。"
+
+[node name="WestDoorway" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Doorways" instance=ExtResource("5_w6k8y")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5.919, 0, 0)
+
+[node name="EastDoorway" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Doorways" instance=ExtResource("5_w6k8y")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 17.757, 0, 0)
+
+[node name="Props" type="Node3D" parent="ModularAssembly/Rooms/RoomB_SoulSanctum"]
+editor_description = "房間內的原本地下城裝飾；保持中央動線，讓房間不只是空地板。"
+
+[node name="Brazier_NW" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.892, 0, -3.946)
+
+[node name="Brazier_SE" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.784, 0, 3.946)
+
+[node name="RoomAltar" parent="ModularAssembly/Rooms/RoomB_SoulSanctum/Props" instance=ExtResource("7_cr8nt")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.838, 0, 0)
+
+[node name="RoomC_Bloodworks" type="Node3D" parent="ModularAssembly/Rooms"]
+editor_description = "房間 RoomC_Bloodworks：3x3 格，原本地板、連續石牆、門洞與裝飾分組。"
+
+[node name="Floors" type="Node3D" parent="ModularAssembly/Rooms/RoomC_Bloodworks"]
+editor_description = "房間地板；可替換 Plain、Cracked、Rune 三種地板。"
+
+[node name="OriginalFloor_7_-1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.622, 0, -3.946)
+
+[node name="OriginalFloor_7_0" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.622, 0, 0)
+
+[node name="OriginalFloor_7_1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.622, 0, 3.946)
+
+[node name="OriginalFloor_8_-1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, -3.946)
+
+[node name="OriginalFloor_8_0" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, 0)
+
+[node name="OriginalFloor_8_1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, 3.946)
+
+[node name="OriginalFloor_9_-1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.514, 0, -3.946)
+
+[node name="OriginalFloor_9_0" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.514, 0, 0)
+
+[node name="OriginalFloor_9_1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.514, 0, 3.946)
+
+[node name="Walls" type="Node3D" parent="ModularAssembly/Rooms/RoomC_Bloodworks"]
+editor_description = "封閉房間外框的阻擋牆；只有 Doorways 位置留出可通行入口。每個牆片都帶 StaticBody3D 碰撞。"
+
+[node name="OriginalNorth_7" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.622, 0, -3.946)
+
+[node name="OriginalSouth_7" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 27.622, 0, 3.946)
+
+[node name="OriginalNorth_8" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, -3.946)
+
+[node name="OriginalSouth_8" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 31.568, 0, 3.946)
+
+[node name="OriginalNorth_9" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.514, 0, -3.946)
+
+[node name="OriginalSouth_9" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 35.514, 0, 3.946)
+
+[node name="OriginalWest_-1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 27.622, 0, -3.946)
+
+[node name="OriginalEast_-1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 35.514, 0, -3.946)
+
+[node name="OriginalEast_0" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 35.514, 0, 0)
+
+[node name="OriginalWest_1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 27.622, 0, 3.946)
+
+[node name="OriginalEast_1" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 35.514, 0, 3.946)
+
+[node name="Corners" type="Node3D" parent="ModularAssembly/Rooms/RoomC_Bloodworks"]
+editor_description = "主房間以原本石牆連續封邊；L 型角牆零件集中用在北側支線轉彎，避免不同牆體散落在房間內。"
+
+[node name="Doorways" type="Node3D" parent="ModularAssembly/Rooms/RoomC_Bloodworks"]
+editor_description = "房間邊界中央的門洞；門洞不封死可走路空間。"
+
+[node name="WestDoorway" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Doorways" instance=ExtResource("5_w6k8y")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 25.649, 0, 0)
+
+[node name="Props" type="Node3D" parent="ModularAssembly/Rooms/RoomC_Bloodworks"]
+editor_description = "房間內的原本地下城裝飾；保持中央動線，讓房間不只是空地板。"
+
+[node name="Brazier_N" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, -3.946)
+
+[node name="Brazier_S" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Props" instance=ExtResource("6_w43vo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.568, 0, 3.946)
+
+[node name="RoomAltar" parent="ModularAssembly/Rooms/RoomC_Bloodworks/Props" instance=ExtResource("7_cr8nt")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 31.568, 0, 0)
+
+[node name="Corridors" type="Node3D" parent="ModularAssembly"]
+editor_description = "1 格寬、兩格長走道：連續原本地板列由原本石牆包住，兩端接到房間石拱門。"
+
+[node name="Corridor_AB" type="Node3D" parent="ModularAssembly/Corridors"]
+editor_description = "1 格寬、兩格長東西向走道；兩側直牆連續排列，走道兩端由房間 Doorways 接入。"
+
+[node name="Floors" type="Node3D" parent="ModularAssembly/Corridors/Corridor_AB"]
+editor_description = "走道地板列。"
+
+[node name="OriginalFloor_0_0" parent="ModularAssembly/Corridors/Corridor_AB/Floors" instance=ExtResource("2_j65ym")]
+
+[node name="OriginalFloor_1_0" parent="ModularAssembly/Corridors/Corridor_AB/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.946, 0, 0)
+
+[node name="Walls" type="Node3D" parent="ModularAssembly/Corridors/Corridor_AB"]
+editor_description = "封住走道左右兩側的阻擋牆；地板只在走道軸線上保持通行。"
+
+[node name="OriginalNorthWall_0" parent="ModularAssembly/Corridors/Corridor_AB/Walls" instance=ExtResource("4_pj1yr")]
+
+[node name="OriginalSouthWall_0" parent="ModularAssembly/Corridors/Corridor_AB/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="OriginalNorthWall_1" parent="ModularAssembly/Corridors/Corridor_AB/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.946, 0, 0)
+
+[node name="OriginalSouthWall_1" parent="ModularAssembly/Corridors/Corridor_AB/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.946, 0, 0)
+
+[node name="Doorways" type="Node3D" parent="ModularAssembly/Corridors/Corridor_AB"]
+editor_description = "走道接口門洞由相鄰房間的 Doorways 群組各放一個，避免兩個門框重疊。"
+
+[node name="Corridor_BC" type="Node3D" parent="ModularAssembly/Corridors"]
+editor_description = "1 格寬、兩格長東西向走道；兩側直牆連續排列，走道兩端由房間 Doorways 接入。"
+
+[node name="Floors" type="Node3D" parent="ModularAssembly/Corridors/Corridor_BC"]
+editor_description = "走道地板列。"
+
+[node name="OriginalFloor_5_0" parent="ModularAssembly/Corridors/Corridor_BC/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.73, 0, 0)
+
+[node name="OriginalFloor_6_0" parent="ModularAssembly/Corridors/Corridor_BC/Floors" instance=ExtResource("2_j65ym")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.676, 0, 0)
+
+[node name="Walls" type="Node3D" parent="ModularAssembly/Corridors/Corridor_BC"]
+editor_description = "封住走道左右兩側的阻擋牆；地板只在走道軸線上保持通行。"
+
+[node name="OriginalNorthWall_5" parent="ModularAssembly/Corridors/Corridor_BC/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.73, 0, 0)
+
+[node name="OriginalSouthWall_5" parent="ModularAssembly/Corridors/Corridor_BC/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 19.73, 0, 0)
+
+[node name="OriginalNorthWall_6" parent="ModularAssembly/Corridors/Corridor_BC/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.676, 0, 0)
+
+[node name="OriginalSouthWall_6" parent="ModularAssembly/Corridors/Corridor_BC/Walls" instance=ExtResource("4_pj1yr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 23.676, 0, 0)
+
+[node name="Doorways" type="Node3D" parent="ModularAssembly/Corridors/Corridor_BC"]
+editor_description = "走道接口門洞由相鄰房間的 Doorways 群組各放一個，避免兩個門框重疊。"
+
+[node name="CorridorFlexibleWing" parent="ModularAssembly" instance=ExtResource("8_bld33")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.946, 0, 0)

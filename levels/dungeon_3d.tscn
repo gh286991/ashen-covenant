@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://levels/dungeon_3d.gd" id="1_game"]
 [ext_resource type="Script" path="res://entities/player/dungeon_player_3d.gd" id="5_player"]
@@ -55,7 +55,7 @@ size = Vector3(0.9, 2.2, 3.6)
 size = Vector3(0.5, 2.2, 3.6)
 
 [node name="Dungeon3D" type="Node3D"]
-editor_description = "可編輯的地下城總場景。GridMapDungeon 是唯一的地圖與碰撞來源；Doors 放雙向門，Monsters 放怪物實例。"
+editor_description = "可編輯的地下城總場景。GridMapDungeon 內含實際模組化房間、走道、轉角與分支；四組 GridMap 保留為隱藏筆刷參考層。"
 script = ExtResource("1_game")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -68,27 +68,39 @@ light_energy = 0.9
 shadow_enabled = true
 
 [node name="EntryTorch" type="OmniLight3D" parent="."]
-position = Vector3(-6, 2.6, 0)
+position = Vector3(-7.892, 2.6, 0)
 light_color = Color(1, 0.22, 0.08, 1)
 light_energy = 4.6
 omni_range = 7.0
 
 [node name="SanctumGlow" type="OmniLight3D" parent="."]
-position = Vector3(7, 2.8, 0)
+position = Vector3(11.838, 2.8, 0)
 light_color = Color(0.1, 0.5, 0.85, 1)
 light_energy = 3.6
 omni_range = 7.0
+
+[node name="BranchEntranceTorch" type="OmniLight3D" parent="."]
+position = Vector3(11.838, 2.6, -7.55)
+light_color = Color(1, 0.22, 0.08, 1)
+light_energy = 2.8
+omni_range = 5.0
+
+[node name="BranchJunctionTorch" type="OmniLight3D" parent="."]
+position = Vector3(3.946, 2.6, -15.784)
+light_color = Color(0.08, 0.45, 0.9, 1)
+light_energy = 2.4
+omni_range = 5.0
 
 [node name="RenderStyle" type="Node" parent="."]
 script = ExtResource("10_render_style")
 
 [node name="GridMapDungeon" parent="." instance=ExtResource("12_grid_map")]
 editable_children = true
-editor_description = "目前遊戲使用的快速筆刷地圖。FloorGridMap 鋪地板；StructureGridMap 鋪上下牆與門洞；BoundaryGridMap 鋪左右牆；PropGridMap 放靜態裝飾。"
+editor_description = "實際遊戲地圖。展開 ModularAssembly 可編輯三個房間、兩段走道與北側分支；底下四組 GridMap 是隱藏筆刷參考層。"
 
 [node name="Player" type="CharacterBody3D" parent="."]
 unique_name_in_owner = true
-position = Vector3(-7, 0.95, 0)
+position = Vector3(-7.892, 0.95, 0)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("5_player")
@@ -132,25 +144,25 @@ aggro_range = 3.0
 
 [node name="SoulStalker_B1" parent="Monsters" instance=ExtResource("9_monster")]
 editable_children = true
-position = Vector3(6.2, 0.65, -3.0)
+position = Vector3(10.146, 0.65, -3.0)
 monster_id = &"SOUL_STALKER_B1"
 aggro_range = 4.0
 
 [node name="SoulStalker_B2" parent="Monsters" instance=ExtResource("9_monster")]
 editable_children = true
-position = Vector3(11.8, 0.65, 2.8)
+position = Vector3(15.746, 0.65, 2.8)
 monster_id = &"SOUL_STALKER_B2"
 aggro_range = 4.0
 
 [node name="CryptWraith_C1" parent="Monsters" instance=ExtResource("9_monster")]
 editable_children = true
-position = Vector3(21.8, 0.65, -2.0)
+position = Vector3(29.692, 0.65, -2.0)
 monster_id = &"CRYPT_WRAITH_C1"
 aggro_range = 3.5
 
 [node name="CryptWraith_C2" parent="Monsters" instance=ExtResource("9_monster")]
 editable_children = true
-position = Vector3(27.4, 0.65, 2.7)
+position = Vector3(35.292, 0.65, 2.7)
 monster_id = &"CRYPT_WRAITH_C2"
 aggro_range = 3.5
 
@@ -165,10 +177,11 @@ current = true
 
 [node name="Doors" type="Node3D" parent="."]
 editor_description = "雙向門觸發區：每個門的 target_spawn 指向另一側的 Marker3D。"
+visible = false
 
 [node name="Door_A_to_B" type="Area3D" parent="Doors"]
 editor_description = "入口墓室 → 靈魂聖所。調整位置即可改變門的觸發區。"
-position = Vector3(-0.5, 1.1, 0)
+position = Vector3(-1.973, 1.1, 0)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("6_door")
@@ -181,7 +194,7 @@ shape = SubResource("DoorShape")
 
 [node name="Door_B_to_A" type="Area3D" parent="Doors"]
 editor_description = "靈魂聖所 → 入口墓室。與 Door_A_to_B 配成雙向門。"
-position = Vector3(0.5, 1.1, 0)
+position = Vector3(5.919, 1.1, 0)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("6_door")
@@ -194,7 +207,7 @@ shape = SubResource("DoorShape")
 
 [node name="Door_B_to_C" type="Area3D" parent="Doors"]
 editor_description = "靈魂聖所 → 東側墓室。"
-position = Vector3(14.5, 1.1, 0)
+position = Vector3(17.757, 1.1, 0)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("6_door")
@@ -207,7 +220,7 @@ shape = SubResource("DoorShapeSmall")
 
 [node name="Door_C_to_B" type="Area3D" parent="Doors"]
 editor_description = "東側墓室 → 靈魂聖所。"
-position = Vector3(17.5, 1.1, 0)
+position = Vector3(25.649, 1.1, 0)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("6_door")
@@ -219,16 +232,20 @@ prompt_text = "按 E 返回靈魂聖所"
 shape = SubResource("DoorShapeSmall")
 
 [node name="Spawn_Room_A_From_B" type="Marker3D" parent="."]
-position = Vector3(-2.5, 0.95, 0)
+visible = false
+position = Vector3(-9.865, 0.95, 0)
 
 [node name="Spawn_Room_B_From_A" type="Marker3D" parent="."]
-position = Vector3(2.5, 0.95, 0)
+visible = false
+position = Vector3(9.865, 0.95, 0)
 
 [node name="Spawn_Room_C_From_B" type="Marker3D" parent="."]
-position = Vector3(19.5, 0.95, 0)
+visible = false
+position = Vector3(29.595, 0.95, 0)
 
 [node name="Spawn_Room_B_From_C" type="Marker3D" parent="."]
-position = Vector3(13.8, 0.95, 0)
+visible = false
+position = Vector3(15.784, 0.95, 0)
 
 [node name="HUD" type="CanvasLayer" parent="."]
 

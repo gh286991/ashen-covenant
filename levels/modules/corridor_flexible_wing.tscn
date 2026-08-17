@@ -1,0 +1,94 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://levels/kit/floor_stone_tripo_3p9.tscn" id="1_original_floor"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_straight_3p946.tscn" id="4_wall_straight"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_corner_3p946.tscn" id="5_wall_corner"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_doorway_3p946.tscn" id="6_original_doorway"]
+[ext_resource type="PackedScene" path="res://levels/modules/castle_wall_end_3p946.tscn" id="7_wall_end"]
+
+[node name="CorridorFlexibleWing" type="Node3D"]
+editor_description = "沿用原本石板地板，搭配獨立直牆、L 型角牆、門洞與端牆組成的可編輯支線。複製牆體零件即可改變房間尺寸或路線。所有中心點遵循 3.946m 格點。"
+
+[node name="Floors" type="Node3D" parent="."]
+
+[node name="OriginalFloor_02_02" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(7.892, 0, -7.892)
+
+[node name="OriginalFloor_02_03" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(7.892, 0, -11.838)
+
+[node name="OriginalFloor_02_04" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(7.892, 0, -15.784)
+
+[node name="OriginalFloor_01_04" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(3.946, 0, -15.784)
+
+[node name="OriginalFloor_00_04" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(0, 0, -15.784)
+
+[node name="OriginalFloor_Minus01_04" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(-3.946, 0, -15.784)
+
+[node name="OriginalFloor_00_05" parent="Floors" instance=ExtResource("1_original_floor")]
+position = Vector3(0, 0, -19.73)
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="EntryDoorway" parent="Walls" instance=ExtResource("6_original_doorway")]
+position = Vector3(7.892, 0, -5.919)
+
+[node name="West_02_02" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(5.919, 0, -7.892)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="East_02_02" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(9.865, 0, -7.892)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="East_02_03" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(9.865, 0, -11.838)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="North_02_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(7.892, 0, -17.757)
+
+[node name="South_00_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(0, 0, -17.757)
+
+[node name="South_01_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(3.946, 0, -17.757)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="North_01_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(-3.946, 0, -13.811)
+
+[node name="South_Minus01_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(-3.946, 0, -17.757)
+
+[node name="West_Minus01_04" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(-5.919, 0, -15.784)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="West_00_05" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(-1.973, 0, -19.73)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="East_00_05" parent="Walls" instance=ExtResource("4_wall_straight")]
+position = Vector3(1.973, 0, -19.73)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="TurnOuterCorner" parent="Walls" instance=ExtResource("5_wall_corner")]
+position = Vector3(9.865, 0, -17.757)
+rotation_degrees = Vector3(0, 270, 0)
+
+[node name="TurnInnerCorner" parent="Walls" instance=ExtResource("5_wall_corner")]
+position = Vector3(5.919, 0, -13.811)
+rotation_degrees = Vector3(0, 270, 0)
+
+[node name="WestEndCap" parent="Walls" instance=ExtResource("7_wall_end")]
+position = Vector3(-5.919, 0, -15.784)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="NorthEndCap" parent="Walls" instance=ExtResource("7_wall_end")]
+position = Vector3(0, 0, -21.703)
+rotation_degrees = Vector3(0, 90, 0)

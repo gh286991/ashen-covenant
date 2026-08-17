@@ -14,6 +14,7 @@ const PIECES := [
 	"res://levels/kit/floor_cute_moss_3p9.tscn",
 	"res://levels/kit/floor_cute_decorated_3p9.tscn",
 	"res://levels/kit/wall_user_stone_2p6.tscn",
+	"res://levels/kit/wall_castle_pbr_2p6.tscn",
 	"res://levels/kit/floor_stone_tripo_3p9.tscn",
 ]
 
@@ -45,7 +46,7 @@ func _init() -> void:
 		piece.queue_free()
 
 	if failures.is_empty():
-		print("DUNGEON_KIT_VALIDATE_OK floor=29 walls=37 corners=12 doors=2 props=21 pieces=13")
+		print("DUNGEON_KIT_VALIDATE_OK floor=29 walls=37 corners=12 doors=2 props=21 pieces=14")
 		quit(0)
 		return
 	for failure in failures:

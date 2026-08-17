@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/3d_dungeon/kit/textures/castle_wall_slates/castle_wall_slates_diff_2k.png" id="1_diff"]
+[ext_resource type="Texture2D" path="res://assets/3d_dungeon/kit/textures/castle_wall_slates/castle_wall_slates_nor_gl_2k.png" id="2_normal"]
+[ext_resource type="Texture2D" path="res://assets/3d_dungeon/kit/textures/castle_wall_slates/castle_wall_slates_arm_2k.png" id="3_arm"]
+
+[resource]
+resource_name = "MAT_Castle_Wall_Slates_PBR"
+cull_mode = 2
+albedo_color = Color(0.68, 0.73, 0.84, 1)
+albedo_texture = ExtResource("1_diff")
+metallic = 0.0
+roughness = 0.86
+normal_enabled = true
+normal_texture = ExtResource("2_normal")
+normal_scale = 0.72
+orm_texture = ExtResource("3_arm")
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_triplanar_sharpness = 4.0
+uv1_scale = Vector3(0.42, 0.42, 0.42)

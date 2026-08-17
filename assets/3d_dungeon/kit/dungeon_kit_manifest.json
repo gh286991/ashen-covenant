@@ -162,5 +162,48 @@
       },
       "file": "brazier_blue.glb"
     }
+  ],
+  "map_assembly": {
+    "floor_scene": "res://levels/kit/floor_stone_tripo_3p9.tscn",
+    "room_wall_scene": "res://levels/kit/wall_castle_pbr_2p6.tscn",
+    "legacy_room_wall_scene": "res://levels/kit/wall_user_stone_2p6.tscn",
+    "note": "房間與走道沿用原本格線與碰撞；Castle wrapper 現在保留原始 GLB 的卡通材質，下載的 PBR 只作備選，舊牆與舊 GLB 完整保留。"
+  },
+  "castle_wall_pbr_set": {
+    "material": "res://assets/3d_dungeon/kit/textures/castle_wall_stylized/castle_wall_stylized_material.tres",
+    "source": "Stylized Mossy Dungeon Wall by kaczor237 (itch.io, CC0)",
+    "active_material_mode": "downloaded_stylized_pbr",
+    "alternate_material": "res://assets/3d_dungeon/kit/textures/castle_wall_slates/castle_wall_slates_material.tres",
+    "straight_room_scene": "res://levels/kit/wall_castle_pbr_2p6.tscn",
+    "straight_corridor_scene": "res://levels/modules/castle_wall_straight_3p946.tscn",
+    "corner_scene": "res://levels/modules/castle_wall_corner_3p946.tscn",
+    "doorway_scene": "res://levels/modules/castle_wall_doorway_3p946.tscn",
+    "end_scene": "res://levels/modules/castle_wall_end_3p946.tscn"
+  },
+  "modular_corridor_components": [
+    {
+      "id": "corridor_wall_straight_3p946",
+      "role": "Straight Wall",
+      "note": "直牆中心對齊格邊；局部 X 軸為牆線方向，旋轉 Y 90 度可改側向。",
+      "file": "../modules/corridor_wall_straight_3p946.glb"
+    },
+    {
+      "id": "corridor_wall_corner_3p946",
+      "role": "Corner Wall",
+      "note": "原點位於格點頂點，L 型牆臂延伸到局部 +X 與 +Z；旋轉 90 度可變換角向。",
+      "file": "../modules/corridor_wall_corner_3p946.glb"
+    },
+    {
+      "id": "corridor_wall_doorway_3p946",
+      "role": "Doorway Wall",
+      "note": "中段保持開放的門洞牆，互動 Area3D 可另外掛在門口。",
+      "file": "../modules/corridor_wall_doorway_3p946.glb"
+    },
+    {
+      "id": "corridor_wall_end_3p946",
+      "role": "End Wall",
+      "note": "端牆封口，適合秘密支線、房間外框或視線終點。",
+      "file": "../modules/corridor_wall_end_3p946.glb"
+    }
   ]
 }

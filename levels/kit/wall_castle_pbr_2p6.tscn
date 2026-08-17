@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/castle_wall_pbr.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_user_stone_2p6.glb" id="2_visual"]
+[ext_resource type="Material" path="res://assets/3d_dungeon/kit/textures/castle_wall_stylized/castle_wall_stylized_material.tres" id="3_material"]
+[sub_resource type="BoxShape3D" id="WallShape"]
+size = Vector3(3.946, 4.24, 0.62)
+
+[node name="WallCastlePbr_2p6" type="Node3D"]
+script = ExtResource("1_script")
+piece_id = &"WALL_CASTLE_PBR_2P6"
+piece_role = "Straight Wall"
+footprint = Vector3(3.946, 4.24, 0.62)
+editor_note = "卡通風 PBR 城牆；沿用舊牆的 3.946m 格線、邊界中心線與碰撞。舊版 wall_user_stone_2p6 保留不動。"
+wall_material = ExtResource("3_material")
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Wall" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.12, -1.973)
+shape = SubResource("WallShape")

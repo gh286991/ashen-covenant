@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_piece"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/corridor_wall_corner_3p946.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="ArmXShape"]
+size = Vector3(4.046, 4.8, 0.62)
+
+[sub_resource type="BoxShape3D" id="ArmZShape"]
+size = Vector3(0.62, 4.8, 4.046)
+
+[sub_resource type="BoxShape3D" id="PillarShape"]
+size = Vector3(0.34, 4.1, 0.34)
+
+[node name="WallCorner_3p946" type="Node3D"]
+script = ExtResource("1_piece")
+piece_id = &"WALL_CORNER_3P946"
+piece_role = "Corner Wall"
+footprint = Vector3(4.046, 4.8, 4.046)
+editor_note = "L 型角牆原點位於格點頂點；兩條牆臂延伸到局部 +X／+Z，旋轉 Y 90 度可得到其他角向。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="ArmX" type="CollisionShape3D" parent="Collision"]
+position = Vector3(1.973, 2.4, 0)
+shape = SubResource("ArmXShape")
+
+[node name="ArmZ" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, 1.973)
+shape = SubResource("ArmZShape")
+
+[node name="Pillar" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.05, 0)
+shape = SubResource("PillarShape")

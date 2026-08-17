@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_module_3d.gd" id="1_module"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/modules/corridor_corner_3p946.glb" id="2_visual"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(3.946, 0.24, 3.946)
+
+[sub_resource type="BoxShape3D" id="OuterWallXShape"]
+size = Vector3(0.62, 4.8, 3.6)
+
+[sub_resource type="BoxShape3D" id="OuterWallZShape"]
+size = Vector3(3.6, 4.8, 0.62)
+
+[node name="CorridorCorner_3p946" type="Node3D"]
+script = ExtResource("1_module")
+module_id = &"CORRIDOR_CORNER_3P946"
+footprint = Vector3(3.946, 4.8, 3.946)
+door_width = 3.6
+editor_note = "90 度轉角。預設開口為西側與北側，旋轉 Y 90 度可接成南側轉西側。"
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.12, 0)
+shape = SubResource("FloorShape")
+
+[node name="OuterWallX" type="CollisionShape3D" parent="Collision"]
+position = Vector3(1.49, 2.4, 0)
+shape = SubResource("OuterWallXShape")
+
+[node name="OuterWallZ" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 2.4, 1.49)
+shape = SubResource("OuterWallZShape")

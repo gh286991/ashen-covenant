@@ -16,6 +16,7 @@ var sfx_players: Array[AudioStreamPlayer] = []
 var explore_music: AudioStream
 var boss_music: AudioStream
 var sword_swings: Array[AudioStream] = []
+var sword_whooshes: Array[AudioStream] = []
 var sword_hits: Array[AudioStream] = []
 var ability_learn: AudioStream
 var item_pickup: AudioStream
@@ -58,6 +59,7 @@ func _exit_tree() -> void:
 	music_players.clear()
 	sfx_players.clear()
 	sword_swings.clear()
+	sword_whooshes.clear()
 	sword_hits.clear()
 	explore_music = null
 	boss_music = null
@@ -75,6 +77,17 @@ func _load_audio_assets() -> void:
 		load("res://assets/audio/sfx/sword_swing_02.ogg") as AudioStream,
 		load("res://assets/audio/sfx/sword_swing_03.ogg") as AudioStream,
 	]
+	sword_whooshes = [
+		load("res://assets/audio/sfx/sword_whoosh_01.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_02.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_03.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_04.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_05.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_06.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_07.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_08.wav") as AudioStream,
+		load("res://assets/audio/sfx/sword_whoosh_09.wav") as AudioStream,
+	]
 	sword_hits = [
 		load("res://assets/audio/sfx/sword_hit_01.ogg") as AudioStream,
 		load("res://assets/audio/sfx/sword_hit_02.ogg") as AudioStream,
@@ -89,7 +102,8 @@ func _load_audio_assets() -> void:
 func set_music_state(next_state: MusicState) -> void:
 	var next_stream := _stream_for_music_state(next_state)
 	var active_player := music_players[current_music_index]
-	if music_state == next_state and active_player.playing and active_player.stream == next_stream:
+	if active_player.playing and active_player.stream == next_stream:
+		music_state = next_state
 		return
 	music_state = next_state
 	var incoming_index := 1 - current_music_index
@@ -127,11 +141,36 @@ func play_player_swing(combo: int, critical: bool = false) -> void:
 	var pitch := 1.13 if combo >= 3 else (1.04 if combo == 2 else 0.96)
 	_play_sfx(_random_stream(sword_swings), -4.0 if critical else -5.0, pitch)
 
+
+func play_heavy_swing(enemy_attack: bool = false) -> void:
+	# The slash itself gets a short air/whoosh cue; impact is played separately.
+	var volume := -3.0 if enemy_attack else -2.0
+	var pitch := 0.82 if enemy_attack else 0.94
+	_play_sfx(_random_stream(sword_whooshes), volume, pitch)
+
+
+func play_heavy_hit() -> void:
+	# Actual damage uses the sword-hit material; the slash whoosh is separate.
+	_play_sfx(_random_stream(sword_hits), 0.0, 0.92)
+	_play_sfx(_random_stream(sword_hits), -4.5, 0.68)
+
+
+func play_heavy_hurt() -> void:
+	_play_sfx(_random_stream(sword_hits), -0.5, 0.76)
+
+
+func play_heavy_death() -> void:
+	_play_sfx(_random_stream(sword_hits), -1.0, 0.62)
+
 func play_hit(critical: bool = false) -> void:
 	_play_sfx(_random_stream(sword_hits), -3.0 if critical else -5.0, 1.08 if critical else 1.0)
 
 func play_dash() -> void:
 	_play_sfx(transition, -8.0, 1.35)
+
+
+func play_transition() -> void:
+	_play_sfx(transition, -6.0, 0.92)
 
 func play_nova() -> void:
 	_play_sfx(ability_learn, -4.5, 0.88)

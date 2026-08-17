@@ -3,6 +3,9 @@ extends CharacterBody3D
 
 signal attack_started(direction: Vector3)
 signal attack_hit(target: Node, amount: float)
+signal health_changed(current: float, maximum: float)
+signal damaged(amount: float, source: Node)
+signal died
 
 @export_group("Movement")
 @export var move_speed: float = 5.4
@@ -18,7 +21,14 @@ signal attack_hit(target: Node, amount: float)
 @export var attack_radius: float = 1.35
 @export var attack_cooldown: float = 0.3
 
+@export_group("Defense")
+@export var max_health: float = 100.0
+@export var hit_invincibility_duration: float = 0.22
+@export var hit_stun_duration: float = 0.18
+@export var knockback_force: float = 4.5
+
 var last_move_direction := Vector3.FORWARD
+var health: float
 var _mouse_target := Vector3.ZERO
 var _mouse_target_active := false
 var _attack_direction := Vector3.FORWARD
@@ -29,14 +39,24 @@ var _attack_cooldown_timer := 0.0
 var _attack_shape: SphereShape3D
 var _attack_target: DungeonMonster3D
 var _hovered_target: DungeonMonster3D
+var _hit_invincibility_timer := 0.0
+var _hit_stun_timer := 0.0
+var _hit_reaction_timer := 0.0
+var _knockback_velocity := Vector3.ZERO
+var _dead := false
+var _base_visual_scale := Vector3.ONE
 
 @onready var visual: DungeonWarrior3D = $Visual
+@onready var _body_shape: CollisionShape3D = $BodyShape
 
 
 func _ready() -> void:
 	add_to_group("player")
+	health = max_health
 	_attack_shape = SphereShape3D.new()
 	_attack_shape.radius = attack_radius
+	_base_visual_scale = visual.scale if visual != null else Vector3.ONE
+	health_changed.emit(health, max_health)
 	if visual != null and not visual.attack_finished.is_connected(_on_attack_animation_finished):
 		visual.attack_finished.connect(_on_attack_animation_finished)
 
@@ -132,10 +152,23 @@ func _pick_monster(screen_position: Vector2) -> DungeonMonster3D:
 
 func _physics_process(delta: float) -> void:
 	_attack_cooldown_timer = maxf(0.0, _attack_cooldown_timer - delta)
+	_hit_invincibility_timer = maxf(0.0, _hit_invincibility_timer - delta)
+	_hit_reaction_timer = maxf(0.0, _hit_reaction_timer - delta)
+	_knockback_velocity = _knockback_velocity.move_toward(Vector3.ZERO, 18.0 * delta)
+	_update_hit_reaction(delta)
+	if _dead:
+		return
+	if _hit_stun_timer > 0.0:
+		_hit_stun_timer = maxf(0.0, _hit_stun_timer - delta)
+		velocity.x = move_toward(velocity.x, _knockback_velocity.x, deceleration * delta)
+		velocity.z = move_toward(velocity.z, _knockback_velocity.z, deceleration * delta)
+		_apply_gravity(delta)
+		move_and_slide()
+		return
 	if _attack_elapsed >= 0.0:
 		_tick_attack(delta)
-		velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
-		velocity.z = move_toward(velocity.z, 0.0, deceleration * delta)
+		velocity.x = move_toward(velocity.x, _knockback_velocity.x, deceleration * delta)
+		velocity.z = move_toward(velocity.z, _knockback_velocity.z, deceleration * delta)
 		_apply_gravity(delta)
 		move_and_slide()
 		return
@@ -171,7 +204,7 @@ func _physics_process(delta: float) -> void:
 	if direction.length_squared() > 1.0:
 		direction = direction.normalized()
 
-	var target_velocity := direction * move_speed
+	var target_velocity := direction * move_speed + _knockback_velocity
 	var response := acceleration if direction != Vector3.ZERO else deceleration
 	velocity.x = move_toward(velocity.x, target_velocity.x, response * delta)
 	velocity.z = move_toward(velocity.z, target_velocity.z, response * delta)
@@ -214,7 +247,7 @@ func is_attacking() -> bool:
 
 
 func _start_attack(direction: Vector3) -> void:
-	if _attack_elapsed >= 0.0 or _attack_cooldown_timer > 0.0:
+	if _dead or _hit_stun_timer > 0.0 or _attack_elapsed >= 0.0 or _attack_cooldown_timer > 0.0:
 		return
 	var flat_direction := Vector3(direction.x, 0.0, direction.z)
 	if flat_direction.length_squared() <= 0.001:
@@ -266,8 +299,9 @@ func _perform_attack_hit() -> void:
 			continue
 		if offset.length_squared() > 0.001 and _attack_direction.dot(offset.normalized()) < 0.0:
 			continue
-		target.call(&"take_damage", attack_damage, self)
-		attack_hit.emit(target, attack_damage)
+		var accepted := bool(target.call(&"take_damage", attack_damage, self))
+		if accepted:
+			attack_hit.emit(target, attack_damage)
 
 
 func _apply_gravity(delta: float) -> void:
@@ -275,6 +309,63 @@ func _apply_gravity(delta: float) -> void:
 		velocity.y -= gravity * delta
 	else:
 		velocity.y = -0.2
+
+
+func is_alive() -> bool:
+	return not _dead and health > 0.0 and is_inside_tree()
+
+
+func take_damage(amount: float, source: Node = null) -> bool:
+	if _dead or _hit_invincibility_timer > 0.0:
+		return false
+	var actual_damage := maxf(amount, 0.0)
+	if actual_damage <= 0.0:
+		return false
+	health = maxf(0.0, health - actual_damage)
+	_hit_invincibility_timer = hit_invincibility_duration
+	_hit_stun_timer = hit_stun_duration
+	_hit_reaction_timer = 0.18
+	_attack_elapsed = -1.0
+	_mouse_target_active = false
+	_apply_knockback(source)
+	health_changed.emit(health, max_health)
+	damaged.emit(actual_damage, source)
+	if health <= 0.0:
+		_die()
+	return true
+
+
+func _apply_knockback(source: Node) -> void:
+	var source_3d := source as Node3D
+	if source_3d == null or not is_instance_valid(source_3d):
+		return
+	var away := global_position - source_3d.global_position
+	away.y = 0.0
+	if away.length_squared() > 0.001:
+		_knockback_velocity = away.normalized() * knockback_force
+
+
+func _update_hit_reaction(delta: float) -> void:
+	if visual == null:
+		return
+	var desired_scale := _base_visual_scale
+	if _hit_reaction_timer > 0.0:
+		desired_scale = _base_visual_scale * (1.0 + _hit_reaction_timer * 0.55)
+	visual.scale = visual.scale.lerp(desired_scale, minf(1.0, delta * 16.0))
+
+
+func _die() -> void:
+	_dead = true
+	_attack_elapsed = -1.0
+	velocity = Vector3.ZERO
+	clear_attack_target()
+	collision_layer = 0
+	collision_mask = 0
+	_body_shape.set_deferred("disabled", true)
+	set_physics_process(false)
+	if visual != null:
+		visual.visible = false
+	died.emit()
 
 
 func _on_attack_animation_finished() -> void:

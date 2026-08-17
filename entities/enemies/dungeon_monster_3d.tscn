@@ -1,6 +1,7 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://entities/enemies/dungeon_monster_3d.gd" id="1_monster"]
+[ext_resource type="Script" path="res://common/monster_health_bar_3d.gd" id="2_health_bar"]
 
 [sub_resource type="CapsuleShape3D" id="MonsterShape"]
 radius = 0.42
@@ -86,12 +87,15 @@ rings = 2
 
 [node name="DungeonMonster3D" type="CharacterBody3D"]
 collision_layer = 4
-collision_mask = 1
+collision_mask = 3
 script = ExtResource("1_monster")
 
 [node name="BodyShape" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.63, 0)
 shape = SubResource("MonsterShape")
+
+[node name="HealthBar" type="Node3D" parent="."]
+script = ExtResource("2_health_bar")
 
 [node name="Visual" type="Node3D" parent="."]
 

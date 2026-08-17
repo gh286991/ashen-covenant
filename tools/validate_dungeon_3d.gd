@@ -208,6 +208,19 @@ func _validate() -> void:
 		push_error("DUNGEON_3D_VALIDATE_FAIL attack_input_missing")
 		quit(1)
 		return
+	target_monster.set("_player", player)
+	target_monster.set("_attack_cooldown_timer", 0.0)
+	target_monster.call("_start_attack", Vector3.FORWARD)
+	if float(target_monster.get("_attack_elapsed")) < 0.0:
+		push_error("DUNGEON_3D_VALIDATE_FAIL monster_attack_did_not_start")
+		quit(1)
+		return
+	await create_timer(0.62).timeout
+	var monster_visual := target_monster.get_node("Visual") as Node3D
+	if monster_visual.scale.y <= 1.15 or monster_visual.position.y <= 0.12:
+		push_error("DUNGEON_3D_VALIDATE_FAIL monster_attack_animation_not_visible")
+		quit(1)
+		return
 	player.start_attack(Vector3.FORWARD)
 	await process_frame
 	if not player.is_attacking():

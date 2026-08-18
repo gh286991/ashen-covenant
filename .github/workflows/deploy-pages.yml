@@ -1,0 +1,50 @@
+name: Deploy Web build to GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag containing the Web ZIP to deploy
+        required: true
+        default: v1.0.0-demo.3
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Download Web release asset
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          web_asset="Ashen-Covenant-${RELEASE_TAG}-Web.zip"
+          curl --fail --location --retry 3 \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}/${web_asset}" \
+            --output web-build.zip
+          mkdir site
+          unzip -q web-build.zip -d site
+          touch site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

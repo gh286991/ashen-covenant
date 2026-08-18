@@ -12,8 +12,8 @@ config_version=5
 
 config/name="Ashen Covenant"
 config/description="A compact dark fantasy action RPG demo"
-config/version="1.0.0-demo"
-run/main_scene="res://levels/dungeon_3d.tscn"
+config/version="1.0.0-demo.3"
+run/main_scene="res://levels/boot.tscn"
 config/features=PackedStringArray("4.5")
 
 [autoload]
@@ -29,10 +29,6 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/handheld/orientation=1
-
-[dotnet]
-
-project/assembly_name="Ashen Covenant"
 
 [editor_plugins]
 

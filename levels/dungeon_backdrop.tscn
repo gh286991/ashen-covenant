@@ -1,0 +1,248 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_straight_2p6.glb" id="1_wall"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_corner_2p6.glb" id="2_corner"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/pillar_crypt.glb" id="3_pillar"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/altar_coffin.glb" id="4_altar"]
+[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/brazier_blue.glb" id="5_brazier"]
+[ext_resource type="PackedScene" path="res://assets/dungeon_backdrop_dressing_final.glb" id="6_dressing"]
+[ext_resource type="PackedScene" path="res://levels/exterior_editable_pieces.tscn" id="7_exterior"]
+[ext_resource type="Script" path="res://scripts/exterior_dressing_style_3d.gd" id="8_exterior_style"]
+
+[sub_resource type="Gradient" id="Gradient_AshenDrift"]
+offsets = PackedFloat32Array(0, 0.68, 1)
+colors = PackedColorArray(0.42, 0.54, 0.72, 0, 0.38, 0.5, 0.68, 0.32, 0.22, 0.32, 0.5, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_AshenDrift"]
+gradient = SubResource("Gradient_AshenDrift")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_AshenDrift"]
+emission_shape = 3
+emission_box_extents = Vector3(27, 2.5, 5)
+direction = Vector3(0.45, 0.08, 0.25)
+spread = 38.0
+initial_velocity_min = 0.18
+initial_velocity_max = 0.48
+gravity = Vector3(0, 0.025, 0)
+angular_velocity_min = -18.0
+angular_velocity_max = 18.0
+scale_min = 0.035
+scale_max = 0.095
+color_ramp = SubResource("GradientTexture1D_AshenDrift")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_AshenMote"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.7, 0.82, 1, 0.7)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_AshenMote"]
+material = SubResource("StandardMaterial3D_AshenMote")
+size = Vector2(0.13, 0.13)
+
+[node name="NonPlayableFill" type="Node3D"]
+editor_description = "地下城外圍的純視覺填充層。所有物件都在既有房間與走道的外牆之外，不含碰撞、門、導航、出生點或互動腳本；地下城主體保持不變。"
+script = ExtResource("8_exterior_style")
+
+[node name="OuterRuins" type="Node3D" parent="."]
+editor_description = "沿北側與南側外牆的斷牆節奏；只用既有石牆 GLB，不新增可玩地面。"
+
+[node name="NorthRuin_01" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-12, 0, -24.2)
+rotation_degrees = Vector3(0, 0, -4)
+
+[node name="NorthRuin_02" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-5, 0, -24.2)
+rotation_degrees = Vector3(0, 0, 3)
+
+[node name="NorthRuin_03" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(3, 0, -24.2)
+rotation_degrees = Vector3(0, 0, -5)
+
+[node name="NorthRuin_04" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(11, 0, -24.2)
+rotation_degrees = Vector3(0, 0, 4)
+
+[node name="NorthRuin_05" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(19, 0, -24.2)
+rotation_degrees = Vector3(0, 0, -3)
+
+[node name="NorthRuin_06" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(27, 0, -24.2)
+rotation_degrees = Vector3(0, 0, 5)
+
+[node name="NorthRuin_07" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(35, 0, -24.2)
+rotation_degrees = Vector3(0, 0, -4)
+
+[node name="BranchWestRuin_01" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-8.8, 0, -10)
+rotation_degrees = Vector3(0, 90, 4)
+
+[node name="BranchWestRuin_02" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-8.8, 0, -14)
+rotation_degrees = Vector3(0, 90, -5)
+
+[node name="BranchWestRuin_03" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-8.8, 0, -18)
+rotation_degrees = Vector3(0, 90, 3)
+
+[node name="BranchEastRuin_01" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(32.4, 0, -10)
+rotation_degrees = Vector3(0, 90, -4)
+
+[node name="BranchEastRuin_02" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(32.4, 0, -14)
+rotation_degrees = Vector3(0, 90, 5)
+
+[node name="BranchEastRuin_03" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(32.4, 0, -18)
+rotation_degrees = Vector3(0, 90, -3)
+
+[node name="SouthRuin_01" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-11, 0, 9)
+rotation_degrees = Vector3(0, 0, 4)
+
+[node name="SouthRuin_02" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(-3, 0, 9)
+rotation_degrees = Vector3(0, 0, -3)
+
+[node name="SouthRuin_03" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(6, 0, 9)
+rotation_degrees = Vector3(0, 0, 5)
+
+[node name="SouthRuin_04" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(15, 0, 9)
+rotation_degrees = Vector3(0, 0, -4)
+
+[node name="SouthRuin_05" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(24, 0, 9)
+rotation_degrees = Vector3(0, 0, 3)
+
+[node name="SouthRuin_06" parent="OuterRuins" instance=ExtResource("1_wall")]
+position = Vector3(33, 0, 9)
+rotation_degrees = Vector3(0, 0, -5)
+
+[node name="OuterCorners" type="Node3D" parent="."]
+editor_description = "四個外圍角落的完整 L 形輪廓，讓房間外側不會只剩平面黑底。"
+
+[node name="WestNorthCorner" parent="OuterCorners" instance=ExtResource("2_corner")]
+position = Vector3(-15, 0, -24.2)
+
+[node name="EastNorthCorner" parent="OuterCorners" instance=ExtResource("2_corner")]
+position = Vector3(39, 0, -24.2)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestSouthCorner" parent="OuterCorners" instance=ExtResource("2_corner")]
+position = Vector3(-15, 0, 9)
+rotation_degrees = Vector3(0, 270, 0)
+
+[node name="EastSouthCorner" parent="OuterCorners" instance=ExtResource("2_corner")]
+position = Vector3(39, 0, 9)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="FarPillars" type="Node3D" parent="."]
+editor_description = "遠景柱列提供高度層次；位置全部在北側外牆之外，不會進入戰鬥地板。"
+
+[node name="Pillar_01" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(-15, 0, -26.2)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="Pillar_02" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(-1, 0, -26.2)
+scale = Vector3(0.78, 0.78, 0.78)
+
+[node name="Pillar_03" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(14, 0, -26.2)
+scale = Vector3(0.92, 0.92, 0.92)
+
+[node name="Pillar_04" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(29, 0, -26.2)
+scale = Vector3(0.8, 0.8, 0.8)
+
+[node name="Pillar_05" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(40, 0, -26.2)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="BranchWestPillar_01" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(-10.4, 0, -12.5)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="BranchWestPillar_02" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(-10.4, 0, -17.5)
+scale = Vector3(0.72, 0.72, 0.72)
+
+[node name="BranchEastPillar_01" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(33.8, 0, -12.5)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="BranchEastPillar_02" parent="FarPillars" instance=ExtResource("3_pillar")]
+position = Vector3(33.8, 0, -17.5)
+scale = Vector3(0.72, 0.72, 0.72)
+
+[node name="SealedNorthShrine" type="Node3D" parent="."]
+editor_description = "遠景封門構圖焦點；這是純視覺祭壇，不是門，不含 Area3D、互動或出生點。"
+
+[node name="Altar" parent="SealedNorthShrine" instance=ExtResource("4_altar")]
+position = Vector3(11.84, 0, -25.4)
+rotation_degrees = Vector3(0, 90, 0)
+scale = Vector3(0.86, 0.86, 0.86)
+
+[node name="BlueBrazier_L" parent="SealedNorthShrine" instance=ExtResource("5_brazier")]
+position = Vector3(7.9, 0, -24.1)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="BlueBrazier_R" parent="SealedNorthShrine" instance=ExtResource("5_brazier")]
+position = Vector3(15.78, 0, -24.1)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="BlenderDressingFinal" parent="." instance=ExtResource("6_dressing")]
+rotation_degrees = Vector3(90, 0, 0)
+editor_description = "Blender 白模型 review 後的純視覺敘事裝飾：碎石、封印石碑、斷柱與封鎖鐵柵。無碰撞、無導航、無互動，全部位於不可到達的外圍區域。"
+
+[node name="AshenExteriorDressing" parent="." instance=ExtResource("7_exterior")]
+editor_description = "灰燼前庭的第二層遠景：76 個子節點各自引用一個獨立 GLB。南側採用碎石緩衝、交錯斷崖與外圍墓園的三層邊界，左右以側崖收邊；可在本場景或 dungeon_grid_map.tscn 選取單件岩塊、墓碑、枯木、橋段、方尖碑與石塚後調整；無碰撞、無導航、無互動。"
+
+[node name="ExteriorAtmosphere" type="Node3D" parent="."]
+editor_description = "Compatibility renderer 友善的外圍氛圍：三盞無陰影魂光與一組低數量灰燼微粒。"
+
+[node name="WestRuneGlow" type="OmniLight3D" parent="ExteriorAtmosphere"]
+position = Vector3(-2, 2.4, -28)
+light_color = Color(0.12, 0.48, 0.9, 1)
+light_energy = 1.35
+shadow_enabled = false
+omni_range = 4.8
+omni_attenuation = 1.55
+
+[node name="NorthRuneGlow" type="OmniLight3D" parent="ExteriorAtmosphere"]
+position = Vector3(18, 2.7, -29)
+light_color = Color(0.08, 0.58, 1, 1)
+light_energy = 1.65
+shadow_enabled = false
+omni_range = 5.4
+omni_attenuation = 1.45
+
+[node name="EastRuneGlow" type="OmniLight3D" parent="ExteriorAtmosphere"]
+position = Vector3(31, 2.2, -28)
+light_color = Color(0.16, 0.42, 0.84, 1)
+light_energy = 1.2
+shadow_enabled = false
+omni_range = 4.5
+omni_attenuation = 1.6
+
+[node name="AshenDrift" type="GPUParticles3D" parent="ExteriorAtmosphere"]
+position = Vector3(12, 3.6, -25.5)
+emitting = true
+amount = 52
+lifetime = 8.0
+preprocess = 4.0
+randomness = 0.72
+visibility_aabb = AABB(-29, -5, -8, 58, 10, 16)
+local_coords = false
+fixed_fps = 20
+process_material = SubResource("ParticleProcessMaterial_AshenDrift")
+draw_pass_1 = SubResource("QuadMesh_AshenMote")
+
+[editable path="BlenderDressingFinal"]
+[editable path="AshenExteriorDressing"]

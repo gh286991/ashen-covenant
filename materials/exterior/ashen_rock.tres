@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://br3kclhnhrt2k"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_Rock"]
+noise_type = 2
+frequency = 0.045
+fractal_gain = 0.58
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_Rock"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_Rock")
+seamless = true
+
+[resource]
+resource_name = "Ashen Layered Rock"
+albedo_color = Color(0.21, 0.23, 0.31, 1)
+albedo_texture = SubResource("NoiseTexture2D_Rock")
+roughness = 0.94
+uv1_scale = Vector3(0.24, 0.24, 0.24)
+uv1_triplanar = true
+uv1_world_triplanar = true

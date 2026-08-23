@@ -1,0 +1,234 @@
+[gd_scene load_steps=77 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_00_0.glb" id="piece_01"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_00_1.glb" id="piece_02"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_00_2.glb" id="piece_03"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_01_0.glb" id="piece_04"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_01_1.glb" id="piece_05"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_01_2.glb" id="piece_06"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_02_0.glb" id="piece_07"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_02_1.glb" id="piece_08"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_02_2.glb" id="piece_09"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_03_0.glb" id="piece_10"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_03_1.glb" id="piece_11"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_03_2.glb" id="piece_12"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_04_0.glb" id="piece_13"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_04_1.glb" id="piece_14"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_04_2.glb" id="piece_15"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_05_0.glb" id="piece_16"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_05_1.glb" id="piece_17"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Cairn_05_2.glb" id="piece_18"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_DeadTree_00.glb" id="piece_19"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_DeadTree_01.glb" id="piece_20"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_DeadTree_02.glb" id="piece_21"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_DeadTree_03.glb" id="piece_22"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_00.glb" id="piece_23"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_01.glb" id="piece_24"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_02.glb" id="piece_25"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_03.glb" id="piece_26"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_04.glb" id="piece_27"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_05.glb" id="piece_28"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_GraveMarker_06.glb" id="piece_29"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_00_Body.glb" id="piece_30"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_00_Rune.glb" id="piece_31"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_01_Body.glb" id="piece_32"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_01_Rune.glb" id="piece_33"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_02_Body.glb" id="piece_34"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Obelisk_02_Rune.glb" id="piece_35"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SideScarp_East_00.glb" id="piece_36"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SideScarp_East_01.glb" id="piece_37"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SideScarp_West_00.glb" id="piece_38"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SideScarp_West_01.glb" id="piece_39"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_00.glb" id="piece_40"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_00_Shard_0.glb" id="piece_41"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_00_Shard_1.glb" id="piece_42"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_01.glb" id="piece_43"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_01_Shard_0.glb" id="piece_44"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_01_Shard_1.glb" id="piece_45"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_02.glb" id="piece_46"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_02_Shard_0.glb" id="piece_47"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_02_Shard_1.glb" id="piece_48"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_03.glb" id="piece_49"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_03_Shard_0.glb" id="piece_50"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_03_Shard_1.glb" id="piece_51"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_04.glb" id="piece_52"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_04_Shard_0.glb" id="piece_53"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_04_Shard_1.glb" id="piece_54"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_05.glb" id="piece_55"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_05_Shard_0.glb" id="piece_56"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_05_Shard_1.glb" id="piece_57"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_06.glb" id="piece_58"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_06_Shard_0.glb" id="piece_59"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_06_Shard_1.glb" id="piece_60"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_07.glb" id="piece_61"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_07_Shard_0.glb" id="piece_62"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_07_Shard_1.glb" id="piece_63"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_08.glb" id="piece_64"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_08_Shard_0.glb" id="piece_65"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_SouthCliff_08_Shard_1.glb" id="piece_66"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_00.glb" id="piece_67"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_01.glb" id="piece_68"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_02.glb" id="piece_69"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_03.glb" id="piece_70"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_04.glb" id="piece_71"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_Arch_05.glb" id="piece_72"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_LeftPier.glb" id="piece_73"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_RightPier.glb" id="piece_74"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_TopLeft.glb" id="piece_75"]
+[ext_resource type="PackedScene" path="res://assets/exterior_pieces/EXT_Viaduct_TopRight.glb" id="piece_76"]
+
+[node name="AshenExteriorDressing" type="Node3D"]
+editor_description = "可逐件調整的灰燼前庭外圍。每個直接子節點各自實例化一個 GLB，原點已對齊物件本身；可在此場景或 dungeon_grid_map.tscn 直接選取、移動、旋轉、縮放、隱藏或替換。"
+
+[node name="EXT_Cairn_00_0" parent="." instance=ExtResource("piece_01")]
+position = Vector3(-6.12, 0.28, -27.4)
+[node name="EXT_Cairn_00_1" parent="." instance=ExtResource("piece_02")]
+position = Vector3(-6, 0.7, -27.4)
+[node name="EXT_Cairn_00_2" parent="." instance=ExtResource("piece_03")]
+position = Vector3(-5.88, 1.12, -27.4)
+[node name="EXT_Cairn_01_0" parent="." instance=ExtResource("piece_04")]
+position = Vector3(2.28, 0.28, -28.799999)
+[node name="EXT_Cairn_01_1" parent="." instance=ExtResource("piece_05")]
+position = Vector3(2.4, 0.7, -28.799999)
+[node name="EXT_Cairn_01_2" parent="." instance=ExtResource("piece_06")]
+position = Vector3(2.52, 1.12, -28.799999)
+[node name="EXT_Cairn_02_0" parent="." instance=ExtResource("piece_07")]
+position = Vector3(10.68, 0.28, -27.4)
+[node name="EXT_Cairn_02_1" parent="." instance=ExtResource("piece_08")]
+position = Vector3(10.8, 0.7, -27.4)
+[node name="EXT_Cairn_02_2" parent="." instance=ExtResource("piece_09")]
+position = Vector3(10.92, 1.12, -27.4)
+[node name="EXT_Cairn_03_0" parent="." instance=ExtResource("piece_10")]
+position = Vector3(19.08, 0.28, -28.799999)
+[node name="EXT_Cairn_03_1" parent="." instance=ExtResource("piece_11")]
+position = Vector3(19.200001, 0.7, -28.799999)
+[node name="EXT_Cairn_03_2" parent="." instance=ExtResource("piece_12")]
+position = Vector3(19.32, 1.12, -28.799999)
+[node name="EXT_Cairn_04_0" parent="." instance=ExtResource("piece_13")]
+position = Vector3(27.48, 0.28, -27.4)
+[node name="EXT_Cairn_04_1" parent="." instance=ExtResource("piece_14")]
+position = Vector3(27.6, 0.7, -27.4)
+[node name="EXT_Cairn_04_2" parent="." instance=ExtResource("piece_15")]
+position = Vector3(27.719999, 1.12, -27.4)
+[node name="EXT_Cairn_05_0" parent="." instance=ExtResource("piece_16")]
+position = Vector3(35.880001, 0.28, -28.799999)
+[node name="EXT_Cairn_05_1" parent="." instance=ExtResource("piece_17")]
+position = Vector3(36, 0.7, -28.799999)
+[node name="EXT_Cairn_05_2" parent="." instance=ExtResource("piece_18")]
+position = Vector3(36.119999, 1.12, -28.799999)
+[node name="EXT_DeadTree_00" parent="." instance=ExtResource("piece_19")]
+position = Vector3(-13.675, 2.9, 23.6)
+[node name="EXT_DeadTree_01" parent="." instance=ExtResource("piece_20")]
+position = Vector3(38.724998, 3.15, 23.200001)
+[node name="EXT_DeadTree_02" parent="." instance=ExtResource("piece_21")]
+position = Vector3(-11.775, 2.7, -28)
+[node name="EXT_DeadTree_03" parent="." instance=ExtResource("piece_22")]
+position = Vector3(37.724998, 2.95, -28.5)
+[node name="EXT_GraveMarker_00" parent="." instance=ExtResource("piece_23")]
+position = Vector3(-11.8, 0.63, 21.700001)
+[node name="EXT_GraveMarker_01" parent="." instance=ExtResource("piece_24")]
+position = Vector3(-8.6, 0.7, 20.1)
+[node name="EXT_GraveMarker_02" parent="." instance=ExtResource("piece_25")]
+position = Vector3(-5.4, 0.77, 22.799999)
+[node name="EXT_GraveMarker_03" parent="." instance=ExtResource("piece_26")]
+position = Vector3(25.299999, 0.63, 20.9)
+[node name="EXT_GraveMarker_04" parent="." instance=ExtResource("piece_27")]
+position = Vector3(28.799999, 0.7, 22.700001)
+[node name="EXT_GraveMarker_05" parent="." instance=ExtResource("piece_28")]
+position = Vector3(31.799999, 0.77, 19.799999)
+[node name="EXT_GraveMarker_06" parent="." instance=ExtResource("piece_29")]
+position = Vector3(35.400002, 0.63, 21.9)
+[node name="EXT_Obelisk_00_Body" parent="." instance=ExtResource("piece_30")]
+position = Vector3(-2, 0, -28)
+[node name="EXT_Obelisk_00_Rune" parent="." instance=ExtResource("piece_31")]
+position = Vector3(-2, 2.491, -28.49)
+[node name="EXT_Obelisk_01_Body" parent="." instance=ExtResource("piece_32")]
+position = Vector3(18, 0, -29)
+[node name="EXT_Obelisk_01_Rune" parent="." instance=ExtResource("piece_33")]
+position = Vector3(18, 2.862, -29.49)
+[node name="EXT_Obelisk_02_Body" parent="." instance=ExtResource("piece_34")]
+position = Vector3(31, 0, -28)
+[node name="EXT_Obelisk_02_Rune" parent="." instance=ExtResource("piece_35")]
+position = Vector3(31, 2.332, -28.49)
+[node name="EXT_SideScarp_East_00" parent="." instance=ExtResource("piece_36")]
+position = Vector3(44.799999, 0.68, 7.4)
+[node name="EXT_SideScarp_East_01" parent="." instance=ExtResource("piece_37")]
+position = Vector3(43.599998, 0.52, -11.8)
+[node name="EXT_SideScarp_West_00" parent="." instance=ExtResource("piece_38")]
+position = Vector3(-20.6, 0.62, 7.4)
+[node name="EXT_SideScarp_West_01" parent="." instance=ExtResource("piece_39")]
+position = Vector3(-19.6, 0.54, -11.2)
+[node name="EXT_SouthCliff_00" parent="." instance=ExtResource("piece_40")]
+position = Vector3(-17, 0.8, 17)
+[node name="EXT_SouthCliff_00_Shard_0" parent="." instance=ExtResource("piece_41")]
+position = Vector3(-18.15, 0.28, 14.1)
+[node name="EXT_SouthCliff_00_Shard_1" parent="." instance=ExtResource("piece_42")]
+position = Vector3(-15.62, 0.22, 13.35)
+[node name="EXT_SouthCliff_01" parent="." instance=ExtResource("piece_43")]
+position = Vector3(-10.5, 0.6, 15.4)
+[node name="EXT_SouthCliff_01_Shard_0" parent="." instance=ExtResource("piece_44")]
+position = Vector3(-11.65, 0.28, 12.5)
+[node name="EXT_SouthCliff_01_Shard_1" parent="." instance=ExtResource("piece_45")]
+position = Vector3(-9.12, 0.22, 11.75)
+[node name="EXT_SouthCliff_02" parent="." instance=ExtResource("piece_46")]
+position = Vector3(-3, 0.7, 18.1)
+[node name="EXT_SouthCliff_02_Shard_0" parent="." instance=ExtResource("piece_47")]
+position = Vector3(-4.15, 0.28, 15.2)
+[node name="EXT_SouthCliff_02_Shard_1" parent="." instance=ExtResource("piece_48")]
+position = Vector3(-1.62, 0.22, 14.45)
+[node name="EXT_SouthCliff_03" parent="." instance=ExtResource("piece_49")]
+position = Vector3(5, 0.9, 14.8)
+[node name="EXT_SouthCliff_03_Shard_0" parent="." instance=ExtResource("piece_50")]
+position = Vector3(3.85, 0.28, 11.9)
+[node name="EXT_SouthCliff_03_Shard_1" parent="." instance=ExtResource("piece_51")]
+position = Vector3(6.38, 0.22, 11.15)
+[node name="EXT_SouthCliff_04" parent="." instance=ExtResource("piece_52")]
+position = Vector3(13, 0.65, 17.6)
+[node name="EXT_SouthCliff_04_Shard_0" parent="." instance=ExtResource("piece_53")]
+position = Vector3(11.85, 0.28, 14.7)
+[node name="EXT_SouthCliff_04_Shard_1" parent="." instance=ExtResource("piece_54")]
+position = Vector3(14.38, 0.22, 13.95)
+[node name="EXT_SouthCliff_05" parent="." instance=ExtResource("piece_55")]
+position = Vector3(21, 0.75, 15)
+[node name="EXT_SouthCliff_05_Shard_0" parent="." instance=ExtResource("piece_56")]
+position = Vector3(19.85, 0.28, 12.1)
+[node name="EXT_SouthCliff_05_Shard_1" parent="." instance=ExtResource("piece_57")]
+position = Vector3(22.379999, 0.22, 11.35)
+[node name="EXT_SouthCliff_06" parent="." instance=ExtResource("piece_58")]
+position = Vector3(29, 0.7, 18)
+[node name="EXT_SouthCliff_06_Shard_0" parent="." instance=ExtResource("piece_59")]
+position = Vector3(27.85, 0.28, 15.1)
+[node name="EXT_SouthCliff_06_Shard_1" parent="." instance=ExtResource("piece_60")]
+position = Vector3(30.379999, 0.22, 14.35)
+[node name="EXT_SouthCliff_07" parent="." instance=ExtResource("piece_61")]
+position = Vector3(37, 0.8, 14.5)
+[node name="EXT_SouthCliff_07_Shard_0" parent="." instance=ExtResource("piece_62")]
+position = Vector3(35.849998, 0.28, 11.6)
+[node name="EXT_SouthCliff_07_Shard_1" parent="." instance=ExtResource("piece_63")]
+position = Vector3(38.380001, 0.22, 10.85)
+[node name="EXT_SouthCliff_08" parent="." instance=ExtResource("piece_64")]
+position = Vector3(44, 0.55, 16.799999)
+[node name="EXT_SouthCliff_08_Shard_0" parent="." instance=ExtResource("piece_65")]
+position = Vector3(42.849998, 0.28, 13.9)
+[node name="EXT_SouthCliff_08_Shard_1" parent="." instance=ExtResource("piece_66")]
+position = Vector3(45.380001, 0.22, 13.15)
+[node name="EXT_Viaduct_Arch_00" parent="." instance=ExtResource("piece_67")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_Arch_01" parent="." instance=ExtResource("piece_68")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_Arch_02" parent="." instance=ExtResource("piece_69")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_Arch_03" parent="." instance=ExtResource("piece_70")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_Arch_04" parent="." instance=ExtResource("piece_71")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_Arch_05" parent="." instance=ExtResource("piece_72")]
+position = Vector3(8, 5.6, -29.4)
+[node name="EXT_Viaduct_LeftPier" parent="." instance=ExtResource("piece_73")]
+position = Vector3(5.35, 2.95, -29.4)
+[node name="EXT_Viaduct_RightPier" parent="." instance=ExtResource("piece_74")]
+position = Vector3(10.65, 2.95, -29.4)
+[node name="EXT_Viaduct_TopLeft" parent="." instance=ExtResource("piece_75")]
+position = Vector3(3.9, 6.25, -29.4)
+[node name="EXT_Viaduct_TopRight" parent="." instance=ExtResource("piece_76")]
+position = Vector3(12, 6.3, -29.4)

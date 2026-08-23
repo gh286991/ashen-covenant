@@ -1,15 +1,424 @@
-[gd_scene load_steps=8 format=3 uid="uid://doh5fyfbtjivs"]
+[gd_scene load_steps=14 format=3 uid="uid://doh5fyfbtjivs"]
 
 [ext_resource type="MeshLibrary" uid="uid://ba65nvhx03144" path="res://levels/kit/dungeon_kit_mesh_library.tres" id="1_r0fbt"]
 [ext_resource type="PackedScene" path="res://levels/kit/floor_stone_tripo_3p9.tscn" id="2_j65ym"]
+[ext_resource type="Material" uid="uid://dubu3nh8f5nkk" path="res://materials/exterior/ashen_charcoal_stone.tres" id="2_vak8v"]
+[ext_resource type="Material" uid="uid://dwgsbvj7c7v2r" path="res://materials/exterior/ashen_cold_edge.tres" id="3_pj1yr"]
 [ext_resource type="PackedScene" path="res://levels/kit/wall_castle_pbr_2p6.tscn" id="4_pj1yr"]
 [ext_resource type="PackedScene" path="res://levels/modules/castle_wall_doorway_3p946.tscn" id="5_w6k8y"]
 [ext_resource type="PackedScene" path="res://levels/kit/brazier_blue.tscn" id="6_w43vo"]
 [ext_resource type="PackedScene" path="res://levels/kit/altar_coffin.tscn" id="7_cr8nt"]
 [ext_resource type="PackedScene" path="res://levels/modules/corridor_branch_rooms_large_3p946.tscn" id="8_bld33"]
+[ext_resource type="PackedScene" path="res://levels/dungeon_backdrop.tscn" id="9_exterior"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w6k8y"]
+resource_name = "Exterior_bone_dust"
+albedo_color = Color(0.28, 0.3, 0.32, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w43vo"]
+resource_name = "Exterior_violet_seal"
+albedo_color = Color(0.11, 0.035, 0.18, 1)
+roughness = 0.9
+emission_enabled = true
+emission = Color(0.34, 0.08, 0.68, 1)
+emission_energy_multiplier = 1.35
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cr8nt"]
+resource_name = "Exterior_dark_iron"
+albedo_color = Color(0.028, 0.035, 0.05, 1)
+metallic = 1.0
+roughness = 0.78
 
 [node name="DungeonGridMap" type="Node3D"]
-editor_description = "實際地圖在 ModularAssembly：房間四邊用牆封住，只在 Doorways 開入口；走道兩側也有碰撞牆。四組 GridMap 是隱藏筆刷參考層。"
+editor_description = "實際地圖在 ModularAssembly；NonPlayableFill 是可在本場景直接預覽的地下城外圍。房間四邊用牆封住，只在 Doorways 開入口；四組 GridMap 是隱藏筆刷參考層。"
+
+[node name="NonPlayableFill" parent="." instance=ExtResource("9_exterior")]
+editor_description = "可直接在本場景展開並編輯的外圍環境；編輯時會同時保留 ModularAssembly 原始地下城作為位置參考。純視覺，沒有碰撞、導航或互動。"
+
+[node name="NorthRuin_01" parent="NonPlayableFill/OuterRuins" index="0"]
+transform = Transform3D(0.9975641, 0.06975647, 0, -0.06975647, 0.9975641, 0, 0, 0, 1, -12, 0, -24.2)
+
+[node name="NorthRuin_02" parent="NonPlayableFill/OuterRuins" index="1"]
+transform = Transform3D(0.9986295, -0.05233596, 0, 0.05233596, 0.9986295, 0, 0, 0, 1, -5, 0, -24.2)
+
+[node name="NorthRuin_03" parent="NonPlayableFill/OuterRuins" index="2"]
+transform = Transform3D(0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0, 0, 0, 1, 3, 0, -24.2)
+
+[node name="NorthRuin_04" parent="NonPlayableFill/OuterRuins" index="3"]
+transform = Transform3D(0.9975641, -0.06975647, 0, 0.06975647, 0.9975641, 0, 0, 0, 1, 11, 0, -24.2)
+
+[node name="NorthRuin_05" parent="NonPlayableFill/OuterRuins" index="4"]
+transform = Transform3D(0.9986295, 0.05233596, 0, -0.05233596, 0.9986295, 0, 0, 0, 1, 19, 0, -24.2)
+
+[node name="NorthRuin_06" parent="NonPlayableFill/OuterRuins" index="5"]
+transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, 27, 0, -24.2)
+
+[node name="NorthRuin_07" parent="NonPlayableFill/OuterRuins" index="6"]
+transform = Transform3D(0.9975641, 0.06975647, 0, -0.06975647, 0.9975641, 0, 0, 0, 1, 35, 0, -24.2)
+
+[node name="BranchWestRuin_01" parent="NonPlayableFill/OuterRuins" index="7"]
+transform = Transform3D(-4.360491e-08, 3.0491523e-09, 1, 0.06975647, 0.9975641, 0, -0.9975641, 0.06975647, -4.371139e-08, -8.8, 0, -10)
+
+[node name="BranchWestRuin_02" parent="NonPlayableFill/OuterRuins" index="8"]
+transform = Transform3D(-4.3545054e-08, -3.8096983e-09, 1, -0.08715574, 0.9961947, 0, -0.9961947, -0.08715574, -4.371139e-08, -8.8, 0, -14)
+
+[node name="BranchWestRuin_03" parent="NonPlayableFill/OuterRuins" index="9"]
+transform = Transform3D(-4.3651482e-08, 2.2876774e-09, 1, 0.05233596, 0.9986295, 0, -0.9986295, 0.05233596, -4.371139e-08, -8.8, 0, -18)
+
+[node name="BranchEastRuin_01" parent="NonPlayableFill/OuterRuins" index="10"]
+transform = Transform3D(-4.360491e-08, -3.0491523e-09, 1, -0.06975647, 0.9975641, 0, -0.9975641, -0.06975647, -4.371139e-08, 32.4, 0, -10)
+
+[node name="BranchEastRuin_02" parent="NonPlayableFill/OuterRuins" index="11"]
+transform = Transform3D(-4.3545054e-08, 3.8096983e-09, 1, 0.08715574, 0.9961947, 0, -0.9961947, 0.08715574, -4.371139e-08, 32.4, 0, -14)
+
+[node name="BranchEastRuin_03" parent="NonPlayableFill/OuterRuins" index="12"]
+transform = Transform3D(-4.3651482e-08, -2.2876774e-09, 1, -0.05233596, 0.9986295, 0, -0.9986295, -0.05233596, -4.371139e-08, 32.4, 0, -18)
+
+[node name="SouthRuin_01" parent="NonPlayableFill/OuterRuins" index="13"]
+transform = Transform3D(0.9975641, -0.06975647, 0, 0.06975647, 0.9975641, 0, 0, 0, 1, -11, 0, 9)
+
+[node name="SouthRuin_02" parent="NonPlayableFill/OuterRuins" index="14"]
+transform = Transform3D(0.9986295, 0.05233596, 0, -0.05233596, 0.9986295, 0, 0, 0, 1, -3, 0, 9)
+
+[node name="SouthRuin_03" parent="NonPlayableFill/OuterRuins" index="15"]
+transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, 6, 0, 9)
+
+[node name="SouthRuin_04" parent="NonPlayableFill/OuterRuins" index="16"]
+transform = Transform3D(0.9975641, 0.06975647, 0, -0.06975647, 0.9975641, 0, 0, 0, 1, 15, 0, 9)
+
+[node name="SouthRuin_05" parent="NonPlayableFill/OuterRuins" index="17"]
+transform = Transform3D(0.9986295, -0.05233596, 0, 0.05233596, 0.9986295, 0, 0, 0, 1, 24, 0, 9)
+
+[node name="SouthRuin_06" parent="NonPlayableFill/OuterRuins" index="18"]
+transform = Transform3D(0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0, 0, 0, 1, 33, 0, 9)
+
+[node name="WestNorthCorner" parent="NonPlayableFill/OuterCorners" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -24.2)
+
+[node name="EastNorthCorner" parent="NonPlayableFill/OuterCorners" index="1"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 39, 0, -24.2)
+
+[node name="WestSouthCorner" parent="NonPlayableFill/OuterCorners" index="2"]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -15, 0, 9)
+
+[node name="EastSouthCorner" parent="NonPlayableFill/OuterCorners" index="3"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 39, 0, 9)
+
+[node name="Pillar_01" parent="NonPlayableFill/FarPillars" index="0"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -15, 0, -26.2)
+
+[node name="Pillar_02" parent="NonPlayableFill/FarPillars" index="1"]
+transform = Transform3D(0.78, 0, 0, 0, 0.78, 0, 0, 0, 0.78, -1, 0, -26.2)
+
+[node name="Pillar_03" parent="NonPlayableFill/FarPillars" index="2"]
+transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, 14, 0, -26.2)
+
+[node name="Pillar_04" parent="NonPlayableFill/FarPillars" index="3"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 29, 0, -26.2)
+
+[node name="Pillar_05" parent="NonPlayableFill/FarPillars" index="4"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 40, 0, -26.2)
+
+[node name="BranchWestPillar_01" parent="NonPlayableFill/FarPillars" index="5"]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, -10.4, 0, -12.5)
+
+[node name="BranchWestPillar_02" parent="NonPlayableFill/FarPillars" index="6"]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, -10.4, 0, -17.5)
+
+[node name="BranchEastPillar_01" parent="NonPlayableFill/FarPillars" index="7"]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 33.8, 0, -12.5)
+
+[node name="BranchEastPillar_02" parent="NonPlayableFill/FarPillars" index="8"]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 33.8, 0, -17.5)
+
+[node name="Altar" parent="NonPlayableFill/SealedNorthShrine" index="0"]
+transform = Transform3D(-3.7591793e-08, 0, 0.86, 0, 0.86, 0, -0.86, 0, -3.7591793e-08, 11.84, 0, -25.4)
+
+[node name="BlueBrazier_L" parent="NonPlayableFill/SealedNorthShrine" index="1"]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 7.9, 0, -24.1)
+
+[node name="BlueBrazier_R" parent="NonPlayableFill/SealedNorthShrine" index="2"]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 15.78, 0, -24.1)
+
+[node name="BlenderDressingFinal" parent="NonPlayableFill" index="4"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+
+[node name="Dressing_RubbleBase_00" parent="NonPlayableFill/BlenderDressingFinal" index="0"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_00_00" parent="NonPlayableFill/BlenderDressingFinal" index="1"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_00_01" parent="NonPlayableFill/BlenderDressingFinal" index="2"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_00_02" parent="NonPlayableFill/BlenderDressingFinal" index="3"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_00_03" parent="NonPlayableFill/BlenderDressingFinal" index="4"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_00" parent="NonPlayableFill/BlenderDressingFinal" index="5"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_01" parent="NonPlayableFill/BlenderDressingFinal" index="6"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_01_00" parent="NonPlayableFill/BlenderDressingFinal" index="7"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_01_01" parent="NonPlayableFill/BlenderDressingFinal" index="8"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_01_02" parent="NonPlayableFill/BlenderDressingFinal" index="9"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_01_03" parent="NonPlayableFill/BlenderDressingFinal" index="10"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_01" parent="NonPlayableFill/BlenderDressingFinal" index="11"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_02" parent="NonPlayableFill/BlenderDressingFinal" index="12"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_02_00" parent="NonPlayableFill/BlenderDressingFinal" index="13"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_02_01" parent="NonPlayableFill/BlenderDressingFinal" index="14"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_02_02" parent="NonPlayableFill/BlenderDressingFinal" index="15"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_02_03" parent="NonPlayableFill/BlenderDressingFinal" index="16"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_02" parent="NonPlayableFill/BlenderDressingFinal" index="17"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_03" parent="NonPlayableFill/BlenderDressingFinal" index="18"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_03_00" parent="NonPlayableFill/BlenderDressingFinal" index="19"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_03_01" parent="NonPlayableFill/BlenderDressingFinal" index="20"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_03_02" parent="NonPlayableFill/BlenderDressingFinal" index="21"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_03_03" parent="NonPlayableFill/BlenderDressingFinal" index="22"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_03" parent="NonPlayableFill/BlenderDressingFinal" index="23"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_04" parent="NonPlayableFill/BlenderDressingFinal" index="24"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_04_00" parent="NonPlayableFill/BlenderDressingFinal" index="25"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_04_01" parent="NonPlayableFill/BlenderDressingFinal" index="26"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_04_02" parent="NonPlayableFill/BlenderDressingFinal" index="27"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_04_03" parent="NonPlayableFill/BlenderDressingFinal" index="28"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_04" parent="NonPlayableFill/BlenderDressingFinal" index="29"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_05" parent="NonPlayableFill/BlenderDressingFinal" index="30"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_05_00" parent="NonPlayableFill/BlenderDressingFinal" index="31"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_05_01" parent="NonPlayableFill/BlenderDressingFinal" index="32"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_05_02" parent="NonPlayableFill/BlenderDressingFinal" index="33"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_05_03" parent="NonPlayableFill/BlenderDressingFinal" index="34"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_05" parent="NonPlayableFill/BlenderDressingFinal" index="35"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_06" parent="NonPlayableFill/BlenderDressingFinal" index="36"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_06_00" parent="NonPlayableFill/BlenderDressingFinal" index="37"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_06_01" parent="NonPlayableFill/BlenderDressingFinal" index="38"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_06_02" parent="NonPlayableFill/BlenderDressingFinal" index="39"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_06_03" parent="NonPlayableFill/BlenderDressingFinal" index="40"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_06" parent="NonPlayableFill/BlenderDressingFinal" index="41"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_07" parent="NonPlayableFill/BlenderDressingFinal" index="42"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_07_00" parent="NonPlayableFill/BlenderDressingFinal" index="43"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_07_01" parent="NonPlayableFill/BlenderDressingFinal" index="44"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_07_02" parent="NonPlayableFill/BlenderDressingFinal" index="45"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_07_03" parent="NonPlayableFill/BlenderDressingFinal" index="46"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_07" parent="NonPlayableFill/BlenderDressingFinal" index="47"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_08" parent="NonPlayableFill/BlenderDressingFinal" index="48"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_08_00" parent="NonPlayableFill/BlenderDressingFinal" index="49"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_08_01" parent="NonPlayableFill/BlenderDressingFinal" index="50"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_08_02" parent="NonPlayableFill/BlenderDressingFinal" index="51"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_08_03" parent="NonPlayableFill/BlenderDressingFinal" index="52"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_08" parent="NonPlayableFill/BlenderDressingFinal" index="53"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_RubbleBase_09" parent="NonPlayableFill/BlenderDressingFinal" index="54"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_09_00" parent="NonPlayableFill/BlenderDressingFinal" index="55"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_09_01" parent="NonPlayableFill/BlenderDressingFinal" index="56"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_Rubble_09_02" parent="NonPlayableFill/BlenderDressingFinal" index="57"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_Rubble_09_03" parent="NonPlayableFill/BlenderDressingFinal" index="58"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BoneShard_09" parent="NonPlayableFill/BlenderDressingFinal" index="59"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w6k8y")
+
+[node name="Dressing_SealPlinth_00" parent="NonPlayableFill/BlenderDressingFinal" index="60"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_SealSlab_00" parent="NonPlayableFill/BlenderDressingFinal" index="61"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_SealDisc_00" parent="NonPlayableFill/BlenderDressingFinal" index="62"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w43vo")
+
+[node name="Dressing_SealPlinth_01" parent="NonPlayableFill/BlenderDressingFinal" index="63"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_SealSlab_01" parent="NonPlayableFill/BlenderDressingFinal" index="64"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_SealDisc_01" parent="NonPlayableFill/BlenderDressingFinal" index="65"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w43vo")
+
+[node name="Dressing_SealPlinth_02" parent="NonPlayableFill/BlenderDressingFinal" index="66"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_SealSlab_02" parent="NonPlayableFill/BlenderDressingFinal" index="67"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_SealDisc_02" parent="NonPlayableFill/BlenderDressingFinal" index="68"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w43vo")
+
+[node name="Dressing_BrokenPillar_00" parent="NonPlayableFill/BlenderDressingFinal" index="69"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_00" parent="NonPlayableFill/BlenderDressingFinal" index="70"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BrokenPillar_01" parent="NonPlayableFill/BlenderDressingFinal" index="71"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_01" parent="NonPlayableFill/BlenderDressingFinal" index="72"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BrokenPillar_02" parent="NonPlayableFill/BlenderDressingFinal" index="73"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_02" parent="NonPlayableFill/BlenderDressingFinal" index="74"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BrokenPillar_03" parent="NonPlayableFill/BlenderDressingFinal" index="75"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_03" parent="NonPlayableFill/BlenderDressingFinal" index="76"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BrokenPillar_04" parent="NonPlayableFill/BlenderDressingFinal" index="77"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_04" parent="NonPlayableFill/BlenderDressingFinal" index="78"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_BrokenPillar_05" parent="NonPlayableFill/BlenderDressingFinal" index="79"]
+surface_material_override/0 = ExtResource("3_pj1yr")
+
+[node name="Dressing_BrokenPillarCap_05" parent="NonPlayableFill/BlenderDressingFinal" index="80"]
+surface_material_override/0 = ExtResource("2_vak8v")
+
+[node name="Dressing_SealGate_Post_7_2" parent="NonPlayableFill/BlenderDressingFinal" index="81"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Post_16_4" parent="NonPlayableFill/BlenderDressingFinal" index="82"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Bar_8_6" parent="NonPlayableFill/BlenderDressingFinal" index="83"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Bar_11_0" parent="NonPlayableFill/BlenderDressingFinal" index="84"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Bar_13_4" parent="NonPlayableFill/BlenderDressingFinal" index="85"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Bar_15_2" parent="NonPlayableFill/BlenderDressingFinal" index="86"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="Dressing_SealGate_Header" parent="NonPlayableFill/BlenderDressingFinal" index="87"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cr8nt")
+
+[node name="WestRuneGlow" parent="NonPlayableFill/ExteriorAtmosphere" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.4, -28)
+
+[node name="NorthRuneGlow" parent="NonPlayableFill/ExteriorAtmosphere" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2.7, -29)
+
+[node name="EastRuneGlow" parent="NonPlayableFill/ExteriorAtmosphere" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2.2, -28)
+
+[node name="AshenDrift" parent="NonPlayableFill/ExteriorAtmosphere" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 3.6, -25.5)
 
 [node name="FloorGridMap" type="GridMap" parent="."]
 editor_description = "只畫地板；所有房間與走廊的基底。"
@@ -392,3 +801,7 @@ editor_description = "走道接口門洞由相鄰房間的 Doorways 群組各放
 
 [node name="CorridorFlexibleWing" parent="ModularAssembly" instance=ExtResource("8_bld33")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.946, 0, 0)
+
+[editable path="NonPlayableFill"]
+[editable path="NonPlayableFill/BlenderDressingFinal"]
+[editable path="NonPlayableFill/AshenExteriorDressing"]

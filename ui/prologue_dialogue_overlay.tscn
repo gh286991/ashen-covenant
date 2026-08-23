@@ -1,0 +1,220 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://ui/prologue_dialogue_overlay.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/prologue/ashen_covenant-prologue-front-alert-v2.png" id="2_character"]
+[ext_resource type="Theme" path="res://ui/menu_theme.tres" id="5_theme"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_click"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dialogue"]
+bg_color = Color(0.035, 0.047, 0.086, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.82, 0.62, 0.31, 0.96)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_name"]
+bg_color = Color(0.12, 0.075, 0.15, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.93, 0.71, 0.34, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skip"]
+bg_color = Color(0.035, 0.047, 0.086, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.82, 0.62, 0.31, 0.75)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="PrologueDialogue" type="CanvasLayer"]
+layer = 100
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="Screen" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_theme")
+
+[node name="Dimmer" type="ColorRect" parent="Screen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.02, 0.045, 0.34)
+
+[node name="AdvanceSurface" type="Button" parent="Screen"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_click")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_click")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_click")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_click")
+
+[node name="LocationLabel" type="Label" parent="Screen"]
+layout_mode = 1
+offset_left = 34.0
+offset_top = 28.0
+offset_right = 310.0
+offset_bottom = 66.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.6, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "灰燼地牢・入口"
+
+[node name="SkipButton" type="Button" parent="Screen"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -144.0
+offset_top = 24.0
+offset_right = -28.0
+offset_bottom = 66.0
+grow_horizontal = 0
+focus_neighbor_bottom = NodePath("../AdvanceSurface")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_skip")
+theme_override_styles/hover = SubResource("StyleBoxFlat_name")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dialogue")
+text = "略過  Esc"
+
+[node name="CharacterArt" type="TextureRect" parent="Screen"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.47
+anchor_top = 0.015
+anchor_right = 0.99
+anchor_bottom = 1.315
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CharacterArtNext" type="TextureRect" parent="Screen"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchor_left = 0.47
+anchor_top = 0.015
+anchor_right = 0.99
+anchor_bottom = 1.315
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DialoguePanel" type="PanelContainer" parent="Screen"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.055
+anchor_top = 0.69
+anchor_right = 0.945
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dialogue")
+
+[node name="DialogueMargin" type="MarginContainer" parent="Screen/DialoguePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 16
+
+[node name="DialogueRows" type="VBoxContainer" parent="Screen/DialoguePanel/DialogueMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="NamePlate" type="PanelContainer" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows/Header"]
+custom_minimum_size = Vector2(148, 38)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_name")
+
+[node name="Name" type="Label" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows/Header/NamePlate"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.91, 0.68, 1)
+theme_override_font_sizes/font_size = 20
+text = "主角"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeaderSpacer" type="Control" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LineCounter" type="Label" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "01 / 03"
+vertical_alignment = 1
+
+[node name="DialogueText" type="RichTextLabel" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.97, 0.95, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 25
+bbcode_enabled = true
+text = "……這裡，就是灰燼地牢。"
+fit_content = false
+
+[node name="ContinuePrompt" type="Label" parent="Screen/DialoguePanel/DialogueMargin/DialogueRows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.76, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "正在說話……"
+horizontal_alignment = 2

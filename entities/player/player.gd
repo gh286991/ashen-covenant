@@ -2,6 +2,7 @@ class_name CovenantPlayer
 extends CharacterBody2D
 
 const Warrior3DVisualScript = preload("res://entities/player/warrior_3d_visual.gd")
+const WorldStatusBarsScript = preload("res://ui/world_status_bars.gd")
 
 signal attack_requested(origin: Vector2, facing: Vector2, radius: float, packet: DamagePacket, combo_step: int)
 signal nova_requested(origin: Vector2, radius: float, packet: DamagePacket)
@@ -209,6 +210,10 @@ func _ready() -> void:
 		model_visual.queue_free()
 		model_visual = null
 		occlusion_sprite = art_sprite
+	var world_status_bars := WorldStatusBarsScript.new() as Node2D
+	world_status_bars.name = "WorldStatusBars"
+	world_status_bars.position = Vector2(0.0, 29.0)
+	add_child(world_status_bars)
 	rng.seed = 0xA55E_2026
 	health = max_health()
 	mana = max_mana()

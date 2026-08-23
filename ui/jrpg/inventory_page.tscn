@@ -1,0 +1,166 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://ui/jrpg/jrpg_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/ability_icons/single-4.png" id="2_potion"]
+
+[node name="InventoryPage" type="PanelContainer"]
+custom_minimum_size = Vector2(1000, 500)
+offset_right = 1000.0
+offset_bottom = 500.0
+theme = ExtResource("1_theme")
+
+[node name="PageMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="Page" type="VBoxContainer" parent="PageMargin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="HBoxContainer" parent="PageMargin/Page"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="PageMargin/Page/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.86, 0.55, 1)
+theme_override_font_sizes/font_size = 26
+text = "物品袋"
+
+[node name="Capacity" type="Label" parent="PageMargin/Page/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.66, 0.7, 0.79, 1)
+text = "持有 8 / 30　　金幣 1,240 G"
+vertical_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="PageMargin/Page"]
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="PageMargin/Page"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="ListColumn" type="VBoxContainer" parent="PageMargin/Page/Body"]
+custom_minimum_size = Vector2(610, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Tabs" type="HBoxContainer" parent="PageMargin/Page/Body/ListColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="All" type="Button" parent="PageMargin/Page/Body/ListColumn/Tabs"]
+layout_mode = 2
+text = "全部"
+
+[node name="Consumables" type="Button" parent="PageMargin/Page/Body/ListColumn/Tabs"]
+layout_mode = 2
+text = "消耗品"
+
+[node name="Materials" type="Button" parent="PageMargin/Page/Body/ListColumn/Tabs"]
+layout_mode = 2
+text = "素材"
+
+[node name="KeyItems" type="Button" parent="PageMargin/Page/Body/ListColumn/Tabs"]
+layout_mode = 2
+text = "重要物品"
+
+[node name="ItemGrid" type="GridContainer" parent="PageMargin/Page/Body/ListColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="Potion" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+icon = ExtResource("2_potion")
+text = "治癒藥水\n× 3"
+expand_icon = true
+alignment = 0
+
+[node name="Ash" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+text = "灰燼結晶\n× 12"
+alignment = 0
+
+[node name="Herb" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+text = "月光藥草\n× 5"
+alignment = 0
+
+[node name="Key" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+text = "古塔銅鑰\n× 1"
+alignment = 0
+
+[node name="Shard" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+text = "魔晶碎片\n× 4"
+alignment = 0
+
+[node name="Empty" type="Button" parent="PageMargin/Page/Body/ListColumn/ItemGrid"]
+custom_minimum_size = Vector2(190, 92)
+layout_mode = 2
+disabled = true
+text = "—"
+
+[node name="Details" type="PanelContainer" parent="PageMargin/Page/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DetailsMargin" type="MarginContainer" parent="PageMargin/Page/Body/Details"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="PageMargin/Page/Body/Details/DetailsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+texture = ExtResource("2_potion")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemName" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.48, 1)
+theme_override_font_sizes/font_size = 22
+text = "治癒藥水"
+horizontal_alignment = 1
+
+[node name="ItemType" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.8, 1)
+text = "消耗品／恢復"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "以月光藥草調製的紅色藥水。\n使用後恢復少量生命。"
+autowrap_mode = 2
+
+[node name="Effect" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.63, 0.82, 0.68, 1)
+text = "效果　HP +50"
+
+[node name="Assign" type="Button" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+layout_mode = 2
+text = "登錄至快捷物品"

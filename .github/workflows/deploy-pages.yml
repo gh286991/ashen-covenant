@@ -6,7 +6,7 @@ on:
       release_tag:
         description: Release tag containing the Web ZIP to deploy
         required: true
-        default: v1.0.0-demo.3
+        default: v1.0.0-demo.4
 
 permissions:
   contents: read

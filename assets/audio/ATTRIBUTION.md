@@ -11,5 +11,6 @@ recorded here for transparency and future maintenance.
 | `sfx/sword_swing_*.ogg`, `sfx/sword_hit_*.ogg` | [20 Sword Sound Effects (Attacks and Clashes)](https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes) | StarNinjas | CC0 1.0 |
 | `sfx/sword_whoosh_*.wav` | [Swishes Sound Pack](https://opengameart.org/content/swishes-sound-pack) (selected heavier sword/weapon swishes) | artisticdude | CC0 1.0 |
 | `sfx/ability_learn.mp3`, `sfx/item_pickup.mp3`, `sfx/level_up.mp3`, `sfx/ui_confirm.mp3`, `sfx/transition.mp3` | [7 Assorted Sound Effects (Menu, Level Up)](https://opengameart.org/content/7-assorted-sound-effects-menu-level-up) | Joth | CC0 1.0 |
+| `sfx/level_up_fanfare.wav` | Original procedurally synthesized brass fanfare; reproducible with `tools/generate_level_up_fanfare.py` | Ashen Covenant project | Project-original, no third-party samples |
 
 CC0 deed: <https://creativecommons.org/publicdomain/zero/1.0/>.

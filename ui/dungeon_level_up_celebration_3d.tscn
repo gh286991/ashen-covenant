@@ -1,0 +1,138 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://ui/dungeon_level_up_celebration_3d.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/effects/level_up_burst.svg" id="2_burst"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSansTC-wght.ttf" id="3_font"]
+
+[sub_resource type="Gradient" id="Gradient_sparkles"]
+offsets = PackedFloat32Array(0, 0.22, 0.72, 1)
+colors = PackedColorArray(1, 0.96, 0.68, 0, 1, 0.91, 0.36, 1, 1, 0.55, 0.12, 0.82, 1, 0.35, 0.08, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_sparkles"]
+gradient = SubResource("Gradient_sparkles")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleMaterial_sparkles"]
+emission_shape = 1
+emission_sphere_radius = 0.55
+direction = Vector3(0, 1, 0)
+spread = 58.0
+initial_velocity_min = 1.6
+initial_velocity_max = 3.8
+gravity = Vector3(0, -2.3, 0)
+angular_velocity_min = -240.0
+angular_velocity_max = 240.0
+scale_min = 0.055
+scale_max = 0.14
+color_ramp = SubResource("GradientTexture_sparkles")
+
+[sub_resource type="StandardMaterial3D" id="SparkleMaterial"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.82, 0.25, 1)
+emission_enabled = true
+emission = Color(1, 0.48, 0.05, 1)
+emission_energy_multiplier = 2.6
+
+[sub_resource type="SphereMesh" id="SparkleMesh"]
+material = SubResource("SparkleMaterial")
+radius = 0.09
+height = 0.18
+radial_segments = 4
+rings = 2
+
+[sub_resource type="TorusMesh" id="HaloMesh"]
+inner_radius = 0.64
+outer_radius = 0.71
+rings = 32
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="HaloOneMaterial"]
+shading_mode = 0
+no_depth_test = true
+albedo_color = Color(1, 0.86, 0.3, 0.95)
+emission_enabled = true
+emission = Color(1, 0.42, 0.045, 1)
+emission_energy_multiplier = 3.2
+
+[sub_resource type="StandardMaterial3D" id="HaloTwoMaterial"]
+shading_mode = 0
+no_depth_test = true
+albedo_color = Color(1, 0.96, 0.68, 0.9)
+emission_enabled = true
+emission = Color(1, 0.72, 0.16, 1)
+emission_energy_multiplier = 2.8
+
+[node name="DungeonLevelUpCelebration3D" type="Node3D"]
+editor_description = "角色升級慶祝演出：頭頂金色放射光、雙光環、火花與 LEVEL UP／獎勵文字。可在 Inspector 保留完整節點結構。"
+script = ExtResource("1_script")
+
+[node name="Burst" type="Sprite3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 0.42, 0)
+billboard = 1
+no_depth_test = false
+texture = ExtResource("2_burst")
+pixel_size = 1.0
+
+[node name="HaloOne" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 0.25, 0)
+mesh = SubResource("HaloMesh")
+material_override = SubResource("HaloOneMaterial")
+
+[node name="HaloTwo" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 0.62, 0)
+mesh = SubResource("HaloMesh")
+material_override = SubResource("HaloTwoMaterial")
+
+[node name="Sparkles" type="GPUParticles3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 0.62, 0)
+emitting = false
+amount = 48
+lifetime = 1.65
+one_shot = true
+explosiveness = 0.9
+randomness = 0.34
+visibility_aabb = AABB(-3, -1, -3, 6, 6, 6)
+process_material = SubResource("ParticleMaterial_sparkles")
+draw_pass_1 = SubResource("SparkleMesh")
+
+[node name="LevelLabel" type="Label3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 2.4, 0)
+scale = Vector3(0.25, 0.25, 0.25)
+billboard = 1
+fixed_size = true
+no_depth_test = true
+modulate = Color(1, 0.9, 0.48, 1)
+outline_modulate = Color(0.16, 0.07, 0.02, 0.96)
+text = "LEVEL UP!  LV.02"
+font = ExtResource("3_font")
+font_size = 40
+outline_size = 8
+
+[node name="RewardLabel" type="Label3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 1.85, 0)
+scale = Vector3(0.25, 0.25, 0.25)
+billboard = 1
+fixed_size = true
+no_depth_test = true
+modulate = Color(1, 0.97, 0.82, 1)
+outline_modulate = Color(0.13, 0.06, 0.02, 0.94)
+text = "能力點 +5　技能點 +1"
+font = ExtResource("3_font")
+font_size = 32
+outline_size = 6
+
+[node name="FlashLight" type="OmniLight3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 0.95, 0.35)
+light_color = Color(1, 0.58, 0.18, 1)
+light_energy = 0.0
+shadow_enabled = false
+omni_range = 4.2
+omni_attenuation = 1.8

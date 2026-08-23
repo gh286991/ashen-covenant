@@ -12,6 +12,7 @@ const ICON_CLEAVE := preload("res://assets/ui/ability_icons/single-1.png")
 const ICON_NOVA := preload("res://assets/ui/ability_icons/single-2.png")
 const ICON_STEP := preload("res://assets/ui/ability_icons/single-3.png")
 const ICON_POTION := preload("res://assets/ui/ability_icons/single-4.png")
+const SIMPLE_JP_HUD_SHEET := preload("res://assets/ui/jp_hud/simple-jp-hud-sheet.png")
 const GOTHIC_HUD_FRAME := preload("res://assets/ui/gothic_hud/gothic-hud-frame.png")
 const TITLE_BACKGROUND := preload("res://assets/ui/main_menu/ashen_covenant-title-bg-v1.png")
 const VIRTUAL_SIZE := Vector2(1280.0, 720.0)
@@ -26,6 +27,11 @@ const SKILL_SLOT_SIZE := Vector2(84.0, 92.0)
 const SKILL_SLOT_GAP := 16.5
 const SKILL_ICON_SIZE := Vector2(58.0, 58.0)
 const SKILL_ICON_TOP := 5.0
+const SIMPLE_HEALTH_SOURCE := Rect2(72.0, 65.0, 1390.0, 270.0)
+const SIMPLE_MANA_SOURCE := Rect2(72.0, 355.0, 1390.0, 245.0)
+const SIMPLE_SKILL_SOURCE := Rect2(585.0, 595.0, 380.0, 370.0)
+const SIMPLE_SKILL_SLOT_SIZE := Vector2(64.0, 64.0)
+const SIMPLE_SKILL_SLOT_GAP := 10.0
 const LIQUID_REFRESH_MSEC := 33
 const LIQUID_SURFACE_SEGMENTS := 22
 const SKILL_NODE_SIZE := Vector2(250.0, 78.0)
@@ -113,9 +119,6 @@ func _process(_delta: float) -> void:
 		needs_redraw = true
 	if String(snapshot.get("phase", "TITLE")) == "TITLE" and now_msec - _last_title_redraw_msec >= TITLE_REFRESH_MSEC:
 		_last_title_redraw_msec = now_msec
-		needs_redraw = true
-	if String(snapshot.get("phase", "TITLE")) != "TITLE" and now_msec - _last_liquid_redraw_msec >= LIQUID_REFRESH_MSEC:
-		_last_liquid_redraw_msec = now_msec
 		needs_redraw = true
 	if needs_redraw:
 		queue_redraw()
@@ -401,30 +404,30 @@ func _set_title_mode(enabled: bool) -> void:
 	_title_panel = &"main"
 
 func _draw_quest_hud() -> void:
-	_panel(Rect2(40, 40, 390, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
-	_text("COVENANT OF ASH", Vector2(60, 67), 17, Color("d5b895"))
-	_text(_fit_text(String(snapshot.get("objective", "Find the soul anchors")), 17, 286.0), Vector2(60, 94), 17, Color("e8e1d8"))
+	_panel(Rect2(40, 40, 390, 82), Color("f6f0e7", 0.94), Color("8f6b5b"))
+	_text("COVENANT OF ASH", Vector2(60, 67), 17, Color("654c45"))
+	_text(_fit_text(String(snapshot.get("objective", "Find the soul anchors")), 17, 286.0), Vector2(60, 94), 17, Color("4e403d"))
 	var done := int(snapshot.get("anchors_destroyed", 0))
 	var total := int(snapshot.get("anchors_total", 3))
 	for i in total:
-		var c := Color("d94c68") if i < done else Color("3b303c")
+		var c := Color("e77d78") if i < done else Color("d8cbbd")
 		draw_colored_polygon(PackedVector2Array([Vector2(365 + i * 20, 64), Vector2(372 + i * 20, 75), Vector2(365 + i * 20, 86), Vector2(358 + i * 20, 75)]), c)
 
 func _draw_status_hud(canvas_size: Vector2) -> void:
-	_panel(Rect2(canvas_size.x - 272, 40, 232, 82), Color(0.035, 0.025, 0.04, 0.88), Color("6d4a50"))
-	_text("LEVEL %d" % int(snapshot.get("level", 1)), Vector2(canvas_size.x - 250, 67), 18, Color("d5b895"))
-	_text("Kills  %d" % int(snapshot.get("kills", 0)), Vector2(canvas_size.x - 250, 94), 16, Color("aaa0a4"))
-	_text("Gold  %d" % int(snapshot.get("gold", 0)), Vector2(canvas_size.x - 147, 94), 16, Color("f1c75b"))
+	_panel(Rect2(canvas_size.x - 272, 40, 232, 82), Color("f6f0e7", 0.94), Color("8f6b5b"))
+	_text("LEVEL %d" % int(snapshot.get("level", 1)), Vector2(canvas_size.x - 250, 67), 18, Color("654c45"))
+	_text("Kills  %d" % int(snapshot.get("kills", 0)), Vector2(canvas_size.x - 250, 94), 16, Color("6e5b56"))
+	_text("Gold  %d" % int(snapshot.get("gold", 0)), Vector2(canvas_size.x - 147, 94), 16, Color("a37b49"))
 
 func _draw_skill_badge() -> void:
 	var points := int(snapshot.get("skill_points", 0))
 	var has_points := points > 0
 	var pulse := 0.5 + sin(Time.get_ticks_msec() * 0.006) * 0.5
-	var border := Color("e7bd5c") if has_points else Color("6d5e70")
-	var fill := Color("402e39", 0.98) if has_points else Color("241c29", 0.94)
+	var border := Color("b78955") if has_points else Color("8f6b5b")
+	var fill := Color("fff8ec", 0.98)
 	_panel(SKILL_BADGE_RECT, fill, border)
 	if has_points:
-		draw_rect(SKILL_BADGE_RECT.grow(4.0), Color(border, 0.12 + pulse * 0.16), false, 2.0)
+		draw_rect(SKILL_BADGE_RECT.grow(4.0), Color(border, 0.10 + pulse * 0.10), false, 2.0)
 	var icon_center := SKILL_BADGE_RECT.position + Vector2(25.0, 39.0)
 	for radius in [16.0, 11.0]:
 		draw_arc(icon_center, radius, 0.0, TAU, 18, Color(border, 0.82), 1.5)
@@ -433,7 +436,7 @@ func _draw_skill_badge() -> void:
 		draw_circle(icon_center + offset, 3.4, Color("241923"))
 		draw_arc(icon_center + offset, 3.4, 0.0, TAU, 10, border, 1.1)
 	draw_circle(icon_center, 5.0, border)
-	_text("SKILLS", SKILL_BADGE_RECT.position + Vector2(50, 31), 16, Color("f5dfad") if has_points else Color("c1b7c0"))
+	_text("SKILLS", SKILL_BADGE_RECT.position + Vector2(50, 31), 16, Color("654c45"))
 	_text("K  •  %d POINT%s" % [points, "" if points == 1 else "S"], SKILL_BADGE_RECT.position + Vector2(50, 54), 12, border)
 
 func _draw_level_up_notice(canvas_size: Vector2) -> void:
@@ -453,9 +456,9 @@ func _draw_level_up_notice(canvas_size: Vector2) -> void:
 
 func _draw_minimap(canvas_size: Vector2) -> void:
 	var panel_rect := Rect2(canvas_size.x - 272, 134, 232, 142)
-	_panel(panel_rect, Color(0.025, 0.018, 0.03, 0.91), Color("59444f"))
+	_panel(panel_rect, Color("f6f0e7", 0.94), Color("8f6b5b"))
 	var inner := Rect2(panel_rect.position + Vector2(14, 25), Vector2(204, 102))
-	draw_rect(inner, Color(0.015, 0.012, 0.02, 0.88))
+	draw_rect(inner, Color("e9dfd3"))
 	var scale_x := inner.size.x / 2200.0
 	var scale_y := inner.size.y / 1400.0
 	var discovered: Array = snapshot.get("discovered_rooms", [])
@@ -469,7 +472,7 @@ func _draw_minimap(canvas_size: Vector2) -> void:
 			current_label = String(room.get("name", "CATACOMBS"))
 		if room_id not in discovered:
 			continue
-		var fill := Color("684851") if room_id == current_id else Color("342b39")
+		var fill := Color("a9c0ba") if room_id == current_id else Color("cbbeb0")
 		if String(room.get("shape", "rect")) == "ellipse":
 			var center := inner.position + Vector2(float(room.get("x", 0.0)) * scale_x, float(room.get("y", 0.0)) * scale_y)
 			var radii := Vector2(float(room.get("rx", 1.0)) * scale_x, float(room.get("ry", 1.0)) * scale_y)
@@ -492,18 +495,37 @@ func _draw_minimap(canvas_size: Vector2) -> void:
 		draw_rect(Rect2(p - Vector2(2, 2), Vector2(4, 4)), Color("d7b65e") if not bool(chest.get("opened", false)) else Color("696057"))
 	var player_position: Vector2 = snapshot.get("player_position", Vector2.ZERO)
 	var player_dot := inner.position + Vector2(player_position.x * scale_x, player_position.y * scale_y)
-	draw_circle(player_dot, 3.5, Color("f2e8d7"))
-	draw_arc(player_dot, 5.5, 0.0, TAU, 16, Color("9c384b"), 1.5)
-	_text(_fit_text(current_label, 13, 204.0), panel_rect.position + Vector2(14, 19), 13, Color("cdb99f"))
+	draw_circle(player_dot, 3.5, Color("654c45"))
+	draw_arc(player_dot, 5.5, 0.0, TAU, 16, Color("e77d78"), 1.5)
+	_text(_fit_text(current_label, 13, 204.0), panel_rect.position + Vector2(14, 19), 13, Color("654c45"))
 
 func _draw_bottom_hud(canvas_size: Vector2) -> void:
 	var health := int(snapshot.get("health", 0))
 	var mana := int(snapshot.get("mana", 0))
 	var health_max := maxi(health, int(snapshot.get("health_max", health)))
 	var mana_max := maxi(mana, int(snapshot.get("mana_max", mana)))
-	_draw_gothic_orb_fill(LIFE_ORB_CENTER, 66.0, float(snapshot.get("health_ratio", 1.0)), Color("b71f35"))
-	_draw_gothic_orb_fill(ESSENCE_ORB_CENTER, 66.0, float(snapshot.get("mana_ratio", 1.0)), Color("245ab8"))
-	draw_texture_rect_region(GOTHIC_HUD_FRAME, GOTHIC_HUD_RECT, GOTHIC_HUD_SOURCE)
+	var panel_rect := Rect2(38.0, 548.0, canvas_size.x - 76.0, 130.0)
+	draw_rect(panel_rect, Color("f6f0e7", 0.96))
+	draw_rect(panel_rect, Color("8f6b5b"), false, 2.0)
+	draw_line(panel_rect.position + Vector2(18.0, 8.0), panel_rect.position + Vector2(panel_rect.size.x - 18.0, 8.0), Color("d6b9a2"), 1.0)
+	_draw_simple_jp_bar(
+		Rect2(52.0, 562.0, 350.0, 58.0),
+		SIMPLE_HEALTH_SOURCE,
+		float(snapshot.get("health_ratio", 1.0)),
+		Color("e77d78"),
+		"HP",
+		health,
+		health_max
+	)
+	_draw_simple_jp_bar(
+		Rect2(canvas_size.x - 402.0, 562.0, 350.0, 58.0),
+		SIMPLE_MANA_SOURCE,
+		float(snapshot.get("mana_ratio", 1.0)),
+		Color("78a9d6"),
+		"MP",
+		mana,
+		mana_max
+	)
 	var skills := [
 		{"key": "F", "name": "CLEAVE", "role": "COMBO", "icon": ICON_CLEAVE, "color": Color("c97755"), "cooldown": snapshot.get("attack_cd", 0.0)},
 		{"key": "Q", "name": "ASH NOVA", "role": "AREA SLOW", "icon": ICON_NOVA, "color": Color("985ccb"), "cooldown": snapshot.get("nova_cd", 0.0)},
@@ -511,18 +533,42 @@ func _draw_bottom_hud(canvas_size: Vector2) -> void:
 		{"key": "R", "name": "BLOOD VIAL", "role": "HEAL  ×%d" % int(snapshot.get("potions", 0)), "icon": ICON_POTION, "color": Color("ba3f55"), "cooldown": 0.0}
 	]
 	for i in mini(HOTBAR_SLOT_COUNT, skills.size()):
-		_draw_gothic_skill(hotbar_slot_rect(i).position, skills[i])
-	_draw_gothic_orb_text(LIFE_ORB_CENTER, "LIFE", health, health_max, Color("fff2e4"))
-	_draw_gothic_orb_text(ESSENCE_ORB_CENTER, "ESSENCE", mana, mana_max, Color("e6efff"))
+		_draw_simple_jp_skill(hotbar_slot_rect(i).position, skills[i])
 	var xp_ratio := clampf(float(snapshot.get("xp_ratio", 0.0)), 0.0, 1.0)
 	var level := int(snapshot.get("level", 1))
 	var xp_current := maxi(0, int(snapshot.get("xp_current", roundi(float(snapshot.get("xp_required", 0)) * xp_ratio))))
 	var xp_required := maxi(1, int(snapshot.get("xp_required", 1)))
-	var xp_rect := Rect2(435.0, 688.0, 410.0, 7.0)
-	draw_rect(xp_rect, Color("09090c"))
-	draw_rect(Rect2(xp_rect.position + Vector2(2, 2), Vector2((xp_rect.size.x - 4.0) * xp_ratio, 3.0)), Color("c79a43"))
-	draw_rect(xp_rect, Color("79603b"), false, 1.0)
-	_center_text("LEVEL %d   %d / %d XP" % [level, xp_current, xp_required], 710.0, 12, Color("d8c394"), canvas_size.x)
+	var xp_rect := Rect2(435.0, 652.0, 410.0, 7.0)
+	draw_rect(xp_rect, Color("e6dccd"))
+	draw_rect(Rect2(xp_rect.position + Vector2(1.0, 1.0), Vector2((xp_rect.size.x - 2.0) * xp_ratio, 5.0)), Color("b7a3c7"))
+	draw_rect(xp_rect, Color("8f6b5b"), false, 1.0)
+	_center_text("Lv.%d   %d / %d XP" % [level, xp_current, xp_required], 672.0, 11, Color("654c45"), canvas_size.x)
+
+func _draw_simple_jp_bar(rect: Rect2, source: Rect2, ratio: float, fill_color: Color, label: String, current: int, maximum: int) -> void:
+	var fill_ratio := clampf(ratio, 0.0, 1.0)
+	var inner := Rect2(
+		Vector2(rect.position.x + rect.size.x * 0.185, rect.position.y + rect.size.y * 0.39),
+		Vector2(rect.size.x * 0.675, rect.size.y * 0.22)
+	)
+	draw_rect(inner, Color("e5d9c9"))
+	if fill_ratio > 0.0:
+		draw_rect(Rect2(inner.position, Vector2(inner.size.x * fill_ratio, inner.size.y)), fill_color)
+	draw_texture_rect_region(SIMPLE_JP_HUD_SHEET, rect, source)
+	_text(label, rect.position + Vector2(rect.size.x * 0.22, rect.size.y * 0.66), 11, Color("654c45"))
+	_right_text("%d / %d" % [current, maximum], rect.position + Vector2(rect.size.x * 0.83, rect.size.y * 0.66), 10, Color("654c45"))
+
+func _draw_simple_jp_skill(draw_position: Vector2, data: Dictionary) -> void:
+	var rect := Rect2(draw_position, SIMPLE_SKILL_SLOT_SIZE)
+	draw_rect(rect.grow(-10.0), Color(data.color, 0.12))
+	var icon: Texture2D = data.icon
+	draw_texture_rect(icon, Rect2(draw_position + Vector2(14.0, 9.0), Vector2(36.0, 36.0)), false, Color.WHITE)
+	var cd := clampf(float(data.cooldown), 0.0, 1.0)
+	if cd > 0.0:
+		draw_rect(Rect2(draw_position + Vector2(10.0, 10.0), Vector2(44.0, 44.0 * cd)), Color(0.20, 0.16, 0.18, 0.48))
+	draw_texture_rect_region(SIMPLE_JP_HUD_SHEET, rect, SIMPLE_SKILL_SOURCE)
+	var key_label := String(data.key)
+	draw_rect(Rect2(draw_position + Vector2(7.0, 5.0), Vector2(25.0 if key_label.length() < 3 else 35.0, 15.0)), Color("fffaf2", 0.94))
+	_text(key_label, draw_position + Vector2(10.0, 16.0), 10, Color("654c45"))
 
 func _draw_gothic_orb_fill(center: Vector2, radius: float, ratio: float, color: Color) -> void:
 	draw_circle(center, radius + 1.0, Color(0.015, 0.012, 0.018, 0.98))
@@ -547,15 +593,15 @@ func _draw_gothic_orb_fill(center: Vector2, radius: float, ratio: float, color: 
 	draw_circle(center + Vector2(17, 19), 13.0, Color(color.darkened(0.52), 0.2))
 
 func _skill_row_start() -> Vector2:
-	var total_width := SKILL_SLOT_SIZE.x * HOTBAR_SLOT_COUNT + SKILL_SLOT_GAP * (HOTBAR_SLOT_COUNT - 1)
-	return Vector2(VIRTUAL_SIZE.x * 0.5 - total_width * 0.5, LIFE_ORB_CENTER.y - SKILL_SLOT_SIZE.y * 0.5)
+	var total_width := SIMPLE_SKILL_SLOT_SIZE.x * HOTBAR_SLOT_COUNT + SIMPLE_SKILL_SLOT_GAP * (HOTBAR_SLOT_COUNT - 1)
+	return Vector2(VIRTUAL_SIZE.x * 0.5 - total_width * 0.5, 566.0)
 
 func hotbar_slot_count() -> int:
 	return HOTBAR_SLOT_COUNT
 
 func hotbar_slot_rect(index: int) -> Rect2:
 	var clamped_index := clampi(index, 0, HOTBAR_SLOT_COUNT - 1)
-	return Rect2(_skill_row_start() + Vector2(clamped_index * (SKILL_SLOT_SIZE.x + SKILL_SLOT_GAP), 0.0), SKILL_SLOT_SIZE)
+	return Rect2(_skill_row_start() + Vector2(clamped_index * (SIMPLE_SKILL_SLOT_SIZE.x + SIMPLE_SKILL_SLOT_GAP), 0.0), SIMPLE_SKILL_SLOT_SIZE)
 
 func _liquid_surface_points(center: Vector2, radius: float, ratio: float, phase: float) -> PackedVector2Array:
 	var points := PackedVector2Array()

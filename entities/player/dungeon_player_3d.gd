@@ -4,6 +4,7 @@ extends CharacterBody3D
 signal attack_started(direction: Vector3)
 signal attack_hit(target: Node, amount: float)
 signal health_changed(current: float, maximum: float)
+signal mana_changed(current: float, maximum: float)
 signal damaged(amount: float, source: Node)
 signal died
 
@@ -23,12 +24,14 @@ signal died
 
 @export_group("Defense")
 @export var max_health: float = 100.0
+@export var max_mana: float = 100.0
 @export var hit_invincibility_duration: float = 0.22
 @export var hit_stun_duration: float = 0.18
 @export var knockback_force: float = 4.5
 
 var last_move_direction := Vector3.FORWARD
 var health: float
+var mana: float
 var _mouse_target := Vector3.ZERO
 var _mouse_target_active := false
 var _attack_direction := Vector3.FORWARD
@@ -45,18 +48,34 @@ var _hit_reaction_timer := 0.0
 var _knockback_velocity := Vector3.ZERO
 var _dead := false
 var _base_visual_scale := Vector3.ONE
+var _base_attack_damage: float
+var _base_max_health: float
+var _base_move_speed: float
+var _base_attack_cooldown: float
+var _critical_chance := 0.05
 
 @onready var visual: DungeonWarrior3D = $Visual
 @onready var _body_shape: CollisionShape3D = $BodyShape
+@onready var progression: DungeonProgression = %Progression
 
 
 func _ready() -> void:
 	add_to_group("player")
+	_base_attack_damage = attack_damage
+	_base_max_health = max_health
+	_base_move_speed = move_speed
+	_base_attack_cooldown = attack_cooldown
+	if progression != null:
+		if not progression.progression_changed.is_connected(_on_progression_changed):
+			progression.progression_changed.connect(_on_progression_changed)
+		_apply_progression_values(progression.get_snapshot(), false)
 	health = max_health
+	mana = max_mana
 	_attack_shape = SphereShape3D.new()
 	_attack_shape.radius = attack_radius
 	_base_visual_scale = visual.scale if visual != null else Vector3.ONE
 	health_changed.emit(health, max_health)
+	mana_changed.emit(mana, max_mana)
 	if visual != null and not visual.attack_finished.is_connected(_on_attack_animation_finished):
 		visual.attack_finished.connect(_on_attack_animation_finished)
 
@@ -299,9 +318,28 @@ func _perform_attack_hit() -> void:
 			continue
 		if offset.length_squared() > 0.001 and _attack_direction.dot(offset.normalized()) < 0.0:
 			continue
-		var accepted := bool(target.call(&"take_damage", attack_damage, self))
+		var dealt_damage := attack_damage
+		if randf() < _critical_chance:
+			dealt_damage *= 2.0
+		var accepted := bool(target.call(&"take_damage", dealt_damage, self))
 		if accepted:
-			attack_hit.emit(target, attack_damage)
+			attack_hit.emit(target, dealt_damage)
+
+
+func _on_progression_changed(snapshot: Dictionary) -> void:
+	_apply_progression_values(snapshot, true)
+
+
+func _apply_progression_values(snapshot: Dictionary, adjust_current_health: bool) -> void:
+	var old_max_health := max_health
+	attack_damage = _base_attack_damage + float(snapshot.get("attack_damage_bonus", 0.0))
+	max_health = maxf(1.0, _base_max_health + float(snapshot.get("max_health_bonus", 0.0)))
+	move_speed = _base_move_speed + float(snapshot.get("move_speed_bonus", 0.0))
+	attack_cooldown = _base_attack_cooldown * float(snapshot.get("attack_cooldown_multiplier", 1.0))
+	_critical_chance = clampf(float(snapshot.get("critical_chance", 0.05)), 0.0, 0.5)
+	if adjust_current_health:
+		health = clampf(health + maxf(0.0, max_health - old_max_health), 0.0, max_health)
+		health_changed.emit(health, max_health)
 
 
 func _apply_gravity(delta: float) -> void:

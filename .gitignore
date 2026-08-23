@@ -1,4 +1,5 @@
 .godot/
+.playwright-cli/
 .env
 *.tmp
 *.log

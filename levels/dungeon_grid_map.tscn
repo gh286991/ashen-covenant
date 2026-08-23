@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://doh5fyfbtjivs"]
+[gd_scene load_steps=15 format=3 uid="uid://doh5fyfbtjivs"]
 
 [ext_resource type="MeshLibrary" uid="uid://ba65nvhx03144" path="res://levels/kit/dungeon_kit_mesh_library.tres" id="1_r0fbt"]
 [ext_resource type="PackedScene" path="res://levels/kit/floor_stone_tripo_3p9.tscn" id="2_j65ym"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://levels/kit/altar_coffin.tscn" id="7_cr8nt"]
 [ext_resource type="PackedScene" path="res://levels/modules/corridor_branch_rooms_large_3p946.tscn" id="8_bld33"]
 [ext_resource type="PackedScene" path="res://levels/dungeon_backdrop.tscn" id="9_exterior"]
+[ext_resource type="PackedScene" path="res://levels/interior_editable_dressing.tscn" id="10_interior"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w6k8y"]
 resource_name = "Exterior_bone_dust"
@@ -35,6 +36,9 @@ editor_description = "實際地圖在 ModularAssembly；NonPlayableFill 是可�
 
 [node name="NonPlayableFill" parent="." instance=ExtResource("9_exterior")]
 editor_description = "可直接在本場景展開並編輯的外圍環境；編輯時會同時保留 ModularAssembly 原始地下城作為位置參考。純視覺，沒有碰撞、導航或互動。"
+
+[node name="InteriorDressing" parent="." instance=ExtResource("10_interior")]
+editor_description = "室內氛圍層：84 件無碰撞、可逐件選取的牆腳碎石、骨骸、斷柱、鏈條、木料與地表痕跡。中央戰鬥空間與門到門動線保持留白。"
 
 [node name="NorthRuin_01" parent="NonPlayableFill/OuterRuins" index="0"]
 transform = Transform3D(0.9975641, 0.06975647, 0, -0.06975647, 0.9975641, 0, 0, 0, 1, -12, 0, -24.2)
@@ -805,3 +809,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.946, 0, 0)
 [editable path="NonPlayableFill"]
 [editable path="NonPlayableFill/BlenderDressingFinal"]
 [editable path="NonPlayableFill/AshenExteriorDressing"]
+[editable path="NonPlayableFill/AshenGroundDressing"]
+[editable path="NonPlayableFill/ExteriorCourtyardDressing"]
+[editable path="NonPlayableFill/ExteriorWildernessDressing"]
+[editable path="NonPlayableFill/OuterFlankWalls"]
+[editable path="InteriorDressing"]

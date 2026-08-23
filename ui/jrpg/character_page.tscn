@@ -1,0 +1,305 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/jrpg/character_page.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/jrpg/jrpg_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/prologue/ashen_covenant-prologue-front-determined-v2.png" id="3_portrait"]
+
+[node name="CharacterPage" type="PanelContainer"]
+custom_minimum_size = Vector2(1000, 500)
+offset_right = 1000.0
+offset_bottom = 500.0
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="PageMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
+
+[node name="Columns" type="HBoxContainer" parent="PageMargin"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="PortraitPanel" type="PanelContainer" parent="PageMargin/Columns"]
+custom_minimum_size = Vector2(286, 0)
+layout_mode = 2
+
+[node name="PortraitMargin" type="MarginContainer" parent="PageMargin/Columns/PortraitPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 9
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 9
+theme_override_constants/margin_bottom = 9
+
+[node name="Portrait" type="TextureRect" parent="PageMargin/Columns/PortraitPanel/PortraitMargin"]
+layout_mode = 2
+texture = ExtResource("3_portrait")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Details" type="VBoxContainer" parent="PageMargin/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 7
+
+[node name="Identity" type="HBoxContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+
+[node name="NameBlock" type="VBoxContainer" parent="PageMargin/Columns/Details/Identity"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CharacterName" type="Label" parent="PageMargin/Columns/Details/Identity/NameBlock"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.55, 1)
+theme_override_font_sizes/font_size = 25
+text = "莉亞・艾許"
+
+[node name="CharacterTitle" type="Label" parent="PageMargin/Columns/Details/Identity/NameBlock"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.8, 1)
+theme_override_font_sizes/font_size = 14
+text = "灰燼誓約的尋火者"
+
+[node name="CharacterLevel" type="Label" parent="PageMargin/Columns/Details/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.48, 1)
+theme_override_font_sizes/font_size = 21
+text = "LV. 01"
+vertical_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+
+[node name="ExpRow" type="HBoxContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ExpLabel" type="Label" parent="PageMargin/Columns/Details/ExpRow"]
+custom_minimum_size = Vector2(82, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "NEXT EXP"
+
+[node name="CharacterExpBar" type="ProgressBar" parent="PageMargin/Columns/Details/ExpRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 0.0
+show_percentage = false
+
+[node name="CharacterExpValue" type="Label" parent="PageMargin/Columns/Details/ExpRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0 / 100"
+horizontal_alignment = 2
+
+[node name="PointsHeader" type="HBoxContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+
+[node name="AttributesTitle" type="Label" parent="PageMargin/Columns/Details/PointsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.76, 0.43, 1)
+theme_override_font_sizes/font_size = 18
+text = "能力配點"
+
+[node name="AttributePoints" type="Label" parent="PageMargin/Columns/Details/PointsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.48, 1)
+theme_override_font_sizes/font_size = 16
+text = "可用能力點　5"
+
+[node name="Attributes" type="GridContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 6
+columns = 4
+
+[node name="StrengthName" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.74, 0.55, 1)
+text = "力量"
+
+[node name="StrengthHint" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.59, 0.64, 0.73, 1)
+theme_override_font_sizes/font_size = 13
+text = "提高攻擊傷害"
+
+[node name="StrengthValue" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "10"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="StrengthAdd" type="Button" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+text = "+"
+tooltip_text = "消耗 1 點能力點"
+
+[node name="VitalityName" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.67, 0.86, 0.68, 1)
+text = "體質"
+
+[node name="VitalityHint" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.59, 0.64, 0.73, 1)
+theme_override_font_sizes/font_size = 13
+text = "提高最大生命"
+
+[node name="VitalityValue" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "10"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="VitalityAdd" type="Button" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+text = "+"
+tooltip_text = "消耗 1 點能力點"
+
+[node name="AgilityName" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.78, 0.95, 1)
+text = "敏捷"
+
+[node name="AgilityHint" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.59, 0.64, 0.73, 1)
+theme_override_font_sizes/font_size = 13
+text = "提高移速與攻速"
+
+[node name="AgilityValue" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "10"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AgilityAdd" type="Button" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+text = "+"
+tooltip_text = "消耗 1 點能力點"
+
+[node name="LuckName" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.7, 0.95, 1)
+text = "幸運"
+
+[node name="LuckHint" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.59, 0.64, 0.73, 1)
+theme_override_font_sizes/font_size = 13
+text = "提高暴擊機率"
+
+[node name="LuckValue" type="Label" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "10"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="LuckAdd" type="Button" parent="PageMargin/Columns/Details/Attributes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+text = "+"
+tooltip_text = "消耗 1 點能力點"
+
+[node name="DerivedStats" type="HBoxContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DerivedAttack" type="Label" parent="PageMargin/Columns/Details/DerivedStats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "攻擊　20"
+
+[node name="DerivedHealth" type="Label" parent="PageMargin/Columns/Details/DerivedStats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "生命　100"
+
+[node name="DerivedSpeed" type="Label" parent="PageMargin/Columns/Details/DerivedStats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "移速　5.40"
+
+[node name="DerivedCritical" type="Label" parent="PageMargin/Columns/Details/DerivedStats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "暴擊　5%"
+
+[node name="EquipmentTitle" type="Label" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.76, 0.43, 1)
+theme_override_font_sizes/font_size = 16
+text = "裝備"
+
+[node name="Equipment" type="GridContainer" parent="PageMargin/Columns/Details"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="Weapon" type="Button" parent="PageMargin/Columns/Details/Equipment"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "武器　灰燼短劍"
+alignment = 0
+
+[node name="Armor" type="Button" parent="PageMargin/Columns/Details/Equipment"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "身體　旅者皮甲"
+alignment = 0
+
+[node name="Charm" type="Button" parent="PageMargin/Columns/Details/Equipment"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "護符　熄火墜飾"
+alignment = 0
+
+[node name="Empty" type="Button" parent="PageMargin/Columns/Details/Equipment"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "飾品　—"
+alignment = 0

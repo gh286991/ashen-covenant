@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "Interior Tarnished Iron"
+albedo_color = Color(0.095, 0.125, 0.145, 1)
+metallic = 0.76
+roughness = 0.62

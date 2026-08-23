@@ -6,21 +6,21 @@ extends Node3D
 const FLOAT_DISTANCE := 0.62
 const FLOAT_DURATION := 0.7
 const POP_DURATION := 0.13
-const POP_SCALE := 1.18
+const POP_SCALE := 1.28
 
 
 func show_damage(world_position: Vector3, amount: float, color: Color) -> void:
 	var label := Label3D.new()
 	label.text = str(maxi(1, roundi(amount)))
-	label.font_size = 48
-	label.pixel_size = 0.004
-	label.outline_size = 9
+	label.font_size = 64
+	label.pixel_size = 0.005
+	label.outline_size = 11
 	label.outline_modulate = Color(0.015, 0.01, 0.02, 0.9)
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.modulate = color
 	label.position = world_position + Vector3(0.0, 0.34, 0.0)
-	label.scale = Vector3.ONE * 0.72
+	label.scale = Vector3.ONE * 0.82
 	add_child(label)
 
 	var tween := label.create_tween()

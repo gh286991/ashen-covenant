@@ -1,0 +1,135 @@
+[gd_resource type="Theme" load_steps=10 format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSansTC-wght.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleMenuPanel"]
+bg_color = Color(0.105, 0.094, 0.18, 0.86)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.79, 0.68, 0.9, 0.75)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+shadow_color = Color(0.12, 0.08, 0.18, 0.3)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleButtonNormal"]
+bg_color = Color(0.97, 0.91, 0.82, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.62, 0.53, 0.79, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 22.0
+content_margin_right = 22.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="StyleButtonHover"]
+bg_color = Color(1, 0.79, 0.66, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.93, 0.68, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 22.0
+content_margin_right = 22.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+shadow_color = Color(0.26, 0.17, 0.37, 0.22)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleButtonPressed"]
+bg_color = Color(0.83, 0.69, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.91, 0.61, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 22.0
+content_margin_right = 22.0
+content_margin_top = 13.0
+content_margin_bottom = 11.0
+
+[sub_resource type="StyleBoxFlat" id="StyleButtonFocus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.91, 0.58, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleProgressBackground"]
+bg_color = Color(0.13, 0.11, 0.22, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.86, 0.78, 0.96, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleProgressFill"]
+bg_color = Color(1, 0.72, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.94, 0.69, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleSeparator"]
+bg_color = Color(0.87, 0.74, 0.94, 0.7)
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 18
+Button/colors/font_color = Color(0.17, 0.13, 0.29, 1)
+Button/colors/font_focus_color = Color(0.17, 0.13, 0.29, 1)
+Button/colors/font_hover_color = Color(0.2, 0.12, 0.27, 1)
+Button/colors/font_pressed_color = Color(0.16, 0.1, 0.25, 1)
+Button/colors/font_outline_color = Color(1, 1, 1, 0.35)
+Button/constants/outline_size = 1
+Button/font_sizes/font_size = 19
+Button/styles/focus = SubResource("StyleButtonFocus")
+Button/styles/hover = SubResource("StyleButtonHover")
+Button/styles/normal = SubResource("StyleButtonNormal")
+Button/styles/pressed = SubResource("StyleButtonPressed")
+HSeparator/styles/separator = SubResource("StyleSeparator")
+PanelContainer/styles/panel = SubResource("StyleMenuPanel")
+ProgressBar/colors/font_color = Color(1, 0.96, 0.84, 1)
+ProgressBar/colors/font_outline_color = Color(0.12, 0.09, 0.2, 0.8)
+ProgressBar/constants/outline_size = 2
+ProgressBar/font_sizes/font_size = 14
+ProgressBar/styles/background = SubResource("StyleProgressBackground")
+ProgressBar/styles/fill = SubResource("StyleProgressFill")

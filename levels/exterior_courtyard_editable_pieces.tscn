@@ -1,0 +1,51 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_CollapsedPlinth_00.glb" id="piece_01"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_CollapsedPlinth_01.glb" id="piece_02"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_FallenColumn_00.glb" id="piece_03"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_FallenColumn_01.glb" id="piece_04"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Paver_00.glb" id="piece_05"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Paver_01.glb" id="piece_06"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Paver_02.glb" id="piece_07"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Paver_03.glb" id="piece_08"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Rubble_00.glb" id="piece_09"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Rubble_01.glb" id="piece_10"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Rubble_02.glb" id="piece_11"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Rubble_03.glb" id="piece_12"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_Rubble_04.glb" id="piece_13"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_ThornCluster_00.glb" id="piece_14"]
+[ext_resource type="PackedScene" path="res://assets/exterior_courtyard_pieces/EXTC_ThornCluster_01.glb" id="piece_15"]
+
+[node name="ExteriorCourtyardDressing" type="Node3D"]
+editor_description = "南側外牆與外圍斷牆之間的低矮崩塌前庭。每個直接子節點都是獨立 GLB，可逐件調整；純視覺，無碰撞、無導航、無互動。"
+
+[node name="EXTC_CollapsedPlinth_00" parent="." instance=ExtResource("piece_01")]
+position = Vector3(-4.65, 0.11, 7.55)
+[node name="EXTC_CollapsedPlinth_01" parent="." instance=ExtResource("piece_02")]
+position = Vector3(3.45, 0.11, 7.48)
+[node name="EXTC_FallenColumn_00" parent="." instance=ExtResource("piece_03")]
+position = Vector3(-0.55, 0.17, 7.72)
+[node name="EXTC_FallenColumn_01" parent="." instance=ExtResource("piece_04")]
+position = Vector3(8.12, 0.17, 7.76)
+[node name="EXTC_Paver_00" parent="." instance=ExtResource("piece_05")]
+position = Vector3(-7.05, 0.028, 8.72)
+[node name="EXTC_Paver_01" parent="." instance=ExtResource("piece_06")]
+position = Vector3(-3, 0.028, 8.78)
+[node name="EXTC_Paver_02" parent="." instance=ExtResource("piece_07")]
+position = Vector3(2.05, 0.028, 8.75)
+[node name="EXTC_Paver_03" parent="." instance=ExtResource("piece_08")]
+position = Vector3(9.45, 0.028, 8.62)
+[node name="EXTC_Rubble_00" parent="." instance=ExtResource("piece_09")]
+position = Vector3(-8.2, 0.12, 7.48)
+[node name="EXTC_Rubble_01" parent="." instance=ExtResource("piece_10")]
+position = Vector3(-2.55, 0.12, 8.36)
+[node name="EXTC_Rubble_02" parent="." instance=ExtResource("piece_11")]
+position = Vector3(1.48, 0.12, 7.3)
+[node name="EXTC_Rubble_03" parent="." instance=ExtResource("piece_12")]
+position = Vector3(6.72, 0.12, 8.36)
+[node name="EXTC_Rubble_04" parent="." instance=ExtResource("piece_13")]
+position = Vector3(10.35, 0.12, 7.44)
+[node name="EXTC_ThornCluster_00" parent="." instance=ExtResource("piece_14")]
+position = Vector3(-6.85, 0.08, 8.05)
+[node name="EXTC_ThornCluster_01" parent="." instance=ExtResource("piece_15")]
+position = Vector3(5.82, 0.08, 8.18)

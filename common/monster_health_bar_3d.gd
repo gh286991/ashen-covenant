@@ -1,22 +1,22 @@
 class_name MonsterHealthBar3D
 extends Node3D
 
-## Billboard health bar that stays below a 3D monster and follows its health.
+## Simple billboard health bar that stays below a 3D monster and follows its health.
 
-const BAR_WIDTH := 0.9
-const BAR_HEIGHT := 0.075
-const BAR_OFFSET_Y := 1.52
+const BAR_WIDTH := 1.1
+const BAR_HEIGHT := 0.07
+const BAR_OFFSET_XZ := 0.72
+const BAR_OFFSET_Y := -0.25
 
-var _background: MeshInstance3D
 var _fill: MeshInstance3D
 var _monster: DungeonMonster3D
 
 
 func _ready() -> void:
-	# The monster root is placed at floor level, so the bar must sit above the
-	# body rather than at the root's local origin where it can be hidden by the
-	# floor or the monster mesh.
-	position.y = BAR_OFFSET_Y
+	# Match the player's world-space bars: equal X/Z offset keeps the bar
+	# centred below the monster in the isometric camera.
+	position = Vector3(BAR_OFFSET_XZ, BAR_OFFSET_Y, BAR_OFFSET_XZ)
+	visible = false
 	_monster = get_parent() as DungeonMonster3D
 	_build_bar()
 	if _monster == null:
@@ -27,12 +27,10 @@ func _ready() -> void:
 
 
 func _build_bar() -> void:
-	_background = _create_bar(Color(0.035, 0.02, 0.025, 0.92), 0)
-	_fill = _create_bar(Color(0.18, 0.92, 0.32, 1.0), 1)
-	_fill.position.z = 0.012
+	_fill = _create_bar(Color("60d96a"))
 
 
-func _create_bar(color: Color, render_priority: int) -> MeshInstance3D:
+func _create_bar(color: Color) -> MeshInstance3D:
 	var mesh_instance := MeshInstance3D.new()
 	var quad := QuadMesh.new()
 	quad.size = Vector2(BAR_WIDTH, BAR_HEIGHT)
@@ -45,7 +43,7 @@ func _create_bar(color: Color, render_priority: int) -> MeshInstance3D:
 	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	material.no_depth_test = true
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	material.render_priority = render_priority
+	material.render_priority = 1
 	mesh_instance.material_override = material
 	add_child(mesh_instance)
 	return mesh_instance
@@ -55,7 +53,10 @@ func _on_health_changed(current: float, maximum: float) -> void:
 	if _fill == null:
 		return
 	var ratio := clampf(current / maxf(maximum, 0.001), 0.0, 1.0)
-	_fill.scale.x = ratio
+	var quad := _fill.mesh as QuadMesh
+	if quad == null:
+		return
+	quad.size.x = maxf(BAR_WIDTH * ratio, 0.001)
 	# Keep the left edge fixed while the green fill shrinks.
 	_fill.position.x = -BAR_WIDTH * 0.5 * (1.0 - ratio)
 	_fill.visible = ratio > 0.0

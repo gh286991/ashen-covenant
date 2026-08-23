@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Asset type: 16:9 loading-screen background for the same Japanese cute fantasy action RPG
+Input images: the first cute loading generation is the edit target; the approved main-menu portrayal and extracted gameplay-model preview are the authoritative protagonist references
+Primary request: replace only the generic brown-haired red-scarfed warrior seen from behind with the same platinum-blonde female protagonist, still walking toward the magical passage
+Character invariants: very pale platinum-blonde high ponytail with curled/spiky locks; ivory-white and warm silver fitted fantasy armor; brown leather belts, straps, pouches, gloves and boots; layered white hip armor panels; one-handed straight sword; no red scarf; no cape; no navy outfit
+Pose and placement: preserve the original center-right position, small scale, back-facing orientation, stance and sword angle
+Style/medium: preserve the Japanese anime game illustration, cute chibi proportions, soft hand-painted cel shading and cozy lavender/golden lighting
+Constraints: change only the character; preserve the corridor, arch, cat ornaments, lanterns, crystal wisps, flowers, runes, lighting, crop and bottom low-detail band; no text; no letters; no logo; no watermark; no extra character

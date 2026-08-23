@@ -1,0 +1,11 @@
+Use case: ui-mockup
+Asset type: reusable 2D game UI texture sheet for a Japanese-style action RPG
+Primary request: a simple, restrained HUD skin sheet with only three reusable assets: one horizontal health bar frame, one horizontal mana bar frame, and one square skill-slot frame
+Style/medium: clean Japanese game UI illustration, soft flat 2D vector-like painting, thin dark brown outline, smooth rounded rectangles, calm and friendly, minimal decoration
+Composition/framing: assets arranged in a neat grid with generous spacing, front-facing, no perspective, isolated pieces
+Lighting/mood: bright, calm, simple, polished
+Color palette: warm off-white and light beige frame, muted coral pink health accent, muted sky blue mana accent, small sage-green accent, dark brown linework
+Materials/textures: mostly flat fills with very subtle paper texture, crisp silhouettes designed for Godot texture import
+Quality: high
+Constraints: transparent background, no text, no letters, no numbers, no logos, no watermark; health and mana frames must have empty transparent interiors; skill frame must have an empty transparent center; no extra decorative icons beyond one tiny leaf or dot per frame; no gradients; no glow
+Avoid: candy overload, kawaii mascots, hearts, wings, stars, jewels, flowers, gothic metal, neon, 3D, photorealism, ornate fantasy frames, clutter

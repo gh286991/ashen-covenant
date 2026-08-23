@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff8c9" stop-opacity="1"/>
+      <stop offset="0.3" stop-color="#ffd866" stop-opacity="0.92"/>
+      <stop offset="0.72" stop-color="#f29a38" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#f29a38" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g fill="#ffd866">
+    <path d="M256 8l17 160-17 68-17-68z"/>
+    <path d="M256 504l17-160-17-68-17 68z"/>
+    <path d="M8 256l160-17 68 17-68 17z"/>
+    <path d="M504 256l-160-17-68 17 68 17z"/>
+    <path d="M81 81l126 101 31 56-56-31z" opacity=".86"/>
+    <path d="M431 431L305 330l-31-56 56 31z" opacity=".86"/>
+    <path d="M431 81L330 207l-56 31 31-56z" opacity=".86"/>
+    <path d="M81 431l101-126 56-31-31 56z" opacity=".86"/>
+  </g>
+  <circle cx="256" cy="256" r="166" fill="none" stroke="#fff1a8" stroke-width="9" opacity=".72"/>
+  <circle cx="256" cy="256" r="112" fill="url(#core)"/>
+  <g fill="#fff8c9">
+    <path d="M117 176l7 19 19 7-19 7-7 19-7-19-19-7 19-7z"/>
+    <path d="M397 149l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M380 347l8 21 21 8-21 8-8 21-8-21-21-8 21-8z"/>
+  </g>
+</svg>

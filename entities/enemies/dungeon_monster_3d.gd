@@ -16,6 +16,7 @@ const DEATH_DURATION := 0.72
 
 @export_group("Identity")
 @export var monster_id: StringName = &"CRYPT_WRAITH"
+@export_range(1, 999, 1) var experience_reward := 55
 
 @export_group("Movement / AI")
 @export var move_speed: float = 0.8
@@ -113,6 +114,7 @@ func _refresh_selection_indicator() -> void:
 	_hover_indicator.visible = _hovered and not _selected
 	_selected_indicator.visible = _selected
 	_selected_diamond.visible = _selected
+	_health_bar.visible = _selected
 
 
 func _physics_process(delta: float) -> void:
@@ -209,7 +211,11 @@ func _update_visual(delta: float) -> void:
 	_selection_indicator.position.y = 0.04 + sin(Time.get_ticks_msec() * 0.005 + _phase) * 0.025
 	var bob_offset := sin(Time.get_ticks_msec() * 0.004 + _phase) * bob_height
 	_visual.position.y = lerpf(_visual.position.y, bob_offset + attack_height_offset, minf(1.0, delta * 18.0))
-	_health_bar.position.y = MonsterHealthBar3D.BAR_OFFSET_Y + _visual.position.y
+	_health_bar.position = Vector3(
+		MonsterHealthBar3D.BAR_OFFSET_XZ,
+		MonsterHealthBar3D.BAR_OFFSET_Y + _visual.position.y,
+		MonsterHealthBar3D.BAR_OFFSET_XZ
+	)
 
 
 func _smooth_attack_curve(value: float) -> float:
@@ -299,7 +305,8 @@ func _perform_attack_hit() -> void:
 func take_damage(amount: float, source: Node = null) -> bool:
 	if _dead or _hit_invincibility_timer > 0.0:
 		return false
-	var actual_damage := maxf(amount, 0.0)
+	# Never report more damage than the monster actually had left.
+	var actual_damage := minf(maxf(amount, 0.0), _health)
 	if actual_damage <= 0.0:
 		return false
 	_health = maxf(0.0, _health - actual_damage)

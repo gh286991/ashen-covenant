@@ -13,6 +13,16 @@ func _validate() -> void:
 	var dungeon := packed.instantiate()
 	root.add_child(dungeon)
 	await process_frame
+	# Combat is not available while the opening dialogue owns the pause state.
+	# Remove it for this isolated combat test so SceneTree timers and Tweens share
+	# the same gameplay pause mode they have after the player enters the dungeon.
+	var prologue := dungeon.get_node_or_null("PrologueDialogue") as CanvasLayer
+	if prologue != null:
+		prologue.queue_free()
+		await process_frame
+	if paused:
+		_fail("prologue_pause_not_released")
+		return
 
 	var player := dungeon.get_node("Player") as DungeonPlayer3D
 	var monster := dungeon.get_node("Monsters/CryptWraith_A1") as DungeonMonster3D
@@ -28,23 +38,35 @@ func _validate() -> void:
 	if audio.sword_whooshes.size() != 9 or audio.sword_whooshes.any(func(stream: AudioStream) -> bool: return stream == null):
 		_fail("sword_whoosh_sfx_not_loaded")
 		return
-	if health_bar == null or health_bar.get_child_count() != 2:
+	if health_bar == null or health_bar.get_child_count() != 1:
 		_fail("monster_health_bar_not_built")
 		return
-	var health_fill := health_bar.get_child(1) as MeshInstance3D
-	if health_fill == null or not is_equal_approx(health_fill.scale.x, 1.0):
+	var health_fill := health_bar.get_child(0) as MeshInstance3D
+	if health_fill == null or not is_equal_approx((health_fill.mesh as QuadMesh).size.x, MonsterHealthBar3D.BAR_WIDTH):
 		_fail("monster_health_bar_not_full_at_spawn")
 		return
-	if health_bar.position.y <= 1.0:
-		_fail("monster_health_bar_not_above_monster")
+	if health_bar.visible:
+		_fail("monster_health_bar_visible_without_lock")
+		return
+	if health_bar.position.y >= 0.1:
+		_fail("monster_health_bar_not_below_monster")
 		return
 
 	if not monster.take_damage(3.0, player):
 		_fail("monster_damage_not_accepted")
 		return
 	await process_frame
-	if not is_equal_approx(health_fill.scale.x, 0.925) or not health_fill.visible:
+	if not is_equal_approx((health_fill.mesh as QuadMesh).size.x, MonsterHealthBar3D.BAR_WIDTH * 0.925) or not health_fill.visible or health_bar.visible:
 		_fail("monster_health_bar_not_updated_after_damage")
+		return
+	monster.set_selected(true)
+	await process_frame
+	if not health_bar.visible:
+		_fail("monster_health_bar_not_visible_when_locked")
+		return
+	monster.set_selected(false)
+	if health_bar.visible:
+		_fail("monster_health_bar_not_hidden_after_unlock")
 		return
 	if feedback.get_child_count() < 1:
 		_fail("monster_damage_number_missing")
@@ -61,7 +83,8 @@ func _validate() -> void:
 		_fail("player_damage_number_missing")
 		return
 
-	await create_timer(1.0).timeout
+	await create_timer(CombatFeedback3D.FLOAT_DURATION + 0.2, false).timeout
+	await process_frame
 	if feedback.get_child_count() != 0:
 		_fail("damage_numbers_not_cleaned_up")
 		return

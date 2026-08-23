@@ -20,9 +20,9 @@ signal command_received(command: String, params: Dictionary)
 
 func _ready() -> void:
 	name = "MCPRuntime"
-	# Runtime inspection is an editor tool. Do not bind a TCP port in game
-	# builds: it is unnecessary for players and can interfere with startup.
-	if not Engine.is_editor_hint() or OS.get_environment("ASHEN_TEST_MODE") == "1":
+	# Runtime inspection is an editor tool. Keep it disabled for normal game
+	# launches, but allow the explicit test mode used by Godot MCP playtests.
+	if not Engine.is_editor_hint() and OS.get_environment("ASHEN_TEST_MODE") != "1":
 		_enabled = false
 		return
 	_start_server()

@@ -1,0 +1,246 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/jrpg/skills_page.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/jrpg/jrpg_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/ability_icons/single-1.png" id="3_slash"]
+[ext_resource type="Texture2D" path="res://assets/ui/ability_icons/single-2.png" id="4_orb"]
+[ext_resource type="Texture2D" path="res://assets/ui/ability_icons/single-3.png" id="5_dash"]
+
+[node name="SkillsPage" type="PanelContainer"]
+custom_minimum_size = Vector2(1000, 500)
+offset_right = 1000.0
+offset_bottom = 500.0
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="PageMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
+
+[node name="Page" type="VBoxContainer" parent="PageMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="PageMargin/Page"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PageMargin/Page/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.86, 0.55, 1)
+theme_override_font_sizes/font_size = 25
+text = "技能樹"
+
+[node name="Instruction" type="Label" parent="PageMargin/Page/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.8, 1)
+text = "選擇技能，再點擊下方欄位進行裝備"
+vertical_alignment = 1
+
+[node name="SkillPoints" type="Label" parent="PageMargin/Page/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.45, 1)
+text = "　SP 1"
+vertical_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="PageMargin/Page"]
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="PageMargin/Page"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="TreeColumn" type="VBoxContainer" parent="PageMargin/Page/Body"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TreePanel" type="PanelContainer" parent="PageMargin/Page/Body/TreeColumn"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TreeCanvas" type="Control" parent="PageMargin/Page/Body/TreeColumn/TreePanel"]
+custom_minimum_size = Vector2(590, 300)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LineA" type="Line2D" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+points = PackedVector2Array(116, 150, 222, 78)
+width = 3.0
+default_color = Color(0.76, 0.59, 0.29, 0.9)
+
+[node name="LineB" type="Line2D" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+points = PackedVector2Array(116, 150, 222, 222)
+width = 3.0
+default_color = Color(0.76, 0.59, 0.29, 0.9)
+
+[node name="LineLockedA" type="Line2D" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+points = PackedVector2Array(326, 78, 432, 78)
+width = 2.0
+default_color = Color(0.31, 0.31, 0.35, 0.8)
+
+[node name="LineLockedB" type="Line2D" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+points = PackedVector2Array(326, 222, 432, 222)
+width = 2.0
+default_color = Color(0.31, 0.31, 0.35, 0.8)
+
+[node name="AshSlash" type="Button" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 104.0
+offset_right = 128.0
+offset_bottom = 196.0
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("3_slash")
+text = "灰燼斬"
+expand_icon = true
+tooltip_text = "已習得／點擊查看"
+
+[node name="SoulOrb" type="Button" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+unique_name_in_owner = true
+offset_left = 218.0
+offset_top = 32.0
+offset_right = 334.0
+offset_bottom = 124.0
+toggle_mode = true
+icon = ExtResource("4_orb")
+modulate = Color(0.66, 0.68, 0.74, 0.9)
+text = "靈魂星火\n未習得 SP 1"
+expand_icon = true
+tooltip_text = "已習得／點擊查看"
+
+[node name="ShadowStep" type="Button" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+unique_name_in_owner = true
+offset_left = 218.0
+offset_top = 176.0
+offset_right = 334.0
+offset_bottom = 268.0
+toggle_mode = true
+icon = ExtResource("5_dash")
+modulate = Color(0.66, 0.68, 0.74, 0.9)
+text = "影步\n未習得 SP 1"
+expand_icon = true
+tooltip_text = "已習得／點擊查看"
+
+[node name="LockedA" type="Button" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+offset_left = 428.0
+offset_top = 32.0
+offset_right = 566.0
+offset_bottom = 124.0
+disabled = true
+text = "餘燼守護\n需求 SP 2"
+
+[node name="LockedB" type="Button" parent="PageMargin/Page/Body/TreeColumn/TreePanel/TreeCanvas"]
+offset_left = 428.0
+offset_top = 176.0
+offset_right = 566.0
+offset_bottom = 268.0
+disabled = true
+text = "誓約之刃\n需求 SP 3"
+
+[node name="LoadoutLabel" type="Label" parent="PageMargin/Page/Body/TreeColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.76, 0.43, 1)
+theme_override_font_sizes/font_size = 15
+text = "裝備中的技能"
+
+[node name="Loadout" type="HBoxContainer" parent="PageMargin/Page/Body/TreeColumn"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Equipped1" type="Button" parent="PageMargin/Page/Body/TreeColumn/Loadout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 58)
+layout_mode = 2
+icon = ExtResource("3_slash")
+text = "1　灰燼斬"
+expand_icon = true
+tooltip_text = "點擊以裝備目前選取的技能"
+
+[node name="Equipped2" type="Button" parent="PageMargin/Page/Body/TreeColumn/Loadout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 58)
+layout_mode = 2
+text = "2　空欄位"
+expand_icon = true
+tooltip_text = "點擊以裝備目前選取的技能"
+
+[node name="Equipped3" type="Button" parent="PageMargin/Page/Body/TreeColumn/Loadout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 58)
+layout_mode = 2
+text = "3　空欄位"
+expand_icon = true
+tooltip_text = "點擊以裝備目前選取的技能"
+
+[node name="Equipped4" type="Button" parent="PageMargin/Page/Body/TreeColumn/Loadout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 58)
+layout_mode = 2
+text = "4　空欄位"
+tooltip_text = "點擊以裝備目前選取的技能"
+
+[node name="Details" type="PanelContainer" parent="PageMargin/Page/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DetailsMargin" type="MarginContainer" parent="PageMargin/Page/Body/Details"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="PageMargin/Page/Body/Details/DetailsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="DetailIcon" type="TextureRect" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+texture = ExtResource("3_slash")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DetailName" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.48, 1)
+theme_override_font_sizes/font_size = 21
+text = "灰燼斬"
+horizontal_alignment = 1
+
+[node name="DetailType" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.8, 1)
+text = "主動戰技／近距離"
+horizontal_alignment = 1
+
+[node name="DetailDescription" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "以誓約之火纏繞刀刃，對前方敵人造成物理與火焰傷害。"
+autowrap_mode = 2
+
+[node name="DetailCost" type="Label" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.64, 0.82, 0.69, 1)
+text = "MP 8　／　冷卻 2.4 秒"
+
+[node name="LearnButton" type="Button" parent="PageMargin/Page/Body/Details/DetailsMargin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+disabled = true
+text = "已習得"

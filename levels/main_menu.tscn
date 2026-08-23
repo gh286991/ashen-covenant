@@ -1,0 +1,269 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://levels/main_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/ui/main_menu/ashen_covenant-title-bg-cute-v1.png" id="2_bg"]
+[ext_resource type="Theme" path="res://ui/menu_theme.tres" id="3_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleSettingsPanel"]
+bg_color = Color(0.18, 0.15, 0.29, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.78, 0.68, 0.9, 0.72)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_theme")
+script = ExtResource("1_menu")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SoftTint" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.23, 0.17, 0.38, 0.1)
+
+[node name="SafeMargins" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 68
+theme_override_constants/margin_top = 54
+theme_override_constants/margin_right = 68
+theme_override_constants/margin_bottom = 54
+
+[node name="MainLayout" type="HBoxContainer" parent="SafeMargins"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="MenuCenter" type="CenterContainer" parent="SafeMargins/MainLayout"]
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+
+[node name="MenuCard" type="PanelContainer" parent="SafeMargins/MainLayout/MenuCenter"]
+custom_minimum_size = Vector2(410, 0)
+layout_mode = 2
+
+[node name="CardMargins" type="MarginContainer" parent="SafeMargins/MainLayout/MenuCenter/MenuCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 26
+
+[node name="MenuColumn" type="VBoxContainer" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EnglishTitle" type="Label" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.91, 0.65, 1)
+theme_override_colors/font_shadow_color = Color(0.12, 0.08, 0.21, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 35
+text = "ASHEN COVENANT"
+horizontal_alignment = 1
+
+[node name="ChineseTitle" type="Label" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.87, 1, 1)
+theme_override_font_sizes/font_size = 23
+text = "灰燼盟約"
+horizontal_alignment = 1
+
+[node name="Tagline" type="Label" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.86, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = "小小勇者，踏上閃閃發亮的大冒險！"
+horizontal_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+text = "開始冒險"
+
+[node name="ControlsButton" type="Button" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+text = "操作說明"
+
+[node name="SettingsButton" type="Button" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+text = "遊戲設定"
+
+[node name="QuitButton" type="Button" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+text = "離開遊戲"
+
+[node name="KeyboardHint" type="Label" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.77, 0.73, 0.86, 1)
+theme_override_font_sizes/font_size = 13
+text = "↑ ↓ 選擇　・　Enter 確認"
+horizontal_alignment = 1
+
+[node name="Version" type="Label" parent="SafeMargins/MainLayout/MenuCenter/MenuCard/CardMargins/MenuColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.61, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "DEMO 1.0"
+horizontal_alignment = 1
+
+[node name="ArtSpacer" type="Control" parent="SafeMargins/MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="DetailsCenter" type="CenterContainer" parent="SafeMargins/MainLayout"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="DetailsPanel" type="PanelContainer" parent="SafeMargins/MainLayout/DetailsCenter"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(480, 430)
+layout_mode = 2
+
+[node name="DetailsMargins" type="MarginContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 28
+
+[node name="DetailsColumn" type="VBoxContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DetailsTitle" type="Label" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
+theme_override_font_sizes/font_size = 29
+text = "操作說明"
+horizontal_alignment = 1
+
+[node name="DetailDivider" type="HSeparator" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="ControlsContent" type="RichTextLabel" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.95, 0.92, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.09, 0.07, 0.15, 0.7)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 17
+bbcode_enabled = true
+text = "[color=#FFEAA8][b]滑鼠左鍵[/b][/color]　移動／點擊敵人\n[color=#FFEAA8][b]滑鼠滾輪[/b][/color]　拉近或拉遠鏡頭\n[color=#FFEAA8][b]F／滑鼠右鍵[/b][/color]　發動攻擊\n[color=#FFEAA8][b]E[/b][/color]　靠近門後進入下一區\n[color=#FFEAA8][b]W A S D[/b][/color]　備用移動操作\n\n跟著燈火前進，勇敢探索每一個房間吧！"
+fit_content = true
+
+[node name="SettingsContent" type="VBoxContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="FullscreenToggle" type="CheckButton" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.97, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "全螢幕模式"
+
+[node name="VolumePanel" type="PanelContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleSettingsPanel")
+
+[node name="VolumeMargins" type="MarginContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent/VolumePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="VolumeColumn" type="VBoxContainer" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent/VolumePanel/VolumeMargins"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="VolumeLabel" type="Label" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent/VolumePanel/VolumeMargins/VolumeColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.97, 0.93, 1, 1)
+text = "主音量"
+
+[node name="VolumeSlider" type="HSlider" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent/VolumePanel/VolumeMargins/VolumeColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 80.0
+
+[node name="SettingsHint" type="Label" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn/SettingsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.75, 0.88, 1)
+theme_override_font_sizes/font_size = 14
+text = "設定會立即套用。"
+
+[node name="BackButton" type="Button" parent="SafeMargins/MainLayout/DetailsCenter/DetailsPanel/DetailsMargins/DetailsColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "返回主選單"
+
+[node name="FadeOverlay" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.12, 0.09, 0.2, 1)

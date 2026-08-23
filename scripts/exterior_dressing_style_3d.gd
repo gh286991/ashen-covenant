@@ -13,6 +13,7 @@ const ASHEN_COLD_EDGE: StandardMaterial3D = preload("res://materials/exterior/as
 const ASHEN_ROCK: StandardMaterial3D = preload("res://materials/exterior/ashen_rock.tres")
 const ASHEN_DEAD_BARK: StandardMaterial3D = preload("res://materials/exterior/ashen_dead_bark.tres")
 const ASHEN_SOUL_RUNE: StandardMaterial3D = preload("res://materials/exterior/ashen_soul_rune.tres")
+const CASTLE_WALL: StandardMaterial3D = preload("res://assets/3d_dungeon/kit/textures/castle_wall_stylized/castle_wall_stylized_material.tres")
 
 
 func _enter_tree() -> void:
@@ -40,6 +41,11 @@ func _apply_to_tree(node: Node) -> void:
 func _style_mesh(mesh_instance: MeshInstance3D) -> void:
 	if mesh_instance.mesh == null:
 		return
+	if _is_perimeter_castle_wall(mesh_instance):
+		# Keep the exterior wall silhouette and the playable castle walls on the
+		# exact same PBR material, including its triplanar albedo, normal and AO.
+		mesh_instance.material_override = CASTLE_WALL
+		return
 	for surface_index in mesh_instance.mesh.get_surface_count():
 		var source_material := mesh_instance.get_active_material(surface_index)
 		if source_material == null:
@@ -48,6 +54,15 @@ func _style_mesh(mesh_instance: MeshInstance3D) -> void:
 		if style_key.is_empty():
 			continue
 		mesh_instance.set_surface_override_material(surface_index, _shared_material(style_key))
+
+
+func _is_perimeter_castle_wall(mesh_instance: MeshInstance3D) -> bool:
+	var cursor: Node = mesh_instance
+	while cursor != null and cursor != self:
+		if cursor.name == &"OuterRuins" or cursor.name == &"OuterCorners" or cursor.name == &"OuterFlankWalls":
+			return true
+		cursor = cursor.get_parent()
+	return false
 
 
 func _style_key(material_name: String) -> StringName:

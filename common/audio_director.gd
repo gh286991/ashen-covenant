@@ -21,6 +21,7 @@ var sword_hits: Array[AudioStream] = []
 var ability_learn: AudioStream
 var item_pickup: AudioStream
 var level_up: AudioStream
+var victory_stinger: AudioStream
 var ui_confirm: AudioStream
 var transition: AudioStream
 var current_music_index := 0
@@ -28,6 +29,7 @@ var music_state := MusicState.TITLE
 var menu_ducked := false
 var next_sfx_index := 0
 var rng := RandomNumberGenerator.new()
+var _last_level_up_msec := -1000
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -66,6 +68,7 @@ func _exit_tree() -> void:
 	ability_learn = null
 	item_pickup = null
 	level_up = null
+	victory_stinger = null
 	ui_confirm = null
 	transition = null
 
@@ -95,7 +98,8 @@ func _load_audio_assets() -> void:
 	]
 	ability_learn = load("res://assets/audio/sfx/ability_learn.mp3") as AudioStream
 	item_pickup = load("res://assets/audio/sfx/item_pickup.mp3") as AudioStream
-	level_up = load("res://assets/audio/sfx/level_up.mp3") as AudioStream
+	level_up = load("res://assets/audio/sfx/level_up_fanfare.wav") as AudioStream
+	victory_stinger = load("res://assets/audio/sfx/level_up.mp3") as AudioStream
 	ui_confirm = load("res://assets/audio/sfx/ui_confirm.mp3") as AudioStream
 	transition = load("res://assets/audio/sfx/transition.mp3") as AudioStream
 
@@ -194,7 +198,11 @@ func play_pickup(rare: bool = false) -> void:
 	_play_sfx(ability_learn if rare else item_pickup, -7.0 if rare else -9.0, 1.0)
 
 func play_level_up() -> void:
-	_play_sfx(level_up, -3.5, 1.0)
+	var now_msec := Time.get_ticks_msec()
+	if now_msec - _last_level_up_msec < 300:
+		return
+	_last_level_up_msec = now_msec
+	_play_sfx(level_up, -1.5, 1.0)
 
 func play_potion() -> void:
 	_play_sfx(item_pickup, -8.0, 0.82)
@@ -206,7 +214,7 @@ func play_boss_arrival() -> void:
 	_play_sfx(transition, -3.5, 0.70)
 
 func play_victory() -> void:
-	_play_sfx(level_up, -2.5, 1.06)
+	_play_sfx(victory_stinger, -2.5, 1.06)
 
 func play_defeat() -> void:
 	_play_sfx(transition, -4.0, 0.58)

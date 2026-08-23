@@ -1,0 +1,260 @@
+[gd_scene load_steps=86 format=3]
+
+[ext_resource type="Script" path="res://scripts/interior_dressing_style_3d.gd" id="1_style"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_BoneScatter_00_Bone_0.glb" id="piece_01"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_BoneScatter_00_Bone_1.glb" id="piece_02"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_BoneScatter_00_Bone_2.glb" id="piece_03"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_DustTrace_00.glb" id="piece_04"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleNorth_00_Stone_0.glb" id="piece_05"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleNorth_00_Stone_1.glb" id="piece_06"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleNorth_00_Stone_2.glb" id="piece_07"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleNorth_00_Stone_3.glb" id="piece_08"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleSouth_00_Stone_0.glb" id="piece_09"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleSouth_00_Stone_1.glb" id="piece_10"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleSouth_00_Stone_2.glb" id="piece_11"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_AB_RubbleSouth_00_Stone_3.glb" id="piece_12"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_00_Bone_0.glb" id="piece_13"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_00_Bone_1.glb" id="piece_14"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_00_Bone_2.glb" id="piece_15"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_01_Bone_0.glb" id="piece_16"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_01_Bone_1.glb" id="piece_17"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_BoneScatter_01_Bone_2.glb" id="piece_18"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_DustTrail_00.glb" id="piece_19"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_DustTrail_01.glb" id="piece_20"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_FallenBeam_00.glb" id="piece_21"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_SupplyCrate_00.glb" id="piece_22"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_00_Stone_0.glb" id="piece_23"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_00_Stone_1.glb" id="piece_24"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_00_Stone_2.glb" id="piece_25"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_00_Stone_3.glb" id="piece_26"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_01_Stone_0.glb" id="piece_27"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_01_Stone_1.glb" id="piece_28"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_01_Stone_2.glb" id="piece_29"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_01_Stone_3.glb" id="piece_30"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_02_Stone_0.glb" id="piece_31"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_02_Stone_1.glb" id="piece_32"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_02_Stone_2.glb" id="piece_33"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_A_WallRubble_02_Stone_3.glb" id="piece_34"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_ChainPile_00.glb" id="piece_35"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_DustTrace_00.glb" id="piece_36"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleNorth_00_Stone_0.glb" id="piece_37"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleNorth_00_Stone_1.glb" id="piece_38"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleNorth_00_Stone_2.glb" id="piece_39"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleNorth_00_Stone_3.glb" id="piece_40"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleSouth_00_Stone_0.glb" id="piece_41"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleSouth_00_Stone_1.glb" id="piece_42"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleSouth_00_Stone_2.glb" id="piece_43"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_BC_RubbleSouth_00_Stone_3.glb" id="piece_44"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_AshRing_00.glb" id="piece_45"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_AshRing_01.glb" id="piece_46"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_BoneScatter_00_Bone_0.glb" id="piece_47"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_BoneScatter_00_Bone_1.glb" id="piece_48"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_BoneScatter_00_Bone_2.glb" id="piece_49"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_BrokenColumn_00.glb" id="piece_50"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_ChainPile_00.glb" id="piece_51"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_ChainPile_01.glb" id="piece_52"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_00_Stone_0.glb" id="piece_53"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_00_Stone_1.glb" id="piece_54"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_00_Stone_2.glb" id="piece_55"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_00_Stone_3.glb" id="piece_56"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_01_Stone_0.glb" id="piece_57"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_01_Stone_1.glb" id="piece_58"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_01_Stone_2.glb" id="piece_59"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_01_Stone_3.glb" id="piece_60"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_02_Stone_0.glb" id="piece_61"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_02_Stone_1.glb" id="piece_62"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_02_Stone_2.glb" id="piece_63"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_B_WallRubble_02_Stone_3.glb" id="piece_64"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_BoneScatter_00_Bone_0.glb" id="piece_65"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_BoneScatter_00_Bone_1.glb" id="piece_66"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_BoneScatter_00_Bone_2.glb" id="piece_67"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_BrokenColumn_00.glb" id="piece_68"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_ChainPile_00.glb" id="piece_69"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_FallenBeam_00.glb" id="piece_70"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_OldStain_00.glb" id="piece_71"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_OldStain_01.glb" id="piece_72"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_00_Stone_0.glb" id="piece_73"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_00_Stone_1.glb" id="piece_74"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_00_Stone_2.glb" id="piece_75"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_00_Stone_3.glb" id="piece_76"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_01_Stone_0.glb" id="piece_77"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_01_Stone_1.glb" id="piece_78"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_01_Stone_2.glb" id="piece_79"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_01_Stone_3.glb" id="piece_80"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_02_Stone_0.glb" id="piece_81"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_02_Stone_1.glb" id="piece_82"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_02_Stone_2.glb" id="piece_83"]
+[ext_resource type="PackedScene" path="res://assets/interior_pieces/INT_C_WallRubble_02_Stone_3.glb" id="piece_84"]
+
+[node name="InteriorDressing" type="Node3D"]
+editor_description = "室內純視覺敘事層：牆根崩塌、供物殘骸、骨骸、斷柱、鏈條與地面痕跡。每個直接子節點都是獨立 GLB，可在此場景或 dungeon_grid_map.tscn 逐件移動、旋轉、縮放、隱藏或替換；無碰撞、無導航、無互動。"
+script = ExtResource("1_style")
+
+[node name="INT_AB_BoneScatter_00_Bone_0" parent="." instance=ExtResource("piece_01")]
+position = Vector3(2.02602, 0.075, -1.11045)
+[node name="INT_AB_BoneScatter_00_Bone_1" parent="." instance=ExtResource("piece_02")]
+position = Vector3(2.0499, 0.075, -1.098)
+[node name="INT_AB_BoneScatter_00_Bone_2" parent="." instance=ExtResource("piece_03")]
+position = Vector3(2.29972, 0.075, -1.28399)
+[node name="INT_AB_DustTrace_00" parent="." instance=ExtResource("piece_04")]
+position = Vector3(1.98, 0.012, 0.54)
+[node name="INT_AB_RubbleNorth_00_Stone_0" parent="." instance=ExtResource("piece_05")]
+position = Vector3(0.2964, 0.0864, -1.4048)
+[node name="INT_AB_RubbleNorth_00_Stone_1" parent="." instance=ExtResource("piece_06")]
+position = Vector3(0.5826, 0.108, -1.3724)
+[node name="INT_AB_RubbleNorth_00_Stone_2" parent="." instance=ExtResource("piece_07")]
+position = Vector3(0.4584, 0.0648, -1.1888)
+[node name="INT_AB_RubbleNorth_00_Stone_3" parent="." instance=ExtResource("piece_08")]
+position = Vector3(0.6852, 0.0486, -1.2212)
+[node name="INT_AB_RubbleSouth_00_Stone_0" parent="." instance=ExtResource("piece_09")]
+position = Vector3(3.19, 0.08, 1.28)
+[node name="INT_AB_RubbleSouth_00_Stone_1" parent="." instance=ExtResource("piece_10")]
+position = Vector3(3.455, 0.1, 1.31)
+[node name="INT_AB_RubbleSouth_00_Stone_2" parent="." instance=ExtResource("piece_11")]
+position = Vector3(3.34, 0.06, 1.48)
+[node name="INT_AB_RubbleSouth_00_Stone_3" parent="." instance=ExtResource("piece_12")]
+position = Vector3(3.55, 0.045, 1.45)
+[node name="INT_A_BoneScatter_00_Bone_0" parent="." instance=ExtResource("piece_13")]
+position = Vector3(-10.12248, 0.075, -2.2609)
+[node name="INT_A_BoneScatter_00_Bone_1" parent="." instance=ExtResource("piece_14")]
+position = Vector3(-10.10057, 0.075, -2.24525)
+[node name="INT_A_BoneScatter_00_Bone_2" parent="." instance=ExtResource("piece_15")]
+position = Vector3(-9.82725, 0.075, -2.39456)
+[node name="INT_A_BoneScatter_01_Bone_0" parent="." instance=ExtResource("piece_16")]
+position = Vector3(-5.10864, 0.075, 2.51291)
+[node name="INT_A_BoneScatter_01_Bone_1" parent="." instance=ExtResource("piece_17")]
+position = Vector3(-5.08174, 0.075, 2.51184)
+[node name="INT_A_BoneScatter_01_Bone_2" parent="." instance=ExtResource("piece_18")]
+position = Vector3(-4.95736, 0.075, 2.22631)
+[node name="INT_A_DustTrail_00" parent="." instance=ExtResource("piece_19")]
+position = Vector3(-7.45, 0.012, -1.8)
+[node name="INT_A_DustTrail_01" parent="." instance=ExtResource("piece_20")]
+position = Vector3(-8.62, 0.012, 2.02)
+[node name="INT_A_FallenBeam_00" parent="." instance=ExtResource("piece_21")]
+position = Vector3(-10.55, 0.18, 1.42)
+[node name="INT_A_SupplyCrate_00" parent="." instance=ExtResource("piece_22")]
+position = Vector3(-10.85, 0.38, -1.32)
+[node name="INT_A_WallRubble_00_Stone_0" parent="." instance=ExtResource("piece_23")]
+position = Vector3(-11.424, 0.176, -3.382)
+[node name="INT_A_WallRubble_00_Stone_1" parent="." instance=ExtResource("piece_24")]
+position = Vector3(-10.841, 0.22, -3.316)
+[node name="INT_A_WallRubble_00_Stone_2" parent="." instance=ExtResource("piece_25")]
+position = Vector3(-11.094, 0.132, -2.942)
+[node name="INT_A_WallRubble_00_Stone_3" parent="." instance=ExtResource("piece_26")]
+position = Vector3(-10.632, 0.099, -3.008)
+[node name="INT_A_WallRubble_01_Stone_0" parent="." instance=ExtResource("piece_27")]
+position = Vector3(-11.2628, 0.1472, 3.1696)
+[node name="INT_A_WallRubble_01_Stone_1" parent="." instance=ExtResource("piece_28")]
+position = Vector3(-10.7752, 0.184, 3.2248)
+[node name="INT_A_WallRubble_01_Stone_2" parent="." instance=ExtResource("piece_29")]
+position = Vector3(-10.9868, 0.1104, 3.5376)
+[node name="INT_A_WallRubble_01_Stone_3" parent="." instance=ExtResource("piece_30")]
+position = Vector3(-10.6004, 0.0828, 3.4824)
+[node name="INT_A_WallRubble_02_Stone_0" parent="." instance=ExtResource("piece_31")]
+position = Vector3(-4.9524, 0.1376, 3.1568)
+[node name="INT_A_WallRubble_02_Stone_1" parent="." instance=ExtResource("piece_32")]
+position = Vector3(-4.4966, 0.172, 3.2084)
+[node name="INT_A_WallRubble_02_Stone_2" parent="." instance=ExtResource("piece_33")]
+position = Vector3(-4.6944, 0.1032, 3.5008)
+[node name="INT_A_WallRubble_02_Stone_3" parent="." instance=ExtResource("piece_34")]
+position = Vector3(-4.3332, 0.0774, 3.4492)
+[node name="INT_BC_ChainPile_00" parent="." instance=ExtResource("piece_35")]
+position = Vector3(21.7, 0.065, -1.18)
+[node name="INT_BC_DustTrace_00" parent="." instance=ExtResource("piece_36")]
+position = Vector3(21.72, 0.012, 0.54)
+[node name="INT_BC_RubbleNorth_00_Stone_0" parent="." instance=ExtResource("piece_37")]
+position = Vector3(20.0432, 0.0832, -1.4024)
+[node name="INT_BC_RubbleNorth_00_Stone_1" parent="." instance=ExtResource("piece_38")]
+position = Vector3(20.3188, 0.104, -1.3712)
+[node name="INT_BC_RubbleNorth_00_Stone_2" parent="." instance=ExtResource("piece_39")]
+position = Vector3(20.1992, 0.0624, -1.1944)
+[node name="INT_BC_RubbleNorth_00_Stone_3" parent="." instance=ExtResource("piece_40")]
+position = Vector3(20.4176, 0.0468, -1.2256)
+[node name="INT_BC_RubbleSouth_00_Stone_0" parent="." instance=ExtResource("piece_41")]
+position = Vector3(22.893, 0.088, 1.274)
+[node name="INT_BC_RubbleSouth_00_Stone_1" parent="." instance=ExtResource("piece_42")]
+position = Vector3(23.1845, 0.11, 1.307)
+[node name="INT_BC_RubbleSouth_00_Stone_2" parent="." instance=ExtResource("piece_43")]
+position = Vector3(23.058, 0.066, 1.494)
+[node name="INT_BC_RubbleSouth_00_Stone_3" parent="." instance=ExtResource("piece_44")]
+position = Vector3(23.289, 0.0495, 1.461)
+[node name="INT_B_AshRing_00" parent="." instance=ExtResource("piece_45")]
+position = Vector3(11.84, 0.012, -2.05)
+[node name="INT_B_AshRing_01" parent="." instance=ExtResource("piece_46")]
+position = Vector3(11.84, 0.012, 2.06)
+[node name="INT_B_BoneScatter_00_Bone_0" parent="." instance=ExtResource("piece_47")]
+position = Vector3(10.0213, 0.075, 2.8489)
+[node name="INT_B_BoneScatter_00_Bone_1" parent="." instance=ExtResource("piece_48")]
+position = Vector3(10.03673, 0.075, 2.87096)
+[node name="INT_B_BoneScatter_00_Bone_2" parent="." instance=ExtResource("piece_49")]
+position = Vector3(10.3442, 0.075, 2.82135)
+[node name="INT_B_BrokenColumn_00" parent="." instance=ExtResource("piece_50")]
+position = Vector3(14.48, 0.12, 3.18)
+[node name="INT_B_ChainPile_00" parent="." instance=ExtResource("piece_51")]
+position = Vector3(8.66, 0.065, -2.36)
+[node name="INT_B_ChainPile_01" parent="." instance=ExtResource("piece_52")]
+position = Vector3(14.42, 0.065, 2.3)
+[node name="INT_B_WallRubble_00_Stone_0" parent="." instance=ExtResource("piece_53")]
+position = Vector3(8.1508, 0.1408, -3.3856)
+[node name="INT_B_WallRubble_00_Stone_1" parent="." instance=ExtResource("piece_54")]
+position = Vector3(8.6172, 0.176, -3.3328)
+[node name="INT_B_WallRubble_00_Stone_2" parent="." instance=ExtResource("piece_55")]
+position = Vector3(8.4148, 0.1056, -3.0336)
+[node name="INT_B_WallRubble_00_Stone_3" parent="." instance=ExtResource("piece_56")]
+position = Vector3(8.7844, 0.0792, -3.0864)
+[node name="INT_B_WallRubble_01_Stone_0" parent="." instance=ExtResource("piece_57")]
+position = Vector3(14.773, 0.168, -3.356)
+[node name="INT_B_WallRubble_01_Stone_1" parent="." instance=ExtResource("piece_58")]
+position = Vector3(15.3295, 0.21, -3.293)
+[node name="INT_B_WallRubble_01_Stone_2" parent="." instance=ExtResource("piece_59")]
+position = Vector3(15.088, 0.126, -2.936)
+[node name="INT_B_WallRubble_01_Stone_3" parent="." instance=ExtResource("piece_60")]
+position = Vector3(15.529, 0.0945, -2.999)
+[node name="INT_B_WallRubble_02_Stone_0" parent="." instance=ExtResource("piece_61")]
+position = Vector3(8.2736, 0.1536, 3.1248)
+[node name="INT_B_WallRubble_02_Stone_1" parent="." instance=ExtResource("piece_62")]
+position = Vector3(8.7824, 0.192, 3.1824)
+[node name="INT_B_WallRubble_02_Stone_2" parent="." instance=ExtResource("piece_63")]
+position = Vector3(8.5616, 0.1152, 3.5088)
+[node name="INT_B_WallRubble_02_Stone_3" parent="." instance=ExtResource("piece_64")]
+position = Vector3(8.9648, 0.0864, 3.4512)
+[node name="INT_C_BoneScatter_00_Bone_0" parent="." instance=ExtResource("piece_65")]
+position = Vector3(34.07095, 0.075, -2.08656)
+[node name="INT_C_BoneScatter_00_Bone_1" parent="." instance=ExtResource("piece_66")]
+position = Vector3(34.09774, 0.075, -2.08924)
+[node name="INT_C_BoneScatter_00_Bone_2" parent="." instance=ExtResource("piece_67")]
+position = Vector3(34.20477, 0.075, -2.38171)
+[node name="INT_C_BrokenColumn_00" parent="." instance=ExtResource("piece_68")]
+position = Vector3(33.82, 0.12, 3.18)
+[node name="INT_C_ChainPile_00" parent="." instance=ExtResource("piece_69")]
+position = Vector3(28.66, 0.065, 2.37)
+[node name="INT_C_FallenBeam_00" parent="." instance=ExtResource("piece_70")]
+position = Vector3(27.98, 0.18, 1.58)
+[node name="INT_C_OldStain_00" parent="." instance=ExtResource("piece_71")]
+position = Vector3(31.52, 0.012, -2.28)
+[node name="INT_C_OldStain_01" parent="." instance=ExtResource("piece_72")]
+position = Vector3(32.62, 0.012, 1.92)
+[node name="INT_C_WallRubble_00_Stone_0" parent="." instance=ExtResource("piece_73")]
+position = Vector3(28.086, 0.176, -3.392)
+[node name="INT_C_WallRubble_00_Stone_1" parent="." instance=ExtResource("piece_74")]
+position = Vector3(28.669, 0.22, -3.326)
+[node name="INT_C_WallRubble_00_Stone_2" parent="." instance=ExtResource("piece_75")]
+position = Vector3(28.416, 0.132, -2.952)
+[node name="INT_C_WallRubble_00_Stone_3" parent="." instance=ExtResource("piece_76")]
+position = Vector3(28.878, 0.099, -3.018)
+[node name="INT_C_WallRubble_01_Stone_0" parent="." instance=ExtResource("piece_77")]
+position = Vector3(34.2372, 0.1472, -3.3904)
+[node name="INT_C_WallRubble_01_Stone_1" parent="." instance=ExtResource("piece_78")]
+position = Vector3(34.7248, 0.184, -3.3352)
+[node name="INT_C_WallRubble_01_Stone_2" parent="." instance=ExtResource("piece_79")]
+position = Vector3(34.5132, 0.1104, -3.0224)
+[node name="INT_C_WallRubble_01_Stone_3" parent="." instance=ExtResource("piece_80")]
+position = Vector3(34.8996, 0.0828, -3.0776)
+[node name="INT_C_WallRubble_02_Stone_0" parent="." instance=ExtResource("piece_81")]
+position = Vector3(28.1276, 0.1376, 3.1368)
+[node name="INT_C_WallRubble_02_Stone_1" parent="." instance=ExtResource("piece_82")]
+position = Vector3(28.5834, 0.172, 3.1884)
+[node name="INT_C_WallRubble_02_Stone_2" parent="." instance=ExtResource("piece_83")]
+position = Vector3(28.3856, 0.1032, 3.4808)
+[node name="INT_C_WallRubble_02_Stone_3" parent="." instance=ExtResource("piece_84")]
+position = Vector3(28.7468, 0.0774, 3.4292)

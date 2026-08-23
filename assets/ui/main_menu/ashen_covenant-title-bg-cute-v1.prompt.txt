@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Asset type: 16:9 main-menu background for a Japanese cute fantasy action RPG
+Input images: the first cute menu generation is the edit target; the extracted gameplay-model preview is the authoritative protagonist and costume reference
+Primary request: replace only the generic brown-haired warrior with a polished chibi anime interpretation of the gameplay protagonist
+Character invariants: young female warrior; very pale platinum-blonde high ponytail with curled/spiky locks, long side strands and side-swept bangs; blue-gray eyes; ivory-white and warm silver fitted fantasy armor; brown leather belts, straps, pouches, gloves and boots; layered white hip armor panels; one-handed straight sword; no scarf; no cape; no navy outfit
+Pose and placement: same right-side position, scale, three-quarter orientation and confident friendly stance as the original generated character
+Style/medium: preserve the high-quality Japanese anime game illustration, cute chibi proportions, soft hand-painted cel shading and warm lavender/golden lighting
+Constraints: change only the character; preserve the gateway, cat ornaments, lanterns, flowers, clouds, lighting, crop and left-side negative space; no text; no letters; no logo; no watermark; no extra character

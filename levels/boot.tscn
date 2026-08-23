@@ -1,17 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://levels/boot.gd" id="1_boot"]
+[ext_resource type="Texture2D" path="res://assets/ui/loading/ashen_covenant-loading-bg-cute-v1.png" id="2_bg"]
+[ext_resource type="Theme" path="res://ui/menu_theme.tres" id="3_theme"]
 
-[node name="Boot" type="Control"]
+[node name="LoadingScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_theme")
 script = ExtResource("1_boot")
 
-[node name="Backdrop" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,40 +22,109 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.018, 0.027, 0.05, 1)
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Center" type="VBoxContainer" parent="."]
+[node name="SoftTint" type="ColorRect" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -54.0
-offset_right = 260.0
-offset_bottom = 54.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 14
+mouse_filter = 2
+color = Color(0.18, 0.12, 0.3, 0.12)
 
-[node name="Title" type="Label" parent="Center"]
+[node name="SafeMargins" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 74
+theme_override_constants/margin_top = 54
+theme_override_constants/margin_right = 74
+theme_override_constants/margin_bottom = 46
+
+[node name="LoadingLayout" type="VBoxContainer" parent="SafeMargins"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.79, 0.5, 1)
-theme_override_font_sizes/font_size = 32
-text = "ASHEN COVENANT"
-horizontal_alignment = 1
 
-[node name="Divider" type="ColorRect" parent="Center"]
-custom_minimum_size = Vector2(0, 2)
+[node name="TopSpacer" type="Control" parent="SafeMargins/LoadingLayout"]
 layout_mode = 2
-color = Color(0.67, 0.41, 0.16, 0.8)
+size_flags_vertical = 3
+mouse_filter = 2
 
-[node name="Status" type="Label" parent="Center"]
+[node name="LoadingPanel" type="PanelContainer" parent="SafeMargins/LoadingLayout"]
+custom_minimum_size = Vector2(0, 188)
+layout_mode = 2
+
+[node name="PanelMargins" type="MarginContainer" parent="SafeMargins/LoadingLayout/LoadingPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 22
+
+[node name="LoadingColumn" type="VBoxContainer" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BrandRow" type="HBoxContainer" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn"]
+layout_mode = 2
+
+[node name="Brand" type="Label" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn/BrandRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.91, 0.64, 1)
+theme_override_font_sizes/font_size = 24
+text = "ASHEN COVENANT　灰燼盟約"
+
+[node name="Percent" type="Label" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn/BrandRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.83, 0.95, 1)
+theme_override_colors/font_color = Color(0.95, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "0%"
+horizontal_alignment = 2
+
+[node name="Status" type="Label" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.97, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "準備啟動…"
-horizontal_alignment = 1
+text = "正在整理冒險行囊…"
+
+[node name="ProgressBar" type="ProgressBar" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+show_percentage = false
+
+[node name="Tip" type="Label" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.81, 0.77, 0.89, 1)
+theme_override_font_sizes/font_size = 14
+text = "小提示：點擊地面，就能讓勇者前往那個位置。"
 autowrap_mode = 2
+
+[node name="RetryButton" type="Button" parent="SafeMargins/LoadingLayout/LoadingPanel/PanelMargins/LoadingColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+text = "再試一次"
+
+[node name="FadeOverlay" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.12, 0.09, 0.2, 1)

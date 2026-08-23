@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_straight_2p6.glb" id="1_wall"]
 [ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/wall_corner_2p6.glb" id="2_corner"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" path="res://assets/dungeon_backdrop_dressing_final.glb" id="6_dressing"]
 [ext_resource type="PackedScene" path="res://levels/exterior_editable_pieces.tscn" id="7_exterior"]
 [ext_resource type="Script" path="res://scripts/exterior_dressing_style_3d.gd" id="8_exterior_style"]
+[ext_resource type="PackedScene" path="res://levels/exterior_ground_editable_pieces.tscn" id="9_ground"]
+[ext_resource type="PackedScene" path="res://levels/exterior_courtyard_editable_pieces.tscn" id="10_courtyard"]
+[ext_resource type="PackedScene" path="res://levels/exterior_wilderness_editable_pieces.tscn" id="11_wilderness"]
 
 [sub_resource type="Gradient" id="Gradient_AshenDrift"]
 offsets = PackedFloat32Array(0, 0.68, 1)
@@ -142,6 +145,41 @@ rotation_degrees = Vector3(0, 270, 0)
 position = Vector3(39, 0, 9)
 rotation_degrees = Vector3(0, 180, 0)
 
+[node name="OuterFlankWalls" type="Node3D" parent="."]
+editor_description = "主區左右兩側的視線收邊：八段純視覺城牆填滿等角鏡頭可看到的側向空白；全部沿用地下城主城牆的 PBR 材質，無碰撞、無導航、無互動。"
+
+[node name="WestFlank_01" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(-15.9, 0, -3.9)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestFlank_02" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(-15.9, 0, 0)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestFlank_03" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(-15.9, 0, 3.9)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="WestFlank_04" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(-15.9, 0, 6.9)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastFlank_01" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(39.9, 0, -3.9)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastFlank_02" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(39.9, 0, 0)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastFlank_03" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(39.9, 0, 3.9)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="EastFlank_04" parent="OuterFlankWalls" instance=ExtResource("1_wall")]
+position = Vector3(39.9, 0, 6.9)
+rotation_degrees = Vector3(0, 90, 0)
+
 [node name="FarPillars" type="Node3D" parent="."]
 editor_description = "遠景柱列提供高度層次；位置全部在北側外牆之外，不會進入戰鬥地板。"
 
@@ -204,6 +242,15 @@ editor_description = "Blender 白模型 review 後的純視覺敘事裝飾：碎
 [node name="AshenExteriorDressing" parent="." instance=ExtResource("7_exterior")]
 editor_description = "灰燼前庭的第二層遠景：76 個子節點各自引用一個獨立 GLB。南側採用碎石緩衝、交錯斷崖與外圍墓園的三層邊界，左右以側崖收邊；可在本場景或 dungeon_grid_map.tscn 選取單件岩塊、墓碑、枯木、橋段、方尖碑與石塚後調整；無碰撞、無導航、無互動。"
 
+[node name="AshenGroundDressing" parent="." instance=ExtResource("9_ground")]
+editor_description = "灰燼前庭的近景地表過渡：73 個子節點各自引用一個獨立 GLB。南側以破碎舊路、灰燼沉積與散石銜接外牆，北側補上封鎖古道，左右肩部與支線外側用低矮碎石、刺灌與石塚消除空白；無碰撞、無導航、無互動。"
+
+[node name="ExteriorCourtyardDressing" parent="." instance=ExtResource("10_courtyard")]
+editor_description = "南側畫面中央的崩塌前庭：兩座低矮傾倒基座、兩段倒柱、碎石、破路塊與刺灌，讓南側外牆與外圍斷牆之間不再是一片空白。15 個直接子節點皆為可獨立調整的 GLB；無碰撞、無導航、無互動。"
+
+[node name="ExteriorWildernessDressing" parent="." instance=ExtResource("11_wilderness")]
+editor_description = "真正位於城牆外的廣域荒野：東西兩側與南方前景以岩丘、枯樹、殘碑和灰土延伸到鏡頭可見範圍。43 個直接子節點皆為可獨立調整的 GLB；無碰撞、無導航、無互動。"
+
 [node name="ExteriorAtmosphere" type="Node3D" parent="."]
 editor_description = "Compatibility renderer 友善的外圍氛圍：三盞無陰影魂光與一組低數量灰燼微粒。"
 
@@ -246,3 +293,7 @@ draw_pass_1 = SubResource("QuadMesh_AshenMote")
 
 [editable path="BlenderDressingFinal"]
 [editable path="AshenExteriorDressing"]
+[editable path="AshenGroundDressing"]
+[editable path="ExteriorCourtyardDressing"]
+[editable path="ExteriorWildernessDressing"]
+[editable path="OuterFlankWalls"]

@@ -14,6 +14,14 @@ func _validate() -> void:
 	var dungeon := packed.instantiate()
 	root.add_child(dungeon)
 	await process_frame
+	var prologue := dungeon.get_node_or_null("PrologueDialogue")
+	if prologue != null:
+		prologue.queue_free()
+		await process_frame
+	if paused:
+		push_error("DUNGEON_3D_VALIDATE_FAIL scene_still_paused_after_prologue_cleanup")
+		quit(1)
+		return
 	var castle_wall := dungeon.get_node("GridMapDungeon/ModularAssembly/Rooms/RoomA_EntryCrypt/Walls/OriginalNorth_-2") as Node3D
 	if castle_wall.get_script() == null or castle_wall.get_script().resource_path != "res://scripts/castle_wall_pbr.gd":
 		push_error("DUNGEON_3D_VALIDATE_FAIL castle_wall_wrapper_not_active")
@@ -215,9 +223,16 @@ func _validate() -> void:
 		push_error("DUNGEON_3D_VALIDATE_FAIL monster_attack_did_not_start")
 		quit(1)
 		return
-	await create_timer(0.62).timeout
 	var monster_visual := target_monster.get_node("Visual") as Node3D
-	if monster_visual.scale.y <= 1.15 or monster_visual.position.y <= 0.12:
+	var peak_scale_y := monster_visual.scale.y
+	var peak_position_y := monster_visual.position.y
+	var sampled_frames := 0
+	while float(target_monster.get("_attack_elapsed")) >= 0.0 and sampled_frames < 120:
+		await physics_frame
+		peak_scale_y = maxf(peak_scale_y, monster_visual.scale.y)
+		peak_position_y = maxf(peak_position_y, monster_visual.position.y)
+		sampled_frames += 1
+	if peak_scale_y <= 1.15 or peak_position_y <= 0.12:
 		push_error("DUNGEON_3D_VALIDATE_FAIL monster_attack_animation_not_visible")
 		quit(1)
 		return

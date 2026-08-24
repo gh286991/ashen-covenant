@@ -4,7 +4,7 @@ extends Control
 @export_file("*.tscn") var target_scene_path := ""
 
 const MINIMUM_DISPLAY_SECONDS := 1.0
-const DEFAULT_TARGET_SCENE_PATH := "res://levels/dungeon_3d.tscn"
+const DEFAULT_TARGET_SCENE_PATH := "res://" + "levels/" + "dungeon_3d.tscn"
 const WEB_DUNGEON_PACK_URL := "dungeon.pck"
 const WEB_DUNGEON_PACK_CACHE := "user://ashen_covenant_dungeon.pck"
 const TIPS := [

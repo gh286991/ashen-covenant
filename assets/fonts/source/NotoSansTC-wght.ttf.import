@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://1y1j4d8c66sq"
-path="res://.godot/imported/NotoSansTC-wght.ttf-9972cd51b346c86b3fcd0a397b3b0456.fontdata"
+path="res://.godot/imported/NotoSansTC-wght.ttf-52ecd73c47a9eae0432aee2c22425b5a.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/NotoSansTC-wght.ttf"
-dest_files=["res://.godot/imported/NotoSansTC-wght.ttf-9972cd51b346c86b3fcd0a397b3b0456.fontdata"]
+source_file="res://assets/fonts/source/NotoSansTC-wght.ttf"
+dest_files=["res://.godot/imported/NotoSansTC-wght.ttf-52ecd73c47a9eae0432aee2c22425b5a.fontdata"]
 
 [params]
 

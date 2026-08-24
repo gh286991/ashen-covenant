@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=13 format=3]
 
-[ext_resource type="FontFile" path="res://assets/fonts/NotoSansTC-wght.ttf" id="1_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSansTC-runtime.ttf" id="1_font"]
 
 [sub_resource type="StyleBoxFlat" id="Panel"]
 bg_color = Color(0.035, 0.047, 0.09, 0.94)

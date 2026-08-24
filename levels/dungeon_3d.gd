@@ -88,13 +88,15 @@ func _ready() -> void:
 func _apply_web_performance_profile() -> void:
 	if not OS.has_feature("web"):
 		return
-	# These are non-playable exterior dressing layers. Removing them on Web
-	# avoids instantiating hundreds of separate GLBs and keeps the combat floor,
-	# walls, monsters, and UI unchanged.
+	# Keep every exterior dressing layer visible on Web. These rocks, broken
+	# walls, and ground pieces are part of the authored scene silhouette; they
+	# must not be treated as disposable optimization content. They have no
+	# gameplay scripts or collision, so the safe Web optimization is to keep
+	# their meshes but disable their shadow casting.
 	for path in WEB_DRESSING_PATHS:
 		var dressing := get_node_or_null(path)
 		if dressing != null:
-			dressing.queue_free()
+			_disable_dressing_shadows(dressing)
 	# The compatibility renderer spends a large amount of GPU time on shadow
 	# maps. The Web profile keeps the lights for the same palette, but removes
 	# the single dynamic shadow caster and limits ambient particles.
@@ -110,6 +112,13 @@ func _apply_web_performance_profile() -> void:
 	var viewport := get_viewport()
 	if viewport != null:
 		viewport.scaling_3d_scale = 0.82
+
+
+func _disable_dressing_shadows(root: Node) -> void:
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh != null:
+			mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _process(delta: float) -> void:

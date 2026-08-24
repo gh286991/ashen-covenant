@@ -111,6 +111,19 @@ func _validate() -> void:
 			push_error("DUNGEON_3D_VALIDATE_FAIL missing=%s" % path)
 			quit(1)
 			return
+	var exterior_dressing_paths := [
+		"GridMapDungeon/NonPlayableFill/BlenderDressingFinal",
+		"GridMapDungeon/NonPlayableFill/AshenExteriorDressing",
+		"GridMapDungeon/NonPlayableFill/AshenGroundDressing",
+		"GridMapDungeon/NonPlayableFill/ExteriorCourtyardDressing",
+		"GridMapDungeon/NonPlayableFill/ExteriorWildernessDressing",
+	]
+	for path in exterior_dressing_paths:
+		var dressing := dungeon.get_node_or_null(path)
+		if dressing == null or dressing.get_child_count() == 0:
+			push_error("DUNGEON_3D_VALIDATE_FAIL exterior_dressing_missing=%s" % path)
+			quit(1)
+			return
 	if dungeon.get_node_or_null("Modules") != null:
 		push_error("DUNGEON_3D_VALIDATE_FAIL legacy_modules_still_present")
 		quit(1)

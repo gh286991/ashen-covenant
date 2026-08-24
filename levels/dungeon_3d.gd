@@ -13,6 +13,12 @@ const CAMERA_ZOOM_MIN_DISTANCE := 5.5
 const CAMERA_ZOOM_MAX_DISTANCE := 22.0
 const CAMERA_ZOOM_STEP := 1.25
 const CAMERA_ZOOM_SMOOTH_SPEED := 14.0
+const WEB_DRESSING_PATHS := [
+	NodePath("GridMapDungeon/NonPlayableFill/BlenderDressingFinal"),
+	NodePath("GridMapDungeon/NonPlayableFill/AshenExteriorDressing"),
+	NodePath("GridMapDungeon/NonPlayableFill/AshenGroundDressing"),
+	NodePath("GridMapDungeon/NonPlayableFill/ExteriorWildernessDressing"),
+]
 
 @onready var player: DungeonPlayer3D = %Player
 @onready var camera: Camera3D = %Camera3D
@@ -30,6 +36,7 @@ var audio: AshenAudioDirector
 
 
 func _ready() -> void:
+	_apply_web_performance_profile()
 	_audio_setup()
 	door_prompt.visible = false
 	player_health_label.visible = false
@@ -76,6 +83,33 @@ func _ready() -> void:
 	# The dungeon is a fixed top-down view. Keeping the pitch fixed prevents
 	# tiny physics-floor corrections from becoming visible camera shake.
 	camera.rotation_degrees = Vector3(CAMERA_PITCH, CAMERA_YAW, 0.0)
+
+
+func _apply_web_performance_profile() -> void:
+	if not OS.has_feature("web"):
+		return
+	# These are non-playable exterior dressing layers. Removing them on Web
+	# avoids instantiating hundreds of separate GLBs and keeps the combat floor,
+	# walls, monsters, and UI unchanged.
+	for path in WEB_DRESSING_PATHS:
+		var dressing := get_node_or_null(path)
+		if dressing != null:
+			dressing.queue_free()
+	# The compatibility renderer spends a large amount of GPU time on shadow
+	# maps. The Web profile keeps the lights for the same palette, but removes
+	# the single dynamic shadow caster and limits ambient particles.
+	var moon_light := get_node_or_null("MoonLight") as DirectionalLight3D
+	if moon_light != null:
+		moon_light.shadow_enabled = false
+	var ash_drift := get_node_or_null("GridMapDungeon/NonPlayableFill/ExteriorAtmosphere/AshenDrift") as GPUParticles3D
+	if ash_drift != null:
+		ash_drift.amount = mini(ash_drift.amount, 16)
+		ash_drift.fixed_fps = 12
+	# Render the 3D buffer at 82% of the browser viewport and upscale it. This
+	# leaves the 2D JRPG HUD crisp while reducing roughly one third of 3D pixels.
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.scaling_3d_scale = 0.82
 
 
 func _process(delta: float) -> void:

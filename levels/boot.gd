@@ -83,7 +83,12 @@ func _begin_web_pack_loading() -> void:
 	_pack_request.timeout = 180.0
 	_pack_request.request_completed.connect(_on_web_pack_request_completed)
 	add_child(_pack_request)
-	var error := _pack_request.request(WEB_DUNGEON_PACK_URL)
+	var request_url := WEB_DUNGEON_PACK_URL
+	if OS.has_feature("web"):
+		var resolved_url = JavaScriptBridge.eval("new URL('%s', window.location.href).href" % WEB_DUNGEON_PACK_URL)
+		if resolved_url is String and not String(resolved_url).is_empty():
+			request_url = String(resolved_url)
+	var error := _pack_request.request(request_url)
 	if error != OK:
 		_show_load_error(error)
 

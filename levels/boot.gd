@@ -1,9 +1,10 @@
 class_name AshenBootScreen
 extends Control
 
-@export_file("*.tscn") var target_scene_path := "res://levels/dungeon_3d.tscn"
+@export_file("*.tscn") var target_scene_path := ""
 
 const MINIMUM_DISPLAY_SECONDS := 1.0
+const DEFAULT_TARGET_SCENE_PATH := "res://levels/dungeon_3d.tscn"
 const WEB_DUNGEON_PACK_URL := "dungeon.pck"
 const WEB_DUNGEON_PACK_CACHE := "user://ashen_covenant_dungeon.pck"
 const TIPS := [
@@ -65,7 +66,8 @@ func _begin_web_pack_loading() -> void:
 	status_label.text = "正在連接冒險資料…"
 	# Keep regular one-pack Web exports compatible; the split release omits this
 	# scene so it falls through to the on-demand download below.
-	if ResourceLoader.exists(target_scene_path):
+	var scene_path := DEFAULT_TARGET_SCENE_PATH if target_scene_path.is_empty() else target_scene_path
+	if ResourceLoader.exists(scene_path):
 		_start_scene_loading()
 		return
 	# Cache the optional pack so repeat visits only wait for scene import.
@@ -105,7 +107,8 @@ func _on_web_pack_request_completed(result: int, response_code: int, _headers: P
 
 func _start_scene_loading() -> void:
 	_scene_loading = false
-	var error := ResourceLoader.load_threaded_request(target_scene_path, "PackedScene", true)
+	var scene_path := DEFAULT_TARGET_SCENE_PATH if target_scene_path.is_empty() else target_scene_path
+	var error := ResourceLoader.load_threaded_request(scene_path, "PackedScene", true)
 	if error != OK:
 		_show_load_error(error)
 		return
@@ -138,7 +141,8 @@ func _process(delta: float) -> void:
 
 func _poll_threaded_load() -> void:
 	var progress: Array = []
-	var state := ResourceLoader.load_threaded_get_status(target_scene_path, progress)
+	var scene_path := DEFAULT_TARGET_SCENE_PATH if target_scene_path.is_empty() else target_scene_path
+	var state := ResourceLoader.load_threaded_get_status(scene_path, progress)
 	match state:
 		ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			if not progress.is_empty():
@@ -146,7 +150,7 @@ func _poll_threaded_load() -> void:
 		ResourceLoader.THREAD_LOAD_LOADED:
 			_scene_loading = false
 			_loading = false
-			_loaded_scene = ResourceLoader.load_threaded_get(target_scene_path) as PackedScene
+			_loaded_scene = ResourceLoader.load_threaded_get(scene_path) as PackedScene
 			if _loaded_scene == null:
 				_show_load_error(ERR_FILE_CORRUPT)
 				return

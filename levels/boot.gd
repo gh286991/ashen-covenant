@@ -5,8 +5,8 @@ extends Control
 
 const MINIMUM_DISPLAY_SECONDS := 1.0
 const DEFAULT_TARGET_SCENE_PATH := "res://" + "levels/" + "dungeon_3d.tscn"
-const WEB_DUNGEON_PACK_URL := "dungeon.pck"
-const WEB_DUNGEON_PACK_CACHE := "user://ashen_covenant_dungeon.pck"
+const WEB_DUNGEON_PACK_URL := "dungeon.zip"
+const WEB_DUNGEON_PACK_CACHE := "user://ashen_covenant_dungeon.zip"
 const TIPS := [
 	"小提示：點擊地面，就能讓勇者前往那個位置。",
 	"小提示：點擊敵人，勇者會靠近並主動攻擊。",

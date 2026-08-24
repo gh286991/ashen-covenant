@@ -4,6 +4,8 @@ extends Control
 @export_file("*.tscn") var target_scene_path := "res://levels/dungeon_3d.tscn"
 
 const MINIMUM_DISPLAY_SECONDS := 1.0
+const WEB_DUNGEON_PACK_URL := "dungeon.pck"
+const WEB_DUNGEON_PACK_CACHE := "user://ashen_covenant_dungeon.pck"
 const TIPS := [
 	"小提示：點擊地面，就能讓勇者前往那個位置。",
 	"小提示：點擊敵人，勇者會靠近並主動攻擊。",
@@ -19,8 +21,11 @@ const TIPS := [
 @onready var fade_overlay: ColorRect = %FadeOverlay
 
 var _loading := false
+var _scene_loading := false
+var _pack_loading := false
 var _transitioning := false
 var _loaded_scene: PackedScene
+var _pack_request: HTTPRequest
 var _target_progress := 0.0
 var _displayed_progress := 0.0
 var _elapsed := 0.0
@@ -48,11 +53,64 @@ func _begin_loading() -> void:
 	_displayed_progress = 0.0
 	progress_bar.value = 0.0
 	percent_label.text = "0%"
+	progress_bar.indeterminate = false
+	_loading = true
+	if OS.has_feature("web"):
+		_begin_web_pack_loading()
+		return
+	_start_scene_loading()
+
+
+func _begin_web_pack_loading() -> void:
+	status_label.text = "正在連接冒險資料…"
+	# Keep regular one-pack Web exports compatible; the split release omits this
+	# scene so it falls through to the on-demand download below.
+	if ResourceLoader.exists(target_scene_path):
+		_start_scene_loading()
+		return
+	# Cache the optional pack so repeat visits only wait for scene import.
+	if FileAccess.file_exists(WEB_DUNGEON_PACK_CACHE):
+		if ProjectSettings.load_resource_pack(WEB_DUNGEON_PACK_CACHE, false):
+			_start_scene_loading()
+			return
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(WEB_DUNGEON_PACK_CACHE))
+	_pack_loading = true
+	progress_bar.indeterminate = true
+	percent_label.text = "下載中"
+	_pack_request = HTTPRequest.new()
+	_pack_request.timeout = 180.0
+	_pack_request.request_completed.connect(_on_web_pack_request_completed)
+	add_child(_pack_request)
+	var error := _pack_request.request(WEB_DUNGEON_PACK_URL)
+	if error != OK:
+		_show_load_error(error)
+
+
+func _on_web_pack_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	_pack_loading = false
+	if result != HTTPRequest.RESULT_SUCCESS or response_code < 200 or response_code >= 300 or body.is_empty():
+		_show_load_error(ERR_CANT_ACQUIRE_RESOURCE)
+		return
+	var file := FileAccess.open(WEB_DUNGEON_PACK_CACHE, FileAccess.WRITE)
+	if file == null:
+		_show_load_error(FileAccess.get_open_error())
+		return
+	file.store_buffer(body)
+	file.close()
+	if not ProjectSettings.load_resource_pack(WEB_DUNGEON_PACK_CACHE, false):
+		_show_load_error(ERR_FILE_CORRUPT)
+		return
+	_start_scene_loading()
+
+
+func _start_scene_loading() -> void:
+	_scene_loading = false
 	var error := ResourceLoader.load_threaded_request(target_scene_path, "PackedScene", true)
 	if error != OK:
 		_show_load_error(error)
 		return
-	_loading = true
+	_scene_loading = true
+	progress_bar.indeterminate = false
 	status_label.text = "正在整理冒險行囊…"
 
 
@@ -64,13 +122,14 @@ func _process(delta: float) -> void:
 		_tip_index = (_tip_index + 1) % TIPS.size()
 		tip_label.text = TIPS[_tip_index]
 
-	if _loading:
+	if _scene_loading:
 		_poll_threaded_load()
 
 	var speed := 1.35 if _loaded_scene != null else 0.52
 	_displayed_progress = move_toward(_displayed_progress, _target_progress, delta * speed)
-	progress_bar.value = _displayed_progress * 100.0
-	percent_label.text = "%d%%" % roundi(_displayed_progress * 100.0)
+	if not _pack_loading:
+		progress_bar.value = _displayed_progress * 100.0
+		percent_label.text = "%d%%" % roundi(_displayed_progress * 100.0)
 	_update_status_text()
 
 	if _loaded_scene != null and _elapsed >= MINIMUM_DISPLAY_SECONDS and _displayed_progress >= 0.995:
@@ -85,6 +144,7 @@ func _poll_threaded_load() -> void:
 			if not progress.is_empty():
 				_target_progress = clampf(float(progress[0]) * 0.96, _target_progress, 0.96)
 		ResourceLoader.THREAD_LOAD_LOADED:
+			_scene_loading = false
 			_loading = false
 			_loaded_scene = ResourceLoader.load_threaded_get(target_scene_path) as PackedScene
 			if _loaded_scene == null:
@@ -92,13 +152,16 @@ func _poll_threaded_load() -> void:
 				return
 			_target_progress = 1.0
 		ResourceLoader.THREAD_LOAD_FAILED, ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			_scene_loading = false
 			_show_load_error(ERR_CANT_ACQUIRE_RESOURCE)
 
 
 func _update_status_text() -> void:
 	if not _loading and _loaded_scene == null:
 		return
-	if _displayed_progress < 0.22:
+	if _pack_loading:
+		status_label.text = "正在下載地城資料…"
+	elif _displayed_progress < 0.22:
 		status_label.text = "正在整理冒險行囊…"
 	elif _displayed_progress < 0.52:
 		status_label.text = "正在點亮地下城燈火…"
@@ -127,6 +190,9 @@ func _enter_loaded_scene() -> void:
 
 func _show_load_error(error: Error) -> void:
 	_loading = false
+	_scene_loading = false
+	_pack_loading = false
+	progress_bar.indeterminate = false
 	_loaded_scene = null
 	status_label.text = "哎呀，地下城大門暫時打不開。"
 	tip_label.text = "請再試一次；若仍失敗，請確認遊戲檔案是否完整。"

@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/altar_coffin.glb" id="2_visual"]
+[ext_resource type="Script" path="res://scripts/altar_coffin_style_3d.gd" id="3_style"]
 
 [sub_resource type="BoxShape3D" id="1_collision"]
 size = Vector3(3.5, 1.56, 2.25)
@@ -14,6 +15,7 @@ footprint = Vector3(3.5, 1.56, 2.25)
 editor_note = "Altar-and-coffin focal prop. Leave a walking route around its long sides."
 
 [node name="Visual" parent="." instance=ExtResource("2_visual")]
+script = ExtResource("3_style")
 
 [node name="Collision" type="StaticBody3D" parent="."]
 collision_layer = 1

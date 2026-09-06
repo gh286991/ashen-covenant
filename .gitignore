@@ -3,9 +3,22 @@
 .env
 *.tmp
 *.log
-recordings/*.avi
+recordings/
 dist/
 .DS_Store
 __pycache__/
 *.pyc
 *.blend1
+*.bak
+
+# Agent & Local Configs
+.agent/
+.agents/
+
+# Test & Playtest Artifacts
+output/
+artifacts/
+previews/
+
+# Raw Blender Source Iterations
+blender_source/

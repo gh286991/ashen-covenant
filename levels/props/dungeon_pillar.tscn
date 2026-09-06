@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_pillar.glb" id="1_tcdyr"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_giawm"]
+height = 3.6
+radius = 0.55
+
+[node name="DungeonPillar" type="StaticBody3D"]
+collision_mask = 0
+
+[node name="Visual" type="Node3D" parent="." instance=ExtResource("1_tcdyr")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+shape = SubResource("CylinderShape3D_giawm")

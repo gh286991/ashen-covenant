@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/arena/dungeon_barrel.glb" id="1_bkfy2"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7d2pj"]
+height = 1.1
+radius = 0.48
+
+[node name="DungeonBarrel" type="StaticBody3D"]
+collision_mask = 0
+
+[node name="Visual" type="Node3D" parent="." instance=ExtResource("1_bkfy2")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+shape = SubResource("CylinderShape3D_7d2pj")

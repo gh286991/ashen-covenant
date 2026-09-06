@@ -1,4 +1,4 @@
-[gd_resource type="StandardMaterial3D" load_steps=3 format=3]
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://c0ekryw223ko6"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_Edge"]
 noise_type = 3

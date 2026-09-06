@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://entities/player/action_combat_player_3d.gd" id="1_player"]
+[ext_resource type="Script" path="res://entities/player/action_warrior_visual_3d.gd" id="2_visual"]
+[ext_resource type="PackedScene" path="res://assets/models/animated/action_combat_hero.glb" id="3_warrior"]
+
+[sub_resource type="CapsuleShape3D" id="PlayerShape"]
+radius = 0.36
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="DashRingMaterial"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(0.2, 0.75, 1, 0.58)
+emission_enabled = true
+emission = Color(0.1, 0.5, 1, 1)
+emission_energy_multiplier = 3.0
+
+[node name="ActionCombatPlayer3D" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_player")
+
+[node name="BodyShape" type="CollisionShape3D" parent="."]
+shape = SubResource("PlayerShape")
+
+[node name="Visual" type="Node3D" parent="."]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, -0.95, 0)
+script = ExtResource("2_visual")
+
+[node name="FantasyWarrior" parent="Visual" instance=ExtResource("3_warrior")]
+
+[node name="KeyLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 2.5, 1.4)
+light_color = Color(1, 0.32, 0.1, 1)
+light_energy = 2.2
+omni_range = 4.0
+
+[node name="RimLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 2.0, -1.4)
+light_color = Color(0.12, 0.52, 1, 1)
+light_energy = 2.0
+omni_range = 3.5

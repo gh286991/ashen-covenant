@@ -159,6 +159,17 @@ func play_heavy_hit() -> void:
 	_play_sfx(_random_stream(sword_hits), -4.5, 0.68)
 
 
+func play_combo_hit(combo_step: int, heavy: bool = false, defeated: bool = false) -> void:
+	var step := clampi(combo_step, 1, 3)
+	var transient_pitch: float = [1.1, 1.0, 0.9][step - 1]
+	var body_pitch: float = [0.82, 0.72, 0.6][step - 1]
+	var transient_volume: float = [-4.5, -3.0, -1.0][step - 1]
+	_play_sfx(_random_stream(sword_hits), transient_volume - (0.0 if heavy else 1.0), transient_pitch)
+	_play_sfx(_random_stream(sword_hits), -7.0 + step * 0.8, body_pitch)
+	if heavy or defeated:
+		_play_sfx(transition, -8.0 if defeated else -10.0, 0.72 if defeated else 0.88)
+
+
 func play_heavy_hurt() -> void:
 	_play_sfx(_random_stream(sword_hits), -0.5, 0.76)
 

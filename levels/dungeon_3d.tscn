@@ -1,20 +1,28 @@
-[gd_scene load_steps=21 format=3 uid="uid://2uxkmryygkl6"]
+[gd_scene load_steps=30 format=3 uid="uid://2uxkmryygkl6"]
 
 [ext_resource type="Script" uid="uid://t75rlhg2vnn5" path="res://levels/dungeon_3d.gd" id="1_game"]
 [ext_resource type="Script" uid="uid://bjws16hqm12yo" path="res://entities/player/dungeon_player_3d.gd" id="5_player"]
 [ext_resource type="Script" uid="uid://cjioo3oicy4wo" path="res://levels/dungeon_door_3d.gd" id="6_door"]
-[ext_resource type="PackedScene" uid="uid://bnnq7f60f14qk" path="res://assets/models/animated/fantasy_warrior_gameplay_head_level.glb" id="7_warrior"]
+[ext_resource type="PackedScene" uid="uid://cechn83xyktx8" path="res://assets/models/animated/action_combat_hero.glb" id="7_warrior"]
 [ext_resource type="Script" uid="uid://flfr8hsf6ysd" path="res://entities/player/dungeon_warrior_3d.gd" id="8_warrior_visual"]
 [ext_resource type="PackedScene" path="res://entities/enemies/dungeon_monster_3d.tscn" id="9_monster"]
 [ext_resource type="Script" uid="uid://4b54s2kp2lta" path="res://scripts/dungeon_render_style_3d.gd" id="10_render_style"]
 [ext_resource type="PackedScene" uid="uid://doh5fyfbtjivs" path="res://levels/dungeon_grid_map.tscn" id="12_grid_map"]
-[ext_resource type="Script" uid="uid://byo3pkhnta3n" path="res://common/combat_feedback_3d.gd" id="13_combat_feedback"]
+[ext_resource type="Script" uid="uid://cmbwy7issb5y7" path="res://common/action_combat_fx_3d.gd" id="13_combat_feedback"]
 [ext_resource type="PackedScene" uid="uid://bj3jaufbaxw2y" path="res://assets/models/animated/treasure_chest.tscn" id="14_treasure_chest"]
-[ext_resource type="Texture2D" path="res://assets/backgrounds/dungeon_far_ground.png" id="15_far_ground"]
+[ext_resource type="Texture2D" uid="uid://brs1of8jk1cj8" path="res://assets/backgrounds/dungeon_far_ground.png" id="15_far_ground"]
 [ext_resource type="PackedScene" path="res://ui/prologue_dialogue_overlay.tscn" id="16_prologue"]
 [ext_resource type="PackedScene" path="res://ui/jrpg/dungeon_jrpg_hud.tscn" id="17_jrpg_hud"]
-[ext_resource type="Script" path="res://entities/player/dungeon_progression.gd" id="18_progression"]
+[ext_resource type="Script" uid="uid://ckspno5rhdrao" path="res://entities/player/dungeon_progression.gd" id="18_progression"]
 [ext_resource type="PackedScene" path="res://ui/dungeon_level_up_celebration_3d.tscn" id="19_level_up"]
+[ext_resource type="PackedScene" path="res://levels/props/dungeon_magic_circle.tscn" id="20_magic_circle"]
+[ext_resource type="PackedScene" path="res://levels/props/dungeon_rubble.tscn" id="22_rubble"]
+[ext_resource type="PackedScene" path="res://levels/props/dungeon_barrel.tscn" id="23_barrel"]
+[ext_resource type="PackedScene" path="res://levels/props/dungeon_weapon_rack.tscn" id="24_weapon_rack"]
+[ext_resource type="PackedScene" path="res://entities/enemies/dungeon_skeleton_warrior_3d.tscn" id="25_skel_warrior"]
+[ext_resource type="PackedScene" path="res://entities/enemies/dungeon_skeleton_archer_3d.tscn" id="26_skel_archer"]
+[ext_resource type="PackedScene" path="res://entities/enemies/dungeon_ashen_hound_3d.tscn" id="27_ashen_hound"]
+[ext_resource type="PackedScene" uid="uid://d2srbf2b8dr3y" path="res://assets/models/arena/arena_monolith.glb" id="28_monolith"]
 
 [sub_resource type="Environment" id="Environment_Dungeon"]
 background_mode = 1
@@ -31,6 +39,14 @@ adjustment_enabled = true
 adjustment_brightness = 1.28
 adjustment_saturation = 0.96
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_FarGround"]
+albedo_texture = ExtResource("15_far_ground")
+roughness = 0.92
+uv1_scale = Vector3(7.333, 7.333, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_FarGround"]
+size = Vector2(176, 176)
+
 [sub_resource type="CapsuleShape3D" id="PlayerShape"]
 radius = 0.36
 height = 1.8
@@ -41,14 +57,6 @@ size = Vector3(0.9, 2.2, 3.6)
 [sub_resource type="BoxShape3D" id="DoorShapeSmall"]
 size = Vector3(0.5, 2.2, 3.6)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_FarGround"]
-size = Vector2(176, 176)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_FarGround"]
-albedo_texture = ExtResource("15_far_ground")
-roughness = 0.92
-uv1_scale = Vector3(7.333, 7.333, 1)
-
 [node name="Dungeon3D" type="Node3D"]
 editor_description = "可編輯的地下城總場景。GridMapDungeon 內含實際模組化房間、走道、轉角與分支；四組 GridMap 保留為隱藏筆刷參考層。"
 script = ExtResource("1_game")
@@ -58,10 +66,10 @@ environment = SubResource("Environment_Dungeon")
 
 [node name="FarGround" type="MeshInstance3D" parent="."]
 editor_description = "地下城遠景底景：用低對比石板與霧氣填補地圖外圍空白，保持房間與戰鬥區域清楚。"
-position = Vector3(12, -0.18, -8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -0.18, -8)
+material_override = SubResource("StandardMaterial3D_FarGround")
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_FarGround")
-material_override = SubResource("StandardMaterial3D_FarGround")
 
 [node name="MoonLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
@@ -109,6 +117,14 @@ editor_description = "可編輯的 3D 寶箱與環境道具。選取子節點後
 editor_description = "入口墓室的木製寶箱。關卡實例已縮放為 0.3 倍，低於人物；滑鼠移入或點擊會顯示選擇環，點擊或按 E 可開啟。"
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -5.584627, 0.33793768, -4.3933706)
 
+[node name="TreasureChest_B1" parent="TreasureProps" instance=ExtResource("14_treasure_chest")]
+editor_description = "靈魂聖所的探險寶箱。"
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 15.2, 0.338, -4.2)
+
+[node name="TreasureChest_C1" parent="TreasureProps" instance=ExtResource("14_treasure_chest")]
+editor_description = "深淵殿堂的首領寶箱。"
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 35.2, 0.338, 0)
+
 [node name="Player" type="CharacterBody3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0.95, 0)
@@ -126,7 +142,7 @@ script = ExtResource("18_progression")
 
 [node name="LevelUpCelebration3D" parent="Player" instance=ExtResource("19_level_up")]
 unique_name_in_owner = true
-position = Vector3(0, 1.35, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
 
 [node name="Visual" type="Node3D" parent="Player"]
 transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, -0.95, 0)
@@ -147,37 +163,106 @@ light_energy = 1.5
 omni_range = 4.0
 
 [node name="Monsters" type="Node3D" parent="."]
-editor_description = "怪物實例：選取任一怪物後可在 Inspector 調整血量、移速、巡邏半徑與仇恨距離。"
+editor_description = "怪物實例：骷髏戰士、骷髏弓箭手、灰燼獵犬與首領，各房間具備鮮明主題挑戰。"
 
-[node name="CryptWraith_A1" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0.65, 2.4)
-monster_id = &"CRYPT_WRAITH_A1"
-aggro_range = 2.8
+[node name="SkeletonWarrior_A1" parent="Monsters" instance=ExtResource("25_skel_warrior")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0, -1.8)
+monster_id = &"SKELETON_WARRIOR_A1"
+aggro_range = 3.8
 
-[node name="CryptWraith_A2" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3, 0.65, -2.4)
-monster_id = &"CRYPT_WRAITH_A2"
-aggro_range = 3.0
+[node name="AshenHound_A2" parent="Monsters" instance=ExtResource("27_ashen_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, 2.2)
+monster_id = &"ASHEN_HOUND_A2"
+aggro_range = 4.2
 
-[node name="SoulStalker_B1" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.146, 0.65, -3)
-monster_id = &"SOUL_STALKER_B1"
+[node name="SkeletonWarrior_B1" parent="Monsters" instance=ExtResource("25_skel_warrior")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.8, 0, -2.2)
+monster_id = &"SKELETON_WARRIOR_B1"
 aggro_range = 4.0
 
-[node name="SoulStalker_B2" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.746, 0.65, 2.8)
-monster_id = &"SOUL_STALKER_B2"
-aggro_range = 4.0
+[node name="SkeletonArcher_B2" parent="Monsters" instance=ExtResource("26_skel_archer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.4, 0, 2.5)
+monster_id = &"SKELETON_ARCHER_B2"
+aggro_range = 9.0
 
-[node name="CryptWraith_C1" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.692, 0.65, -2)
-monster_id = &"CRYPT_WRAITH_C1"
-aggro_range = 3.5
+[node name="SkeletonChampion_Boss" parent="Monsters" instance=ExtResource("25_skel_warrior")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 32.5, 0, 0)
+monster_id = &"SKELETON_CHAMPION_BOSS"
+experience_reward = 250
+aggro_range = 5.5
+max_health = 120.0
+attack_damage = 16.0
 
-[node name="CryptWraith_C2" parent="Monsters" instance=ExtResource("9_monster")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.292, 0.65, 2.7)
-monster_id = &"CRYPT_WRAITH_C2"
-aggro_range = 3.5
+[node name="SkeletonArcher_C1" parent="Monsters" instance=ExtResource("26_skel_archer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.8, 0, -2.6)
+monster_id = &"SKELETON_ARCHER_C1"
+aggro_range = 9.0
+
+[node name="DungeonProps" type="Node3D" parent="."]
+editor_description = "關卡環境細節裝飾：古代奧術法陣、精選背景立柱、武器架、儲備橡木酒桶、瓦礫堆與巨石碑。前景完全淨空，視線無阻擋。"
+
+[node name="MagicCircle_A" parent="DungeonProps" instance=ExtResource("20_magic_circle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0.02, 0)
+circle_color = Color(0.25, 0.72, 1, 0.85)
+
+[node name="WeaponRack_A1" parent="DungeonProps" instance=ExtResource("24_weapon_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.892, 0, -4.3)
+
+[node name="Barrel_A1" parent="DungeonProps" instance=ExtResource("23_barrel")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -5.2, 0, -3.9)
+
+[node name="Barrel_A2" parent="DungeonProps" instance=ExtResource("23_barrel")]
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, -4.4, 0, -4.2)
+
+[node name="Barrel_A3" parent="DungeonProps" instance=ExtResource("23_barrel")]
+transform = Transform3D(0.92, 0, 0, 0, 0.92, 0, 0, 0, 0.92, -11.2, 0, 1.8)
+
+[node name="Rubble_A1" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -3.8)
+
+[node name="Rubble_A2" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -4.2, 0, 3.8)
+
+[node name="Rubble_AB" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, 0.2, 0, 1.6)
+
+[node name="MagicCircle_B" parent="DungeonProps" instance=ExtResource("20_magic_circle")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 11.838, 0.02, 0)
+circle_color = Color(0.72, 0.22, 1, 0.9)
+
+[node name="Monolith_B" parent="DungeonProps" instance=ExtResource("28_monolith")]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 11.838, 0, -4.5)
+
+[node name="Barrel_B1" parent="DungeonProps" instance=ExtResource("23_barrel")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 15.4, 0, 3.8)
+
+[node name="Barrel_B2" parent="DungeonProps" instance=ExtResource("23_barrel")]
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, 14.6, 0, 4.2)
+
+[node name="Rubble_B1" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 0, 4)
+
+[node name="Rubble_B2" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 15.5, 0, -3.9)
+
+[node name="MagicCircle_C" parent="DungeonProps" instance=ExtResource("20_magic_circle")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 31.568, 0.02, 0)
+circle_color = Color(1, 0.18, 0.12, 0.95)
+
+[node name="Monolith_C" parent="DungeonProps" instance=ExtResource("28_monolith")]
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 35.8, 0, 0)
+
+[node name="WeaponRack_C1" parent="DungeonProps" instance=ExtResource("24_weapon_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, -4.2)
+
+[node name="WeaponRack_C2" parent="DungeonProps" instance=ExtResource("24_weapon_rack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, 4.2)
+
+[node name="Rubble_C1" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.8, 0, -4)
+
+[node name="Rubble_C2" parent="DungeonProps" instance=ExtResource("22_rubble")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 34.8, 0, 4)
 
 [node name="CombatFeedback3D" type="Node3D" parent="."]
 unique_name_in_owner = true
@@ -274,7 +359,7 @@ offset_right = 620.0
 offset_bottom = 52.0
 theme_override_colors/font_color = Color(0.78, 0.86, 0.94, 1)
 theme_override_font_sizes/font_size = 18
-text = "左鍵點怪物攻擊／點地面移動　·　F／右鍵攻擊　·　走到門口按 E（WASD 備用）"
+text = "左鍵：移動／點怪普攻　·　右鍵：重擊　·　Shift＋左鍵：朝游標出招　·　空白鍵：閃避　·　E：互動"
 
 [node name="PlayerHealthLabel" type="Label" parent="HUD"]
 unique_name_in_owner = true

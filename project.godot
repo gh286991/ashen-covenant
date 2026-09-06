@@ -13,7 +13,7 @@ config_version=5
 config/name="Ashen Covenant"
 config/description="A compact dark fantasy action RPG demo"
 config/version="1.0.0-demo.5"
-run/main_scene="res://levels/main_menu_3d.tscn"
+run/main_scene="res://levels/main_menu.tscn"
 config/features=PackedStringArray("4.5")
 
 [autoload]

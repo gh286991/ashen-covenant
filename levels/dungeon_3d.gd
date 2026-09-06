@@ -32,10 +32,13 @@ var _prompt_owner: Node
 var _camera_anchor := Vector3.ZERO
 var _camera_distance := CAMERA_OFFSET.length()
 var _camera_target_distance := CAMERA_OFFSET.length()
+var _camera_shake := 0.0
+var _time_effect_serial := 0
 var audio: AshenAudioDirector
 
 
 func _ready() -> void:
+	Engine.time_scale = 1.0
 	_apply_web_performance_profile()
 	_audio_setup()
 	door_prompt.visible = false
@@ -56,6 +59,14 @@ func _ready() -> void:
 			player.damaged.connect(_on_player_damaged)
 		if not player.attack_started.is_connected(_on_player_attack_started):
 			player.attack_started.connect(_on_player_attack_started)
+		if not player.slash_requested.is_connected(_on_player_slash_requested):
+			player.slash_requested.connect(_on_player_slash_requested)
+		if not player.dash_requested.is_connected(_on_player_dash_requested):
+			player.dash_requested.connect(_on_player_dash_requested)
+		if not player.hit_confirmed.is_connected(_on_player_hit_confirmed):
+			player.hit_confirmed.connect(_on_player_hit_confirmed)
+		if not player.perfect_dodged.is_connected(_on_player_perfect_dodged):
+			player.perfect_dodged.connect(_on_player_perfect_dodged)
 		if not player.died.is_connected(_on_player_died):
 			player.died.connect(_on_player_died)
 		_on_player_health_changed(player.health, player.max_health)
@@ -121,6 +132,10 @@ func _disable_dressing_shadows(root: Node) -> void:
 			mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
+
+
 func _process(delta: float) -> void:
 	if not is_instance_valid(player) or not is_instance_valid(camera):
 		return
@@ -132,7 +147,9 @@ func _process(delta: float) -> void:
 		_camera_anchor = _camera_anchor.lerp(desired_anchor, follow_weight)
 	var zoom_weight := 1.0 - exp(-CAMERA_ZOOM_SMOOTH_SPEED * delta)
 	_camera_distance = lerpf(_camera_distance, _camera_target_distance, zoom_weight)
-	camera.global_position = _camera_anchor + _get_camera_offset()
+	_camera_shake = maxf(0.0, _camera_shake - delta * 14.0)
+	var shake_offset := Vector3(randf_range(-1.0, 1.0), randf_range(-0.45, 0.45), randf_range(-1.0, 1.0)) * _camera_shake
+	camera.global_position = _camera_anchor + _get_camera_offset() + shake_offset
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -202,9 +219,61 @@ func _on_player_health_changed(current: float, maximum: float) -> void:
 
 
 func _on_player_damaged(amount: float, _source: Node) -> void:
+	_camera_shake = 0.28
 	if audio != null:
 		audio.play_heavy_hurt()
 	combat_feedback.show_damage(player.global_position + Vector3(0.0, 0.88, 0.0), amount, Color("ff6b5f"))
+
+
+func _on_player_slash_requested(origin: Vector3, direction: Vector3, combo_step: int, heavy: bool, sweep_duration: float) -> void:
+	if combat_feedback != null and combat_feedback.has_method(&"show_slash"):
+		combat_feedback.call(&"show_slash", origin, direction, combo_step, heavy, sweep_duration)
+	if audio != null:
+		if heavy:
+			audio.play_heavy_swing(false)
+		else:
+			audio.play_player_swing(combo_step, combo_step == 3)
+
+
+func _on_player_dash_requested(origin: Vector3, direction: Vector3) -> void:
+	if combat_feedback != null and combat_feedback.has_method(&"show_dash"):
+		combat_feedback.call(&"show_dash", origin, direction)
+	_camera_shake = maxf(_camera_shake, 0.055)
+
+
+func _on_player_hit_confirmed(pos: Vector3, amount: float, heavy: bool, direction: Vector3, combo_step: int, defeated: bool) -> void:
+	if combat_feedback != null and combat_feedback.has_method(&"show_hit"):
+		combat_feedback.call(&"show_hit", pos, direction, combo_step, heavy, defeated)
+	var impact_strength: float = 0.3 if defeated else (0.24 if heavy else [0.1, 0.145, 0.21][clampi(combo_step, 1, 3) - 1])
+	_camera_shake = maxf(_camera_shake, impact_strength)
+	if audio != null:
+		audio.play_combo_hit(combo_step, heavy, defeated)
+	_hit_stop(0.07 if defeated else (0.056 if heavy else [0.024, 0.032, 0.046][clampi(combo_step, 1, 3) - 1]))
+
+
+func _on_player_perfect_dodged(pos: Vector3) -> void:
+	if combat_feedback != null and combat_feedback.has_method(&"show_perfect_dodge"):
+		combat_feedback.call(&"show_perfect_dodge", pos)
+	_camera_shake = 0.12
+	_slow_motion(0.32, 0.22)
+
+
+func _hit_stop(duration: float) -> void:
+	_time_effect_serial += 1
+	var serial := _time_effect_serial
+	Engine.time_scale = 0.08
+	await get_tree().create_timer(duration, true, false, true).timeout
+	if serial == _time_effect_serial:
+		Engine.time_scale = 1.0
+
+
+func _slow_motion(scale: float, duration: float) -> void:
+	_time_effect_serial += 1
+	var serial := _time_effect_serial
+	Engine.time_scale = scale
+	await get_tree().create_timer(duration, true, false, true).timeout
+	if serial == _time_effect_serial:
+		Engine.time_scale = 1.0
 
 
 func _on_monster_damaged(amount: float, _source: Node, monster: DungeonMonster3D) -> void:
@@ -214,8 +283,7 @@ func _on_monster_damaged(amount: float, _source: Node, monster: DungeonMonster3D
 
 
 func _on_player_attack_started(_direction: Vector3) -> void:
-	if audio != null:
-		audio.play_heavy_swing(false)
+	pass
 
 
 func _on_monster_attack_started(_direction: Vector3) -> void:

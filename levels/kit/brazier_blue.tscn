@@ -1,25 +1,107 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=11 format=3]
 
-[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://assets/3d_dungeon/kit/brazier_blue.glb" id="2_visual"]
+[ext_resource type="Script" path="res://scripts/dungeon_kit_piece_3d.gd" id="1_bxtuj"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_brazier.glb" id="2_jrjeu"]
+[ext_resource type="Script" path="res://scripts/torch_flicker_3d.gd" id="3_dx8ed"]
 
-[sub_resource type="CylinderShape3D" id="1_collision"]
+[sub_resource type="SphereMesh" id="SphereMesh_0hdl5"]
+radius = 0.22
+height = 0.18
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7sm50"]
+albedo_color = Color(0.12, 0.04, 0.02, 1)
+roughness = 0.95
+emission_enabled = true
+emission = Color(1, 0.35, 0.05, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cvldx"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.55, 0.15, 0.7)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_1kxwf"]
+material = SubResource("StandardMaterial3D_cvldx")
+size = Vector2(0.22, 0.22)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2g6ty"]
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.3, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_m55tc"]
+material = SubResource("StandardMaterial3D_2g6ty")
+radius = 0.025
+height = 0.05
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ha2uh"]
+height = 1.6
 radius = 0.48
-height = 2.15
 
 [node name="BrazierBlue" type="Node3D"]
-script = ExtResource("1_script")
+script = ExtResource("1_bxtuj")
 piece_id = &"BRAZIER_BLUE"
-piece_role = "Prop"
-footprint = Vector3(0.96, 2.15, 0.96)
-editor_note = "Blue brazier decoration. Add an OmniLight3D as a sibling if you want it to illuminate the room."
+footprint = Vector3(0.96, 1.6, 0.96)
+editor_note = "Detailed dungeon brazier with glowing flame and flickering torchlight."
 
-[node name="Visual" parent="." instance=ExtResource("2_visual")]
+[node name="Visual" type="Node3D" parent="." instance=ExtResource("2_jrjeu")]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 0, 0, 0)
+
+[node name="FlickerController" type="Node3D" parent="."]
+script = ExtResource("3_dx8ed")
+base_energy = 3.8
+flicker_intensity = 0.75
+
+[node name="Light" type="OmniLight3D" parent="FlickerController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+light_color = Color(1, 0.55, 0.18, 1)
+light_energy = 3.8
+shadow_enabled = true
+omni_range = 7.0
+
+[node name="Coals" type="MeshInstance3D" parent="FlickerController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82, 0)
+mesh = SubResource("SphereMesh_0hdl5")
+surface_material_override/0 = SubResource("StandardMaterial3D_7sm50")
+
+[node name="FireParticles" type="CPUParticles3D" parent="FlickerController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, 0)
+amount = 22
+lifetime = 0.65
+preprocess = 0.5
+mesh = SubResource("QuadMesh_1kxwf")
+emission_shape = 1
+emission_sphere_radius = 0.12
+direction = Vector3(0, 1, 0)
+spread = 18.0
+gravity = Vector3(0, 2.5, 0)
+initial_velocity_min = 0.35
+initial_velocity_max = 0.75
+scale_amount_min = 0.14
+scale_amount_max = 0.24
+color = Color(1, 0.65, 0.15, 0.85)
+
+[node name="EmberParticles" type="CPUParticles3D" parent="FlickerController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
+amount = 14
+lifetime = 1.2
+preprocess = 0.5
+mesh = SubResource("SphereMesh_m55tc")
+emission_shape = 1
+emission_sphere_radius = 0.1
+direction = Vector3(0, 1, 0)
+spread = 35.0
+gravity = Vector3(0, 1.2, 0)
+initial_velocity_min = 0.8
+initial_velocity_max = 1.6
+scale_amount_min = 0.02
+scale_amount_max = 0.045
+color = Color(1, 0.8, 0.25, 0.9)
 
 [node name="Collision" type="StaticBody3D" parent="."]
-collision_layer = 1
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Collision"]
-position = Vector3(0, 1.12, 0)
-shape = SubResource("1_collision")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("CylinderShape3D_ha2uh")

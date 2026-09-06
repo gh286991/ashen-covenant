@@ -1,0 +1,489 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://levels/action_combat_lab.gd" id="1_lab"]
+[ext_resource type="PackedScene" path="res://entities/player/action_combat_player_3d.tscn" id="2_player"]
+[ext_resource type="Script" path="res://common/action_combat_fx_3d.gd" id="3_fx"]
+[ext_resource type="Theme" path="res://ui/jrpg/jrpg_theme.tres" id="4_theme"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_pillar.glb" id="5_pillar"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_brazier.glb" id="6_brazier"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_wall_segment.glb" id="7_wall"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_corner_tower.glb" id="8_tower"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_monolith.glb" id="9_monolith"]
+[ext_resource type="PackedScene" path="res://assets/models/arena/arena_rubble.glb" id="10_rubble"]
+[ext_resource type="Texture2D" path="res://assets/textures/arena/arena_floor_stone.jpg" id="11_floor_tex"]
+[ext_resource type="Texture2D" path="res://assets/textures/arena/arena_floor_stone_normal.png" id="12_floor_norm"]
+[ext_resource type="Texture2D" path="res://assets/textures/arena/arena_floor_stone_roughness.png" id="13_floor_rough"]
+[ext_resource type="Texture2D" path="res://assets/textures/arena/arena_runic_seal.png" id="14_seal_tex"]
+[ext_resource type="Script" path="res://common/light_flicker_3d.gd" id="15_flicker"]
+
+[sub_resource type="Environment" id="Environment_Lab"]
+background_mode = 1
+background_color = Color(0.012, 0.018, 0.038, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.24, 0.32, 0.52, 1)
+ambient_light_energy = 1.25
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 1.35
+glow_bloom = 0.12
+fog_enabled = true
+fog_light_color = Color(0.04, 0.075, 0.15, 1)
+fog_light_energy = 0.4
+fog_density = 0.01
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.72, 0.74, 0.8, 1)
+albedo_texture = ExtResource("11_floor_tex")
+metallic = 0.06
+roughness = 0.78
+roughness_texture = ExtResource("13_floor_rough")
+normal_enabled = true
+normal_scale = 1.25
+normal_texture = ExtResource("12_floor_norm")
+uv1_scale = Vector3(4.4, 3.4, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(23.2, 0.24, 18.2)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(23.5, 0.24, 18.5)
+
+[sub_resource type="StandardMaterial3D" id="SealMaterial"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("14_seal_tex")
+emission_enabled = true
+emission = Color(0.28, 0.62, 1, 1)
+emission_energy_multiplier = 2.4
+
+[sub_resource type="PlaneMesh" id="SealMesh"]
+material = SubResource("SealMaterial")
+size = Vector2(8.6, 8.6)
+
+[sub_resource type="TorusMesh" id="RuneMesh"]
+inner_radius = 4.38
+outer_radius = 4.46
+rings = 64
+ring_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="RuneMaterial"]
+shading_mode = 0
+albedo_color = Color(0.08, 0.62, 1, 1)
+emission_enabled = true
+emission = Color(0.03, 0.36, 1, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="BoxShape3D" id="LongEdgeShape"]
+size = Vector3(23.5, 2.8, 0.8)
+
+[sub_resource type="BoxShape3D" id="ShortEdgeShape"]
+size = Vector3(0.8, 2.8, 18.5)
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.018, 0.026, 0.055, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.48, 0.82, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="HealthBG"]
+bg_color = Color(0.09, 0.03, 0.06, 0.95)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.88, 0.14, 0.12, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="ActionCombatLab" type="Node3D"]
+script = ExtResource("1_lab")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_Lab")
+
+[node name="MoonLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.882948, 0.369949, -0.289036, 0, 0.615662, 0.788011, 0.469472, -0.695772, 0.543597, 0, 10, 0)
+light_color = Color(0.5, 0.7, 1, 1)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="ArenaFloor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.14, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="ArenaFloor"]
+mesh = SubResource("FloorMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="ArenaFloor"]
+shape = SubResource("FloorShape")
+
+[node name="CenterSeal" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.012, 0)
+mesh = SubResource("SealMesh")
+
+[node name="OuterRune" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, 0)
+mesh = SubResource("RuneMesh")
+material_override = SubResource("RuneMaterial")
+
+[node name="ArenaArchitecture" type="Node3D" parent="."]
+
+[node name="CornerTowerNW" parent="ArenaArchitecture" instance=ExtResource("8_tower")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.2, 0, -8.7)
+
+[node name="TowerBrazierNW" parent="ArenaArchitecture/CornerTowerNW" instance=ExtResource("6_brazier")]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 0, 4.25, 0)
+
+[node name="Light" type="OmniLight3D" parent="ArenaArchitecture/CornerTowerNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.2, 0)
+light_color = Color(1, 0.45, 0.14, 1)
+light_energy = 4.8
+omni_range = 9.5
+shadow_enabled = true
+script = ExtResource("15_flicker")
+
+[node name="CornerTowerNE" parent="ArenaArchitecture" instance=ExtResource("8_tower")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, 0, -8.7)
+
+[node name="TowerBrazierNE" parent="ArenaArchitecture/CornerTowerNE" instance=ExtResource("6_brazier")]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 0, 4.25, 0)
+
+[node name="Light" type="OmniLight3D" parent="ArenaArchitecture/CornerTowerNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.2, 0)
+light_color = Color(1, 0.45, 0.14, 1)
+light_energy = 4.8
+omni_range = 9.5
+shadow_enabled = true
+script = ExtResource("15_flicker")
+
+[node name="CornerTowerSW" parent="ArenaArchitecture" instance=ExtResource("8_tower")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.2, 0, 9.1)
+
+[node name="TowerBrazierSW" parent="ArenaArchitecture/CornerTowerSW" instance=ExtResource("6_brazier")]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 0, 4.25, 0)
+
+[node name="Light" type="OmniLight3D" parent="ArenaArchitecture/CornerTowerSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.2, 0)
+light_color = Color(1, 0.45, 0.14, 1)
+light_energy = 4.2
+omni_range = 9.0
+script = ExtResource("15_flicker")
+
+[node name="CornerTowerSE" parent="ArenaArchitecture" instance=ExtResource("8_tower")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, 0, 9.1)
+
+[node name="TowerBrazierSE" parent="ArenaArchitecture/CornerTowerSE" instance=ExtResource("6_brazier")]
+transform = Transform3D(0.82, 0, 0, 0, 0.82, 0, 0, 0, 0.82, 0, 4.25, 0)
+
+[node name="Light" type="OmniLight3D" parent="ArenaArchitecture/CornerTowerSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.2, 0)
+light_color = Color(1, 0.45, 0.14, 1)
+light_energy = 4.2
+omni_range = 9.0
+script = ExtResource("15_flicker")
+
+[node name="MonolithAltar" parent="ArenaArchitecture" instance=ExtResource("9_monolith")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.7)
+
+[node name="MonolithGlow" type="OmniLight3D" parent="ArenaArchitecture/MonolithAltar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.8)
+light_color = Color(0.92, 0.22, 0.28, 1)
+light_energy = 3.6
+omni_range = 7.0
+
+[node name="NorthWall_L1" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0, -8.7)
+
+[node name="NorthWall_L2" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.2, 0, -8.7)
+
+[node name="NorthWall_R1" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, -8.7)
+
+[node name="NorthWall_R2" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 0, -8.7)
+
+[node name="NorthPillarL" parent="ArenaArchitecture" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, -8.2)
+
+[node name="NorthPillarR" parent="ArenaArchitecture" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0, -8.2)
+
+[node name="SouthWall_1" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, 0, 9.3)
+
+[node name="SouthWall_2" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 0, 9.3)
+
+[node name="SouthWall_3" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 9.3)
+
+[node name="SouthWall_4" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 9.3)
+
+[node name="WestWall_N" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.2, 0, -4.2)
+
+[node name="WestWall_S" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11.2, 0, 4.2)
+
+[node name="WestPillar" parent="ArenaArchitecture" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.1, 0, 0)
+
+[node name="WestBrazier" parent="ArenaArchitecture" instance=ExtResource("6_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, 0, 0)
+
+[node name="WestBrazierLight" type="OmniLight3D" parent="ArenaArchitecture/WestBrazier"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+light_color = Color(1, 0.44, 0.12, 1)
+light_energy = 4.5
+omni_range = 8.5
+script = ExtResource("15_flicker")
+
+[node name="EastWall_N" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.2, 0, -4.2)
+
+[node name="EastWall_S" parent="ArenaArchitecture" instance=ExtResource("7_wall")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.2, 0, 4.2)
+
+[node name="EastPillar" parent="ArenaArchitecture" instance=ExtResource("5_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.1, 0, 0)
+
+[node name="EastBrazier" parent="ArenaArchitecture" instance=ExtResource("6_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 0, 0)
+
+[node name="EastBrazierLight" type="OmniLight3D" parent="ArenaArchitecture/EastBrazier"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+light_color = Color(1, 0.44, 0.12, 1)
+light_energy = 4.5
+omni_range = 8.5
+script = ExtResource("15_flicker")
+
+[node name="RubbleNW" parent="ArenaArchitecture" instance=ExtResource("10_rubble")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -9.4, 0, -7.0)
+
+[node name="RubbleSE" parent="ArenaArchitecture" instance=ExtResource("10_rubble")]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 9.2, 0, 7.0)
+
+[node name="RubbleSW" parent="ArenaArchitecture" instance=ExtResource("10_rubble")]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, -9.5, 0, 7.2)
+
+[node name="NorthWall" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.2, -8.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="NorthWall"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("LongEdgeShape")
+
+[node name="SouthWall" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.2, 9.3)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="SouthWall"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("LongEdgeShape")
+
+[node name="WestWall" type="StaticBody3D" parent="."]
+position = Vector3(-11.2, 0.2, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="WestWall"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("ShortEdgeShape")
+
+[node name="EastWall" type="StaticBody3D" parent="."]
+position = Vector3(11.2, 0.2, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="EastWall"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("ShortEdgeShape")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+unique_name_in_owner = true
+position = Vector3(0, 0.95, 2.2)
+
+[node name="Enemies" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="ActionCombatFX3D" type="Node3D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_fx")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 14.2, 12)
+rotation_degrees = Vector3(-49.8, 0, 0)
+current = true
+fov = 48.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Vignette" type="ColorRect" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.65, 0.015, 0.02, 0)
+
+[node name="ImpactFlash" type="ColorRect" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(1, 0.88, 0.58, 0)
+
+[node name="TopLeft" type="PanelContainer" parent="HUD"]
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 382.0
+offset_bottom = 150.0
+theme = ExtResource("4_theme")
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="HUD/TopLeft"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="Rows" type="VBoxContainer" parent="HUD/TopLeft/Margin"]
+theme_override_constants/separation = 7
+
+[node name="Title" type="Label" parent="HUD/TopLeft/Margin/Rows"]
+text = "灰燼戰技試煉"
+theme_override_colors/font_color = Color(1, 0.73, 0.28, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="HealthRow" type="HBoxContainer" parent="HUD/TopLeft/Margin/Rows"]
+theme_override_constants/separation = 10
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/TopLeft/Margin/Rows/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(215, 22)
+show_percentage = false
+theme_override_styles/background = SubResource("HealthBG")
+theme_override_styles/fill = SubResource("HealthFill")
+
+[node name="HealthLabel" type="Label" parent="HUD/TopLeft/Margin/Rows/HealthRow"]
+unique_name_in_owner = true
+text = "100 / 100"
+
+[node name="DashLabel" type="Label" parent="HUD/TopLeft/Margin/Rows"]
+unique_name_in_owner = true
+text = "閃避  ◆◆◆"
+theme_override_colors/font_color = Color(0.36, 0.9, 1, 1)
+
+[node name="TopRight" type="VBoxContainer" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 24.0
+offset_right = -26.0
+offset_bottom = 168.0
+theme = ExtResource("4_theme")
+alignment = 2
+
+[node name="WaveLabel" type="Label" parent="HUD/TopRight"]
+unique_name_in_owner = true
+text = "WAVE  01"
+horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.52, 0.72, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="RankLabel" type="Label" parent="HUD/TopRight"]
+unique_name_in_owner = true
+text = "D"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 58
+
+[node name="ScoreLabel" type="Label" parent="HUD/TopRight"]
+unique_name_in_owner = true
+text = "STYLE  00000"
+horizontal_alignment = 2
+
+[node name="Bottom" type="PanelContainer" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -395.0
+offset_top = -92.0
+offset_right = 395.0
+offset_bottom = -24.0
+theme = ExtResource("4_theme")
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Rows" type="VBoxContainer" parent="HUD/Bottom"]
+alignment = 1
+
+[node name="Controls" type="Label" parent="HUD/Bottom/Rows"]
+text = "WASD  移動    │    左鍵 / F  三段連斬    │    右鍵 / Q  破防重斬    │    SPACE  閃避取消"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 17
+
+[node name="Hint" type="Label" parent="HUD/Bottom/Rows"]
+text = "敵人光圈蓄滿瞬間閃避可觸發完美閃避  ·  攻擊中也能取消  ·  R 重新開始"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.52, 0.74, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="ComboLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -132.0
+offset_right = 120.0
+offset_bottom = -101.0
+text = "連段  READY"
+horizontal_alignment = 1
+theme = ExtResource("4_theme")
+theme_override_colors/font_color = Color(1, 0.74, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="BannerLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -75.0
+offset_right = 260.0
+offset_bottom = 75.0
+text = "第 1 波"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme = ExtResource("4_theme")
+theme_override_colors/font_color = Color(1, 0.77, 0.32, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 46

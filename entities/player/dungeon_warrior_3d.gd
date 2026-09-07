@@ -24,6 +24,7 @@ func _ready() -> void:
 		push_warning("Dungeon warrior model has no AnimationPlayer")
 		return
 	_animation_player.animation_finished.connect(_on_animation_finished)
+	_animation_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_PHYSICS
 	for looping_animation in [&"Idle", &"Walk", &"Run"]:
 		var resolved := _resolve_animation(looping_animation)
 		if not resolved.is_empty():

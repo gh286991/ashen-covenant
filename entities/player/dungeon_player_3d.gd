@@ -90,6 +90,7 @@ var _critical_chance := 0.05
 
 
 func _ready() -> void:
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	add_to_group("player")
 	_base_attack_damage = attack_damage
 	_base_max_health = max_health

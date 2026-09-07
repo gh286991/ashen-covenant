@@ -117,9 +117,15 @@ confirm={
 2d_physics/layer_5="EnemyHit"
 2d_physics/layer_6="Pickups"
 
+[physics]
+
+common/physics_interpolation=true
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+renderer/rendering_method.macos="mobile"
+rendering_device/driver.macos="metal"
 textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.018, 0.014, 0.024, 1)

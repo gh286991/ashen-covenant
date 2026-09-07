@@ -33,6 +33,7 @@ var _camera_anchor := Vector3.ZERO
 var _camera_distance := CAMERA_OFFSET.length()
 var _camera_target_distance := CAMERA_OFFSET.length()
 var _camera_shake := 0.0
+var _camera_snap_physics_frame := -1
 var _time_effect_serial := 0
 var audio: AshenAudioDirector
 
@@ -89,6 +90,11 @@ func _ready() -> void:
 		if not monster.died.is_connected(died_callback):
 			monster.died.connect(died_callback)
 	camera.current = true
+	# The camera is updated every rendered frame, following the interpolated
+	# actor rather than sampling its stepped physics position.
+	camera.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	player.reset_physics_interpolation()
+	player.get_global_transform_interpolated()
 	_camera_anchor = _get_player_horizontal_position()
 	camera.global_position = _camera_anchor + _get_camera_offset()
 	# The dungeon is a fixed top-down view. Keeping the pitch fixed prevents
@@ -139,7 +145,12 @@ func _exit_tree() -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(player) or not is_instance_valid(camera):
 		return
-	var desired_anchor := _get_player_horizontal_position()
+	var desired_anchor := player.get_global_transform_interpolated().origin
+	# The interpolation getter can still be cached for the teleport frame.
+	# Follow the destination until a complete new physics interval is available.
+	if Engine.get_physics_frames() <= _camera_snap_physics_frame:
+		desired_anchor = player.global_position
+	desired_anchor.y = 0.0
 	if _camera_anchor.distance_to(desired_anchor) > CAMERA_SNAP_DISTANCE:
 		_camera_anchor = desired_anchor
 	else:
@@ -206,7 +217,9 @@ func transition_player(spawn: Node3D, _door: Node) -> void:
 	if audio != null:
 		audio.play_transition()
 	player.global_position = spawn.global_position
+	player.reset_physics_interpolation()
 	player.velocity = Vector3.ZERO
+	_camera_snap_physics_frame = Engine.get_physics_frames() + 1
 	player.clear_move_target()
 	_camera_anchor = _get_player_horizontal_position()
 	camera.global_position = _camera_anchor + _get_camera_offset()

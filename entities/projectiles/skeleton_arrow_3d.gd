@@ -21,9 +21,11 @@ func setup(start_pos: Vector3, shoot_dir: Vector3, shooter: Node3D, dmg: float =
 	damage = dmg
 	if direction.length_squared() > 0.001:
 		look_at(global_position + direction, Vector3.UP)
+	reset_physics_interpolation()
 
 
 func _ready() -> void:
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	monitoring = true
 	body_entered.connect(_on_body_entered)
 

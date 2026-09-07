@@ -90,6 +90,7 @@ var _base_visual_position := Vector3.ZERO
 
 
 func _ready() -> void:
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 	add_to_group("dungeon_monsters")
 	collision_layer = 4
 	collision_mask = 3 # World + Player: bodies block each other.
@@ -108,6 +109,7 @@ func _ready() -> void:
 	if _anim_player == null:
 		_anim_player = find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if _anim_player != null:
+		_anim_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_PHYSICS
 		for looping_clip in [&"Idle", &"Run"]:
 			var resolved := _resolve_model_anim(looping_clip)
 			if not resolved.is_empty():

@@ -20,6 +20,8 @@ var _animation: Tween
 
 
 func _ready() -> void:
+	# These local visual transforms are driven by render-frame tweens.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_reset_visuals()
 	visible = false
 

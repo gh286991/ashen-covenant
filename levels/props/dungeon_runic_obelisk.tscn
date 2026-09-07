@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/arena/ancient_runic_obelisk.glb" id="1_model"]
+[ext_resource type="Script" path="res://common/light_flicker_3d.gd" id="2_flicker"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_obelisk"]
+height = 3.5
+radius = 0.95
+
+[node name="DungeonRunicObelisk" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Visual" type="Node3D" parent="." instance=ExtResource("1_model")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+shape = SubResource("CylinderShape3D_obelisk")
+
+[node name="RunicGlow" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+light_color = Color(0.2, 0.75, 1, 1)
+light_energy = 3.2
+omni_range = 6.0
+script = ExtResource("2_flicker")
+base_energy = 3.2
+flicker_range = 0.5
+flicker_speed = 8.0

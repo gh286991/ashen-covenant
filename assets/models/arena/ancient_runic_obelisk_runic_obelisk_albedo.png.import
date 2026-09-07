@@ -2,21 +2,21 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ox30epxmufju"
-path.s3tc="res://.godot/imported/arena_brazier_arena_iron_metal.jpg-26b108adeb7db4f29008e2fb46e67392.s3tc.ctex"
-path.etc2="res://.godot/imported/arena_brazier_arena_iron_metal.jpg-26b108adeb7db4f29008e2fb46e67392.etc2.ctex"
+uid="uid://csnlcv6t2umbn"
+path.s3tc="res://.godot/imported/ancient_runic_obelisk_runic_obelisk_albedo.png-40a9ce0e26b75469f361cf405de57318.s3tc.ctex"
+path.etc2="res://.godot/imported/ancient_runic_obelisk_runic_obelisk_albedo.png-40a9ce0e26b75469f361cf405de57318.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "ce49bd0886048eb9ff503a8d1e80e108"
+"md5": "fbf254f528752b8351572584fd2eb6ea"
 }
 
 [deps]
 
-source_file="res://assets/models/arena/arena_brazier_arena_iron_metal.jpg"
-dest_files=["res://.godot/imported/arena_brazier_arena_iron_metal.jpg-26b108adeb7db4f29008e2fb46e67392.s3tc.ctex", "res://.godot/imported/arena_brazier_arena_iron_metal.jpg-26b108adeb7db4f29008e2fb46e67392.etc2.ctex"]
+source_file="res://assets/models/arena/ancient_runic_obelisk_runic_obelisk_albedo.png"
+dest_files=["res://.godot/imported/ancient_runic_obelisk_runic_obelisk_albedo.png-40a9ce0e26b75469f361cf405de57318.s3tc.ctex", "res://.godot/imported/ancient_runic_obelisk_runic_obelisk_albedo.png-40a9ce0e26b75469f361cf405de57318.etc2.ctex"]
 
 [params]
 

@@ -30,7 +30,7 @@ func setup(actor: DungeonPlayer3D) -> void:
 	_on_mana_changed(actor.mana, actor.max_mana)
 
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	_sync_stack_orientation()
 
 
